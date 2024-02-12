@@ -1,0 +1,53 @@
+{
+  "scripts": [{
+    "in": "src/scripts/script.js",
+    "out": "dist/script.js",
+    "options": {
+      "sourcemap": true,
+      "minify": true,
+      "justMinified": false,
+      "format": "iife",
+      "target": "es2019"
+    }
+  }],
+  "styles": [{
+    "in": "src/styles/index.scss",
+    "out": "dist/style.css",
+    "options": {
+      "sourcemap": true,
+      "minify": true,
+      "justMinified": false
+    }
+  }],
+  "markup": {
+    "in": "src/markup",
+    "out": "/",
+    "options": {
+      "site": {
+        "title": "💩🌪️ Shitstorm",
+        "description": "Poops project template",
+        "url": "https://stamat.github.io/shitstorm"
+      },
+      "data": [
+        "_data/fonts.yaml"
+      ],
+      "includePaths": [
+        "_layouts",
+        "_partials"
+      ],
+      "timeDateFormat": "MMM D, YYYY"
+    }
+  },
+  "banner": "/* {{ name }} v{{ version }} | {{ homepage }} | {{ license }} License */",
+  "serve" : {
+    "port": 4040,
+    "base": "/"
+  },
+  "livereload": true,
+  "watch": [
+    "src"
+  ],
+  "includePaths": [
+    "node_modules"
+  ]
+}

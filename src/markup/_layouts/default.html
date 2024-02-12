@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>{{ page.title or site.title }}</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="{{ page.description or site.description }}">
+  <link rel="alternate" type="application/rss+xml" href="{{ site.url }}/changelog/feed.rss">
+  <link rel="preconnect" href="https://fonts.googleapis.com"> 
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="{{ relativePathPrefix }}dist/style.min.css">
+  {% set fontparts = '' %}
+  
+  {% for font in fonts %}
+    {% set name = font.name | replace(" ", "+") %}
+    {% if font.weights %}
+      {% set weights = font.weights | join(",") %}
+      {% set name = name + ":wght@" + weights %}
+    {% endif %}
+    {% set fontparts = fontparts + name %}
+    {% if not loop.last %}
+      {% set fontparts = fontparts + "&family=" %}
+    {% endif %}
+  {% endfor %}
+
+  {% if fontparts.length != 0 %}
+    <link href="https://fonts.googleapis.com/css2?family={{ fontparts }}&display=swap" rel="stylesheet">
+  {% endif %}   
+
+  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/atom-one-dark.min.css">
+  <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+</head>
+<body class="bg-brownish">
+  {% block content %} {% endblock %}
+
+  {% if livereload_port %}
+  <script>document.write('<script src="http://'
+    + (location.host || 'localhost').split(':')[0]
+    + ':{{livereload_port}}/livereload.js?snipver=1"></'
+    + 'script>')</script>
+  {% endif %}
+  <script>hljs.highlightAll();</script>
+  <script async type="text/javascript" src="{{ relativePathPrefix }}dist/script.min.js"></script>
+</body>
+</html>
