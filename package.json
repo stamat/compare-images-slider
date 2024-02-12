@@ -1,24 +1,24 @@
 {
-  "private": true,
-  "name": "shitstorm",
+  "name": "compare-images-slider",
   "version": "1.0.0",
   "description": "Poops project template",
   "main": "src/scripts/script.js",
   "style": "src/scripts/index.scss",
-  "homepage": "https://stamat.github.io/shitstorm/",
+  "homepage": "https://stamat.github.io/compare-images-slider/",
   "repository": {
     "type": "git",
-    "url": "https://github.com/stamat/shitstorm.git"
+    "url": "https://github.com/stamat/compare-images-slider.git"
   },
   "keywords": [
-    "poops",
-    "template"
+    "compare",
+    "images",
+    "slider"
   ],
   "author": "Nikola Stamatovic <@stamat>",
   "contributors": [],
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/stamat/shitstorm/issues"
+    "url": "https://github.com/stamat/compare-images-slider/issues"
   },
   "scripts": {
     "dev": "poops",

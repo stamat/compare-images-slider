@@ -24,9 +24,9 @@
     "out": "/",
     "options": {
       "site": {
-        "title": "💩🌪️ Shitstorm",
-        "description": "Poops project template",
-        "url": "https://stamat.github.io/shitstorm"
+        "title": "Compare Images Slider",
+        "description": "Image comparison slider. Slide to compare two images.",
+        "url": "https://stamat.github.io/compare-images-slider"
       },
       "data": [
         "_data/fonts.yaml"
