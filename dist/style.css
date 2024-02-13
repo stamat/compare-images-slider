@@ -1,4 +1,5 @@
-/* shitstorm v1.0.0 | https://stamat.github.io/shitstorm/ | MIT License */
+/* compare-images-slider v1.0.0 | https://stamat.github.io/compare-images-slider/ | MIT License */
+@charset "UTF-8";
 /*
  * BREAKPOINTS - 'size label': (min, max)
  */
@@ -7152,7 +7153,64 @@ template {
     clear: none;
   }
 }
-a {
-  color: #824F2D;
+.before-after-wrap {
+  display: block;
+  position: relative;
+}
+.before-after-wrap .before-after {
+  position: relative;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0px;
+  left: 0px;
+}
+.before-after-wrap .before-after.active {
+  z-index: 5;
+  display: block;
+  opacity: 1;
+}
+.before-after-wrap .slide {
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+.before-after-wrap .resize {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 20%;
+  overflow: hidden;
+  z-index: 2;
+}
+.before-after-wrap .handle {
+  position: absolute;
+  left: 20%;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+  margin-left: -2px;
+  height: 100%;
+  cursor: ew-resize;
+  z-index: 3;
+}
+.before-after-wrap .handle:after {
+  position: absolute;
+  top: 50%;
+  width: 42px;
+  height: 42px;
+  margin: -21px 0 0 -21px;
+  content: "↔";
+  line-height: 42px;
+  font-size: 32px;
+  background: #fff;
+}
+.before-after-wrap .draggable:after {
+  width: 48px;
+  height: 48px;
+  margin: -24px 0 0 -24px;
+  line-height: 48px;
+  font-size: 30px;
 }
 /*# sourceMappingURL=style.css.map */

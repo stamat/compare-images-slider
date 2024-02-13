@@ -4,21 +4,18 @@ layout: default
 <div class="container">
   <h1>{{ site.title }}</h1>
   {{ site.description }}
-</div>
 
-<div class="before-after-wrap">
-  <img class="spacer main-spacer" src="{{'switch-spacer.png' | asset_url}}" alt="" />
-  {% for block in section.blocks %}
-      <div class="before-after slider target-{{block.settings.type}}{%if forloop.index == 1%} active{% endif %}">
-            <div class="slide slide1 loadme" style="background-image: url({{block.settings.after | img_url: '300x'}})" data-full="{{block.settings.after | img_url: '1440x'}}"></div>
-            <div class="resize">
-                <div class="slide-wrap">
-                    <div class="slide slide2 loadme" style="background-image: url({{block.settings.before | img_url: '300x'}})" data-full="{{block.settings.before | img_url: '1440x'}}">
-                        <img class="spacer" src="{{'switch-spacer.png' | asset_url}}" alt="" />
-                    </div>
-                </div>
-            </div>
-            <span class="handle icon-drag"></span>
+  <div class="before-after-wrap ba-slider">
+    <img class="first slide slide1" width="1680" height="1120" src="{{ relativePathPrefix }}dist/assets/img.jpg" alt="" />
+      <div class="before-after slider">
+        <div class="resize">
+          <div class="slide-wrap">
+            <img class="second slide slide2" width="1680" height="1120" src="{{ relativePathPrefix }}dist/assets/img-alt.jpg" alt="" />
+          </div>
+        </div>
+        <span class="handle icon-drag"></span>
       </div>
-  {% endfor %}
+  </div>
+  Photo by <a href="https://unsplash.com/@necone?utm_content=creditCopyText&utm_medium=referral&utm_source=unsplash">Nenad Radojčić</a> on <a href="https://unsplash.com/photos/gray-concrete-building-under-white-sky-during-daytime-JBm5eNo6B4E?utm_content=creditCopyText&utm_medium=referral&utm_source=unsplash">Unsplash</a>
 </div>
+  

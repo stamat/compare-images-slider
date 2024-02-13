@@ -2,10 +2,10 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>💩 Shitstorm</title>
+  <title>Compare Images Slider</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Poops project template.">
-  <link rel="alternate" type="application/rss+xml" href="https://stamat.github.io/shitstorm/changelog/feed.rss">
+  <meta name="description" content="Image comparison slider. Slide to compare two images.">
+  <link rel="alternate" type="application/rss+xml" href="https://stamat.github.io/compare-images-slider/changelog/feed.rss">
   <link rel="preconnect" href="https://fonts.googleapis.com"> 
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="dist/style.min.css">
@@ -38,11 +38,23 @@
 <body class="bg-brownish">
   
 <div class="container">
-  <h1>💩 Shitstorm</h1>
-  Poops project template.
+  <h1>Compare Images Slider</h1>
+  Image comparison slider. Slide to compare two images.
 
-<p>  Discover <a href="https://github.com/stamat/poops/">Poops</a> - super fast and easy bundler and static site generator.</p>
+  <div class="before-after-wrap ba-slider">
+    <img class="first slide slide1" width="1680" height="1120" src="dist/assets/img.jpg" alt="" />
+      <div class="before-after slider">
+        <div class="resize">
+          <div class="slide-wrap">
+            <img class="second slide slide2" width="1680" height="1120" src="dist/assets/img-alt.jpg" alt="" />
+          </div>
+        </div>
+        <span class="handle icon-drag"></span>
+      </div>
+  </div>
+  Photo by <a href="https://unsplash.com/@necone?utm_content=creditCopyText&utm_medium=referral&utm_source=unsplash">Nenad Radojčić</a> on <a href="https://unsplash.com/photos/gray-concrete-building-under-white-sky-during-daytime-JBm5eNo6B4E?utm_content=creditCopyText&utm_medium=referral&utm_source=unsplash">Unsplash</a>
 </div>
+  
 
 
 

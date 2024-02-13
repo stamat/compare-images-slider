@@ -58,3 +58,5 @@ Element.prototype.beforeAfter = function() {
 
   window.addEventListener('resize', adjustSlider);
 }
+
+document.querySelector('.ba-slider').beforeAfter();
