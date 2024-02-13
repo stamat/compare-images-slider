@@ -34,7 +34,7 @@
     "options": {
       "site": {
         "title": "Compare Images Slider",
-        "description": "Image comparison slider. Slide to compare two images.",
+        "description": "A simple slider for comparing two images visually.",
         "url": "https://stamat.github.io/compare-images-slider"
       },
       "data": [

@@ -7152,4 +7152,10 @@ template {
     clear: none;
   }
 }
+.github-buttons {
+  position: absolute;
+  top: 0px;
+  right: 0px;
+  padding: 16px;
+}
 /*# sourceMappingURL=site.css.map */

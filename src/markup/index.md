@@ -1,11 +1,15 @@
 ---
 layout: default
 ---
+<div class="github-buttons">
+  <a class="github-button" href="https://github.com/stamat/compare-images-slider" data-size="large" aria-label="Download stamat/compare-images-slider on GitHub">View on GitHub</a>
+</div>
+
 <div class="container mb-64">
   <h1>{{ site.title }}</h1>
-  {{ site.description }}
+  <p class="p1">{{ site.description }}</p>
 
-  <div class="js-compare-images-slider compare-images-slider" style="margin-top: 32px;">
+  <div class="js-compare-images-slider compare-images-slider">
     <img width="1680" height="1120" src="{{ relativePathPrefix }}dist/assets/img.jpg" loading="lazy" alt="">
     <div class="frame">
       <img width="1680" height="1120" src="{{ relativePathPrefix }}dist/assets/img-alt.jpg" loading="lazy" alt="">

@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <title>Compare Images Slider</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Image comparison slider. Slide to compare two images.">
+  <meta name="description" content="A simple slider for comparing two images.">
   <link rel="alternate" type="application/rss+xml" href="https://stamat.github.io/compare-images-slider/changelog/feed.rss">
   <link rel="preconnect" href="https://fonts.googleapis.com"> 
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -39,11 +39,15 @@
 </head>
 <body>
   
+<div class="github-buttons">
+  <a class="github-button" href="https://github.com/stamat/compare-images-slider" data-size="large" aria-label="Download stamat/compare-images-slider on GitHub">View on GitHub</a>
+</div>
+
 <div class="container mb-64">
   <h1>Compare Images Slider</h1>
-  Image comparison slider. Slide to compare two images.
+  <p class="p1">A simple slider for comparing two images.</p>
 
-  <div class="js-compare-images-slider compare-images-slider" style="margin-top: 32px;">
+  <div class="js-compare-images-slider compare-images-slider">
     <img width="1680" height="1120" src="dist/assets/img.jpg" loading="lazy" alt="">
     <div class="frame">
       <img width="1680" height="1120" src="dist/assets/img-alt.jpg" loading="lazy" alt="">
@@ -78,5 +82,6 @@
   <script>hljs.highlightAll();</script>
   
   <script async type="text/javascript" src="dist/compare-images-slider.min.js"></script>
+  <script async defer src="https://buttons.github.io/buttons.js"></script>
 </body>
 </html>
