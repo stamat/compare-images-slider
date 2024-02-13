@@ -6,11 +6,11 @@ layout: default
   {{ site.description }}
 
   <div class="before-after-wrap ba-slider">
-    <img class="first slide slide1" width="1680" height="1120" src="{{ relativePathPrefix }}dist/assets/img.jpg" alt="" />
+    <img style="max-width: 100%; height: auto;" class="first" width="1680" height="1120" src="{{ relativePathPrefix }}dist/assets/img.jpg" alt="" />
       <div class="before-after slider">
         <div class="resize">
-          <div class="slide-wrap">
-            <img class="second slide slide2" width="1680" height="1120" src="{{ relativePathPrefix }}dist/assets/img-alt.jpg" alt="" />
+          <div class="slide-wrap slide slide2">
+            <img style="max-width: 100%; height: auto;" class="second" width="1680" height="1120" src="{{ relativePathPrefix }}dist/assets/img-alt.jpg" alt="" />
           </div>
         </div>
         <span class="handle icon-drag"></span>
