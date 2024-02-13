@@ -1,62 +1,136 @@
-import { isMobile } from 'book-of-spells'
+import { percentage } from 'book-of-spells'
 
-const drags = (dragElement, resizeElement, container) => {
-  const startDrag = (e) => {
-      const startX = e.pageX || e.touches[0].pageX;
-      const dragWidth = dragElement.offsetWidth;
-      const posX = dragElement.offsetLeft + dragWidth - startX;
-      const containerOffset = container.offsetLeft;
-      const containerWidth = container.offsetWidth;
+function onDrag(element, callback) {
+  let startX = 0;
+  let startY = 0;
+  let endX = 0;
+  let endY = 0;
+  let dragging = false;
+  let rect = element.getBoundingClientRect();
 
-      const minLeft = containerOffset + 10;
-      const maxLeft = containerOffset + containerWidth - dragWidth - 10;
+  const handleStart = function(e) {
+    const carrier = e.type === 'touchstart' ? e.touches[0] : e;
+    startX = carrier.clientX;
+    startY = carrier.clientY;
+    dragging = true;
+    rect = element.getBoundingClientRect();
+    const xPercentage = percentage(startX - rect.left, rect.width);
+    const yPercentage = percentage(startY - rect.top, rect.height);
+    const event = new CustomEvent('dragstart', { detail: { target: element, startX, startY, rect, xPercentage, yPercentage } });
+    element.dispatchEvent(event);
+  };
 
-      const doDrag = (e) => {
-          const moveX = e.pageX || e.touches[0].pageX;
-          let leftValue = moveX + posX - dragWidth;
+  const handleMove = function(e) {
+    if (!dragging) return;
+    const carrier = e.type === 'touchmove' ? e.touches[0] : e;
+    endX = carrier.clientX;
+    endY = carrier.clientY;
+    handleDragGesture();
+  };
 
-          leftValue = Math.max(Math.min(leftValue, maxLeft), minLeft);
-          const widthValue = ((leftValue + dragWidth / 2 - containerOffset) * 100 / containerWidth) + '%';
+  const handleEnd = function() {
+    dragging = false;
+    const event = new CustomEvent('dragend', { detail: { target: element, startX, startY, rect, endX, endY } });
+    element.dispatchEvent(event);
+  };
 
-          dragElement.style.left = widthValue;
-          resizeElement.style.width = widthValue;
-      }
+  const handleDragGesture = function() {
+    const deltaX = endX - startX;
+    const deltaY = endY - startY;
+    const left = deltaX < 0;
+    const up = deltaY < 0;
+    const xPercentage = percentage(endX - rect.left, rect.width);
+    const yPercentage = percentage(endY - rect.top, rect.height);
 
-      const stopDrag = () => {
-          dragElement.classList.remove('ba-draggable');
-          resizeElement.classList.remove('ba-resizable');
-          document.removeEventListener('mousemove', doDrag);
-          document.removeEventListener('mouseup', stopDrag);
-          document.removeEventListener('touchmove', doDrag);
-          document.removeEventListener('touchend', stopDrag);
-      }
+    const detail = {
+      target: element,
+      deltaX: deltaX,
+      deltaY: deltaY,
+      startX: startX,
+      startY: startY,
+      endX: endX,
+      endY: endY,
+      horizontalDirection: left ? 'left' : 'right',
+      verticalDirection: up ? 'up' : 'down',
+      xPercentage: xPercentage,
+      yPercentage: yPercentage
+    };
 
-      dragElement.classList.add('ba-draggable');
-      resizeElement.classList.add('ba-resizable');
+    if (xPercentage < 0) {
+      detail.xPercentage = 0;
+    }
 
-      document.addEventListener('mousemove', doDrag);
-      document.addEventListener('mouseup', stopDrag);
-      document.addEventListener('touchmove', doDrag);
-      document.addEventListener('touchend', stopDrag);
+    if (xPercentage > 100) {
+      detail.xPercentage = 100;
+    }
 
-      e.preventDefault();
-  }
+    if (yPercentage < 0) {
+      detail.yPercentage = 0;
+    }
 
-  dragElement.addEventListener('mousedown', startDrag);
-  dragElement.addEventListener('touchstart', startDrag);
+    if (yPercentage > 100) {
+      detail.yPercentage = 100;
+    }
+
+    if (callback) {
+      callback(detail);
+    }
+
+    const event = new CustomEvent('drag', { detail: detail });
+    element.dispatchEvent(event);
+  };
+
+  element.addEventListener('mousedown', handleStart);
+  element.addEventListener('mousemove', handleMove);
+  element.addEventListener('mouseup', handleEnd);
+  element.addEventListener('touchstart', handleStart);
+  element.addEventListener('touchmove', handleMove);
+  element.addEventListener('touchend', handleEnd);
+
+  return {
+    destroy: function() {
+      element.removeEventListener('mousedown', handleStart);
+      element.removeEventListener('mousemove', handleMove);
+      element.removeEventListener('mouseup', handleEnd);
+      element.removeEventListener('touchstart', handleStart);
+      element.removeEventListener('touchmove', handleMove);
+      element.removeEventListener('touchend', handleEnd);
+    }
+  };
 }
 
-Element.prototype.beforeAfter = function() {
-  const adjustSlider = () => {
-      const width = this.offsetWidth + 'px';
-      this.querySelector('.resize img').style.width = width;
-      this.querySelector('.resize .slide').style.width = width;
-  }
+const slider = document.querySelector('.ba-slider');
 
-  adjustSlider();
-  drags(this.querySelector('.handle'), this.querySelector('.resize'), this);
-
-  window.addEventListener('resize', adjustSlider);
+const initSlider = (slider) => {
+  const secondImage = slider.querySelector('.resize img');
+  const width = slider.offsetWidth + 'px';
+  secondImage.style.width = width;
 }
 
-document.querySelector('.ba-slider').beforeAfter();
+window.addEventListener('resize', () => {
+  requestAnimationFrame(() => {
+    initSlider(slider);
+  });
+});
+initSlider(slider);
+
+onDrag(slider);
+
+updateVisibleHandler = (e) => {
+  e.detail.target.querySelector('.resize').style.width = e.detail.xPercentage + '%';
+  e.detail.target.querySelector('.handle').style.left = e.detail.xPercentage + '%';
+  console.log(e.detail.target.querySelector('.resize'));
+}
+
+
+slider.addEventListener('dragstart', (e) => {
+  requestAnimationFrame(() => {
+    updateVisibleHandler(e);
+  });
+});
+
+slider.addEventListener('drag', (e) => {
+  requestAnimationFrame(() => {
+    updateVisibleHandler(e);
+  });
+})

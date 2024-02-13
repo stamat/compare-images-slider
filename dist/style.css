@@ -7165,11 +7165,6 @@ template {
   top: 0px;
   left: 0px;
 }
-.before-after-wrap .before-after.active {
-  z-index: 5;
-  display: block;
-  opacity: 1;
-}
 .before-after-wrap .slide {
   background-position: center;
   background-repeat: no-repeat;
