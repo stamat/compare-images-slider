@@ -94,32 +94,34 @@
       }
     };
   }
-  var slider = document.querySelector(".js-compare-images-slider");
-  var initSlider = (slider2) => {
-    const secondImage = slider2.querySelector(".second");
-    const width = slider2.offsetWidth + "px";
-    secondImage.style.width = width;
+  var CompareImagesSlider = class {
+    constructor(element, options) {
+      this.element = element;
+      this.second = this.element.querySelector(".second");
+      this.handle = this.element.querySelector(".handle");
+      this.frame = this.element.querySelector(".frame");
+      window.addEventListener("resize", () => {
+        requestAnimationFrame(this.setupSecondImage.bind(this));
+      });
+      this.setupSecondImage();
+      this.drag = onDrag(this.element);
+      this.element.addEventListener("dragstart", this.updateVisibleHandler.bind(this));
+      this.element.addEventListener("drag", this.updateVisibleHandler.bind(this));
+    }
+    setupSecondImage() {
+      const width = this.element.offsetWidth + "px";
+      this.second.style.width = width;
+    }
+    updateVisibleHandler(e) {
+      this.frame.style.width = e.detail.xPercentage + "%";
+      this.handle.style.left = e.detail.xPercentage + "%";
+    }
+    destroy() {
+      this.drag.destroy();
+      this.element.removeEventListener("dragstart", this.updateVisibleHandler.bind(this));
+      this.element.removeEventListener("drag", this.updateVisibleHandler.bind(this));
+    }
   };
-  window.addEventListener("resize", () => {
-    requestAnimationFrame(() => {
-      initSlider(slider);
-    });
-  });
-  initSlider(slider);
-  onDrag(slider);
-  updateVisibleHandler = (e) => {
-    e.detail.target.querySelector(".frame").style.width = e.detail.xPercentage + "%";
-    e.detail.target.querySelector(".handle").style.left = e.detail.xPercentage + "%";
-  };
-  slider.addEventListener("dragstart", (e) => {
-    requestAnimationFrame(() => {
-      updateVisibleHandler(e);
-    });
-  });
-  slider.addEventListener("drag", (e) => {
-    requestAnimationFrame(() => {
-      updateVisibleHandler(e);
-    });
-  });
+  new CompareImagesSlider(document.querySelector(".js-compare-images-slider"));
 })();
 //# sourceMappingURL=script.js.map
