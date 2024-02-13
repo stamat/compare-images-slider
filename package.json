@@ -1,9 +1,9 @@
 {
   "name": "compare-images-slider",
   "version": "1.0.0",
-  "description": "Poops project template",
-  "main": "src/scripts/script.js",
-  "style": "src/scripts/index.scss",
+  "description": "A simple slider for comparing two images.",
+  "main": "src/scripts/compare-images-slider.js",
+  "style": "src/styles/index.scss",
   "homepage": "https://stamat.github.io/compare-images-slider/",
   "repository": {
     "type": "git",
@@ -25,10 +25,10 @@
     "build": "poops -b"
   },
   "devDependencies": {
-    "poops": "^1.0.18"
+    "poops": "^1.0.18",
+    "sulphuris": "^1.0.5"
   },
   "dependencies": {
-    "book-of-spells": "^1.0.22",
-    "sulphuris": "^1.0.5"
+    "book-of-spells": "^1.0.22"
   }
 }

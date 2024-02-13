@@ -13,6 +13,18 @@ layout: default
     <span class="handle"></span>
   </div>
 
+  <script>
+    const slider = document.querySelector('.js-compare-images-slider');
+    
+    if (window.CompareImagesSlider) {
+      const compareImagesSlider = new CompareImagesSlider(slider);
+    } else {
+      document.addEventListener('CompareImagesSliderLoaded', function() {
+        const compareImagesSlider = new CompareImagesSlider(slider);
+      }); 
+    }
+  </script>
+
   Photo by <a href="https://unsplash.com/@necone?utm_content=creditCopyText&utm_medium=referral&utm_source=unsplash">Nenad Radojčić</a> on <a href="https://unsplash.com/photos/gray-concrete-building-under-white-sky-during-daytime-JBm5eNo6B4E?utm_content=creditCopyText&utm_medium=referral&utm_source=unsplash">Unsplash</a>
 </div>
   

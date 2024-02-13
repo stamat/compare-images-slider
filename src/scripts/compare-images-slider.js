@@ -132,5 +132,3 @@ export default class CompareImagesSlider {
     this.element.removeEventListener('drag', this.updateVisibleHandler.bind(this));
   }
 }
-
-new CompareImagesSlider(document.querySelector('.js-compare-images-slider'));

@@ -7,7 +7,7 @@
     return num / total * 100;
   }
 
-  // src/scripts/script.js
+  // src/scripts/compare-images-slider.js
   function onDrag(element, callback) {
     let startX = 0;
     let startY = 0;
@@ -122,6 +122,11 @@
       this.element.removeEventListener("drag", this.updateVisibleHandler.bind(this));
     }
   };
-  new CompareImagesSlider(document.querySelector(".js-compare-images-slider"));
+
+  // src/scripts/iife.js
+  if (!window.CompareImagesSlider) {
+    window.CompareImagesSlider = CompareImagesSlider;
+    document.dispatchEvent(new CustomEvent("CompareImagesSliderLoaded"));
+  }
 })();
-//# sourceMappingURL=script.js.map
+//# sourceMappingURL=compare-images-slider.js.map

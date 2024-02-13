@@ -8,7 +8,9 @@
   <link rel="alternate" type="application/rss+xml" href="https://stamat.github.io/compare-images-slider/changelog/feed.rss">
   <link rel="preconnect" href="https://fonts.googleapis.com"> 
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="stylesheet" href="dist/style.min.css">
+  <link rel="stylesheet" href="dist/site.min.css">
+  <link rel="stylesheet" href="dist/compare-images-slider.min.css">
+
   
   
   
@@ -49,6 +51,18 @@
     <span class="handle"></span>
   </div>
 
+  <script>
+    const slider = document.querySelector('.js-compare-images-slider');
+    
+    if (window.CompareImagesSlider) {
+      const compareImagesSlider = new CompareImagesSlider(slider);
+    } else {
+      document.addEventListener('CompareImagesSliderLoaded', function() {
+        const compareImagesSlider = new CompareImagesSlider(slider);
+      }); 
+    }
+  </script>
+
 <p>  Photo by <a href="https://unsplash.com/@necone?utm_content=creditCopyText&utm_medium=referral&utm_source=unsplash">Nenad Radojčić</a> on <a href="https://unsplash.com/photos/gray-concrete-building-under-white-sky-during-daytime-JBm5eNo6B4E?utm_content=creditCopyText&utm_medium=referral&utm_source=unsplash">Unsplash</a></p>
 </div>
   
@@ -62,6 +76,7 @@
     + 'script>')</script>
   
   <script>hljs.highlightAll();</script>
-  <script async type="text/javascript" src="dist/script.min.js"></script>
+  
+  <script async type="text/javascript" src="dist/compare-images-slider.min.js"></script>
 </body>
 </html>

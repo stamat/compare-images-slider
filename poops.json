@@ -1,7 +1,7 @@
 {
   "scripts": [{
-    "in": "src/scripts/script.js",
-    "out": "dist/script.js",
+    "in": "src/scripts/iife.js",
+    "out": "dist/compare-images-slider.js",
     "options": {
       "sourcemap": true,
       "minify": true,
@@ -12,7 +12,16 @@
   }],
   "styles": [{
     "in": "src/styles/index.scss",
-    "out": "dist/style.css",
+    "out": "dist/compare-images-slider.css",
+    "options": {
+      "sourcemap": true,
+      "minify": true,
+      "justMinified": false
+    }
+  },
+  {
+    "in": "src/styles/site.scss",
+    "out": "dist/site.css",
     "options": {
       "sourcemap": true,
       "minify": true,
