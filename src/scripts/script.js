@@ -99,10 +99,10 @@ function onDrag(element, callback) {
   };
 }
 
-const slider = document.querySelector('.ba-slider');
+const slider = document.querySelector('.js-compare-images-slider');
 
 const initSlider = (slider) => {
-  const secondImage = slider.querySelector('.resize img');
+  const secondImage = slider.querySelector('.second');
   const width = slider.offsetWidth + 'px';
   secondImage.style.width = width;
 }
@@ -117,9 +117,8 @@ initSlider(slider);
 onDrag(slider);
 
 updateVisibleHandler = (e) => {
-  e.detail.target.querySelector('.resize').style.width = e.detail.xPercentage + '%';
+  e.detail.target.querySelector('.frame').style.width = e.detail.xPercentage + '%';
   e.detail.target.querySelector('.handle').style.left = e.detail.xPercentage + '%';
-  console.log(e.detail.target.querySelector('.resize'));
 }
 
 

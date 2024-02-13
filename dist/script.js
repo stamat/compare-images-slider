@@ -94,9 +94,9 @@
       }
     };
   }
-  var slider = document.querySelector(".ba-slider");
+  var slider = document.querySelector(".js-compare-images-slider");
   var initSlider = (slider2) => {
-    const secondImage = slider2.querySelector(".resize img");
+    const secondImage = slider2.querySelector(".second");
     const width = slider2.offsetWidth + "px";
     secondImage.style.width = width;
   };
@@ -108,9 +108,8 @@
   initSlider(slider);
   onDrag(slider);
   updateVisibleHandler = (e) => {
-    e.detail.target.querySelector(".resize").style.width = e.detail.xPercentage + "%";
+    e.detail.target.querySelector(".frame").style.width = e.detail.xPercentage + "%";
     e.detail.target.querySelector(".handle").style.left = e.detail.xPercentage + "%";
-    console.log(e.detail.target.querySelector(".resize"));
   };
   slider.addEventListener("dragstart", (e) => {
     requestAnimationFrame(() => {
