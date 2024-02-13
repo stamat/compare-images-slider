@@ -102,9 +102,9 @@ function onDrag(element, callback) {
 export default class CompareImagesSlider {
   constructor(element, options) {
     this.element = element;
-    this.second = this.element.querySelector('.second');
-    this.handle = this.element.querySelector('.handle');
     this.frame = this.element.querySelector('.frame');
+    this.second = this.frame.querySelector(':scope > img');
+    this.handle = this.element.querySelector('.handle');
 
     window.addEventListener('resize', () => {
       requestAnimationFrame(this.setupSecondImage.bind(this));

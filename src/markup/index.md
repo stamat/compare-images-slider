@@ -6,9 +6,9 @@ layout: default
   {{ site.description }}
 
   <div class="js-compare-images-slider compare-images-slider" style="margin-top: 32px;">
-    <img class="first" width="1680" height="1120" src="{{ relativePathPrefix }}dist/assets/img.jpg" alt="" />
+    <img width="1680" height="1120" src="{{ relativePathPrefix }}dist/assets/img.jpg" loading="lazy" alt="">
     <div class="frame">
-      <img class="second" width="1680" height="1120" src="{{ relativePathPrefix }}dist/assets/img-alt.jpg" alt="" />
+      <img width="1680" height="1120" src="{{ relativePathPrefix }}dist/assets/img-alt.jpg" loading="lazy" alt="">
     </div>
     <span class="handle"></span>
   </div>
