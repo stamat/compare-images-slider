@@ -1,4 +1,4 @@
-import { drag } from 'book-of-spells'
+import { drag, shallowMerge } from 'book-of-spells'
 
 export default class CompareImagesSlider {
   constructor(element, options) {
@@ -7,15 +7,19 @@ export default class CompareImagesSlider {
     this.second = this.frame.querySelector(':scope > img');
     this.handle = this.element.querySelector('.handle');
 
+    this.options = {
+      inertia: false,
+      bounce: false,
+    }
+
+    if (options) shallowMerge(this.options, options);
+
     window.addEventListener('resize', () => {
       requestAnimationFrame(this.setupSecondImage.bind(this));
     });
     this.setupSecondImage();
 
-    this.drag = drag(this.element, {
-      inertia: true,
-      bounce: true,
-    });
+    this.drag = drag(this.element, this.options);
     this.element.addEventListener('dragstart', this.updateVisibleHandler.bind(this));
     this.element.addEventListener('drag', this.updateVisibleHandler.bind(this));
     this.element.addEventListener('draginertia', this.updateVisibleHandler.bind(this));

@@ -19,12 +19,16 @@ layout: default
 
   <script>
     const slider = document.querySelector('.js-compare-images-slider');
-    
+    const options = {
+      inertia: true,
+      bounce: true,
+    }
+
     if (window.CompareImagesSlider) {
-      const compareImagesSlider = new CompareImagesSlider(slider);
+      const compareImagesSlider = new CompareImagesSlider(slider, options);
     } else {
       document.addEventListener('CompareImagesSliderLoaded', function() {
-        const compareImagesSlider = new CompareImagesSlider(slider);
+        const compareImagesSlider = new CompareImagesSlider(slider, options);
       }); 
     }
   </script>
