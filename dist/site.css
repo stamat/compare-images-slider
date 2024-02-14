@@ -7158,4 +7158,8 @@ template {
   right: 0px;
   padding: 16px;
 }
+
+.compare-images-slider img {
+  border-radius: 16px;
+}
 /*# sourceMappingURL=site.css.map */
