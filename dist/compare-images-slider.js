@@ -13,27 +13,41 @@
     let y = 0;
     let dragging = false;
     let rect = element.getBoundingClientRect();
+    if (!element)
+      return;
+    if (element.getAttribute("drag-enabled") === "true")
+      return;
+    element.setAttribute("drag-enabled", "true");
+    element.setAttribute("dragging", "false");
     const handleStart = function(e) {
-      const carrier = e.type === "touchstart" ? e.touches[0] : e;
-      x = carrier.clientX;
-      y = carrier.clientY;
+      setXY(e);
       dragging = true;
+      element.setAttribute("dragging", "true");
       const event = new CustomEvent("dragstart", { detail: getDetail() });
       element.dispatchEvent(event);
     };
     const handleMove = function(e) {
       if (!dragging)
         return;
-      const carrier = e.type === "touchmove" ? e.touches[0] : e;
-      x = carrier.clientX;
-      y = carrier.clientY;
-      const event = new CustomEvent("drag", { detail: getDetail() });
+      setXY(e);
+      const detail = getDetail();
+      if (callback)
+        callback(detail);
+      const event = new CustomEvent("drag", { detail });
       element.dispatchEvent(event);
     };
     const handleEnd = function() {
       dragging = false;
-      const event = new CustomEvent("dragend", { detail: { target: element, x, y, rect } });
+      element.setAttribute("dragging", "false");
+      const event = new CustomEvent("dragend", { detail: getDetail() });
       element.dispatchEvent(event);
+    };
+    const setXY = function(e) {
+      const carrier = e.touches ? e.touches[0] : e;
+      if (e.touches)
+        e.preventDefault();
+      x = carrier.clientX;
+      y = carrier.clientY;
     };
     const getDetail = function() {
       const relativeX = x - rect.left;
@@ -49,18 +63,14 @@
         xPercentage,
         yPercentage
       };
-      if (xPercentage < 0) {
+      if (xPercentage < 0)
         detail.xPercentage = 0;
-      }
-      if (xPercentage > 100) {
+      if (xPercentage > 100)
         detail.xPercentage = 100;
-      }
-      if (yPercentage < 0) {
+      if (yPercentage < 0)
         detail.yPercentage = 0;
-      }
-      if (yPercentage > 100) {
+      if (yPercentage > 100)
         detail.yPercentage = 100;
-      }
       return detail;
     };
     element.addEventListener("mousedown", handleStart);

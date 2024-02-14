@@ -1,41 +1,52 @@
 import { percentage } from 'book-of-spells'
 
 function onDrag(element, callback) {
-  let x = 0;
-  let y = 0;
-  let dragging = false;
-  let rect = element.getBoundingClientRect();
+  let x = 0
+  let y = 0
+  let dragging = false
+  let rect = element.getBoundingClientRect()
+
+  if (!element) return
+  if (element.getAttribute('drag-enabled') === 'true') return
+  element.setAttribute('drag-enabled', 'true')
+  element.setAttribute('dragging', 'false')
 
   const handleStart = function(e) {
-    const carrier = e.type === 'touchstart' ? e.touches[0] : e;
-    x = carrier.clientX;
-    y = carrier.clientY;
-    dragging = true;
-    const event = new CustomEvent('dragstart', { detail: getDetail() });
-    element.dispatchEvent(event);
-  };
+    setXY(e)
+    dragging = true
+    element.setAttribute('dragging', 'true')
+    const event = new CustomEvent('dragstart', { detail: getDetail() })
+    element.dispatchEvent(event)
+  }
 
   const handleMove = function(e) {
-    if (!dragging) return;
-    const carrier = e.type === 'touchmove' ? e.touches[0] : e;
-    x = carrier.clientX;
-    y = carrier.clientY;
-
-    const event = new CustomEvent('drag', { detail: getDetail() });
-    element.dispatchEvent(event);
-  };
+    if (!dragging) return
+    setXY(e)
+    const detail = getDetail()
+    if (callback) callback(detail)
+    const event = new CustomEvent('drag', { detail: detail })
+    element.dispatchEvent(event)
+  }
 
   const handleEnd = function() {
-    dragging = false;
-    const event = new CustomEvent('dragend', { detail: { target: element, x, y, rect } });
-    element.dispatchEvent(event);
-  };
+    dragging = false
+    element.setAttribute('dragging', 'false')
+    const event = new CustomEvent('dragend', { detail: getDetail() })
+    element.dispatchEvent(event)
+  }
+
+  const setXY = function(e) {
+    const carrier = e.touches ? e.touches[0] : e
+    if (e.touches) e.preventDefault()
+    x = carrier.clientX
+    y = carrier.clientY
+  }
 
   const getDetail = function() {
-    const relativeX = x - rect.left;
-    const relativeY = y - rect.top;
-    const xPercentage = percentage(relativeX, rect.width);
-    const yPercentage = percentage(relativeY, rect.height);
+    const relativeX = x - rect.left
+    const relativeY = y - rect.top
+    const xPercentage = percentage(relativeX, rect.width)
+    const yPercentage = percentage(relativeY, rect.height)
 
     const detail = {
       target: element,
@@ -45,44 +56,33 @@ function onDrag(element, callback) {
       relativeY: relativeY,
       xPercentage: xPercentage,
       yPercentage: yPercentage
-    };
-
-    if (xPercentage < 0) {
-      detail.xPercentage = 0;
     }
 
-    if (xPercentage > 100) {
-      detail.xPercentage = 100;
-    }
+    if (xPercentage < 0) detail.xPercentage = 0
+    if (xPercentage > 100) detail.xPercentage = 100
+    if (yPercentage < 0) detail.yPercentage = 0
+    if (yPercentage > 100) detail.yPercentage = 100
 
-    if (yPercentage < 0) {
-      detail.yPercentage = 0;
-    }
-
-    if (yPercentage > 100) {
-      detail.yPercentage = 100;
-    }
-
-    return detail;
+    return detail
   }
 
-  element.addEventListener('mousedown', handleStart);
-  element.addEventListener('mousemove', handleMove);
-  element.addEventListener('mouseup', handleEnd);
-  element.addEventListener('touchstart', handleStart);
-  element.addEventListener('touchmove', handleMove);
-  element.addEventListener('touchend', handleEnd);
+  element.addEventListener('mousedown', handleStart)
+  element.addEventListener('mousemove', handleMove)
+  element.addEventListener('mouseup', handleEnd)
+  element.addEventListener('touchstart', handleStart)
+  element.addEventListener('touchmove', handleMove)
+  element.addEventListener('touchend', handleEnd)
 
   return {
     destroy: function() {
-      element.removeEventListener('mousedown', handleStart);
-      element.removeEventListener('mousemove', handleMove);
-      element.removeEventListener('mouseup', handleEnd);
-      element.removeEventListener('touchstart', handleStart);
-      element.removeEventListener('touchmove', handleMove);
-      element.removeEventListener('touchend', handleEnd);
+      element.removeEventListener('mousedown', handleStart)
+      element.removeEventListener('mousemove', handleMove)
+      element.removeEventListener('mouseup', handleEnd)
+      element.removeEventListener('touchstart', handleStart)
+      element.removeEventListener('touchmove', handleMove)
+      element.removeEventListener('touchend', handleEnd)
     }
-  };
+  }
 }
 
 export default class CompareImagesSlider {
@@ -91,6 +91,10 @@ export default class CompareImagesSlider {
     this.frame = this.element.querySelector('.frame');
     this.second = this.frame.querySelector(':scope > img');
     this.handle = this.element.querySelector('.handle');
+    
+    this.options = {
+
+    }
 
     window.addEventListener('resize', () => {
       requestAnimationFrame(this.setupSecondImage.bind(this));
