@@ -8,21 +8,24 @@
   }
 
   // src/scripts/compare-images-slider.js
-  function onDrag(element, callback) {
+  function onDragWithInertia(element, callback) {
+    const friction = 0.9;
     let x = 0;
     let y = 0;
+    let prevX = 0;
+    let prevY = 0;
+    let velocityX = 0;
+    let velocityY = 0;
     let dragging = false;
     let rect = element.getBoundingClientRect();
-    if (!element)
-      return;
-    if (element.getAttribute("drag-enabled") === "true")
-      return;
-    element.setAttribute("drag-enabled", "true");
-    element.setAttribute("dragging", "false");
+    let inertiaId = null;
     const handleStart = function(e) {
       setXY(e);
       dragging = true;
-      element.setAttribute("dragging", "true");
+      if (inertiaId) {
+        cancelAnimationFrame(inertiaId);
+        inertiaId = null;
+      }
       const event = new CustomEvent("dragstart", { detail: getDetail() });
       element.dispatchEvent(event);
     };
@@ -30,6 +33,8 @@
       if (!dragging)
         return;
       setXY(e);
+      velocityX = x - prevX;
+      velocityY = y - prevY;
       const detail = getDetail();
       if (callback)
         callback(detail);
@@ -38,7 +43,7 @@
     };
     const handleEnd = function() {
       dragging = false;
-      element.setAttribute("dragging", "false");
+      inertiaId = requestAnimationFrame(inertia);
       const event = new CustomEvent("dragend", { detail: getDetail() });
       element.dispatchEvent(event);
     };
@@ -46,6 +51,8 @@
       const carrier = e.touches ? e.touches[0] : e;
       if (e.touches)
         e.preventDefault();
+      prevX = x;
+      prevY = y;
       x = carrier.clientX;
       y = carrier.clientY;
     };
@@ -73,6 +80,30 @@
         detail.yPercentage = 100;
       return detail;
     };
+    const inertia = function() {
+      x += velocityX;
+      y += velocityY;
+      velocityX *= friction;
+      velocityY *= friction;
+      if (Math.abs(velocityX) < 0.1)
+        velocityX = 0;
+      if (Math.abs(velocityY) < 0.1)
+        velocityY = 0;
+      const detail = getDetail();
+      if (velocityX !== 0 || velocityY !== 0) {
+        if (callback)
+          callback(detail);
+        const event = new CustomEvent("draginertia", { detail });
+        element.dispatchEvent(event);
+        inertiaId = requestAnimationFrame(inertia);
+      } else {
+        inertiaId = null;
+        if (callback)
+          callback(detail);
+        const event = new CustomEvent("draginertiaend", { detail });
+        element.dispatchEvent(event);
+      }
+    };
     element.addEventListener("mousedown", handleStart);
     element.addEventListener("mousemove", handleMove);
     element.addEventListener("mouseup", handleEnd);
@@ -87,6 +118,10 @@
         element.removeEventListener("touchstart", handleStart);
         element.removeEventListener("touchmove", handleMove);
         element.removeEventListener("touchend", handleEnd);
+        if (inertiaId) {
+          cancelAnimationFrame(inertiaId);
+          inertiaId = null;
+        }
       }
     };
   }
@@ -96,13 +131,15 @@
       this.frame = this.element.querySelector(".frame");
       this.second = this.frame.querySelector(":scope > img");
       this.handle = this.element.querySelector(".handle");
+      this.options = {};
       window.addEventListener("resize", () => {
         requestAnimationFrame(this.setupSecondImage.bind(this));
       });
       this.setupSecondImage();
-      this.drag = onDrag(this.element);
+      this.drag = onDragWithInertia(this.element);
       this.element.addEventListener("dragstart", this.updateVisibleHandler.bind(this));
       this.element.addEventListener("drag", this.updateVisibleHandler.bind(this));
+      this.element.addEventListener("draginertia", this.updateVisibleHandler.bind(this));
     }
     setupSecondImage() {
       const width = this.element.offsetWidth + "px";
@@ -116,6 +153,7 @@
       this.drag.destroy();
       this.element.removeEventListener("dragstart", this.updateVisibleHandler.bind(this));
       this.element.removeEventListener("drag", this.updateVisibleHandler.bind(this));
+      this.element.removeEventListener("draginertia", this.updateVisibleHandler.bind(this));
     }
   };
 
