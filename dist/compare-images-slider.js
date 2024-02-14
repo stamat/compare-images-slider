@@ -193,13 +193,11 @@
         friction: 0.9,
         bounceFactor: 0.1,
         onlyHandleActivation: false,
-        vertical: false,
-        inverted: false
+        vertical: false
       };
       if (options)
         shallowMerge(this.options, options);
       this.checkAndApplyAttribute("vertical");
-      this.checkAndApplyAttribute("inverted");
       window.addEventListener("resize", () => {
         requestAnimationFrame(this.setupSecondImage.bind(this));
       });
@@ -241,16 +239,6 @@
       this.second.style.width = width;
     }
     updateVisibleHandler(e) {
-      if (this.options.inverted) {
-        if (this.options.vertical) {
-          this.frame.style.height = 100 - e.detail.yPercentage + "%";
-          this.handle.style.top = 100 - e.detail.yPercentage + "%";
-          return;
-        }
-        this.frame.style.width = 100 - e.detail.xPercentage + "%";
-        this.handle.style.left = 100 - e.detail.xPercentage + "%";
-        return;
-      }
       if (this.options.vertical) {
         this.frame.style.height = e.detail.yPercentage + "%";
         this.handle.style.top = e.detail.yPercentage + "%";
