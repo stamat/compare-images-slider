@@ -2,6 +2,23 @@
 
 A simple slider for comparing two images visually.
 
+![Screenshot](https://imgur.com/e9m4QaU)
+
+## Features
+
+- Lightweight and minimal DOM depth
+- No dependencies
+- Mobile friendly
+- Vertical slider
+- Inertia physics
+- Bounce back
+- Customizable via CSS
+
+## Demo
+
+[Check out the demo](https://stamat.github.io/compare-images-slider/)
+
+
 ## Installation
 
 ```bash
