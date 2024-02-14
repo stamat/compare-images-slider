@@ -192,15 +192,14 @@
         bounce: false,
         friction: 0.9,
         bounceFactor: 0.1,
-        onlyHandleActivation: true,
-        vertical: false
+        onlyHandleActivation: false,
+        vertical: false,
+        inverted: false
       };
       if (options)
         shallowMerge(this.options, options);
-      if (this.element.dataset.vertical)
-        this.options.vertical = true;
-      if (this.element.hasAttribute("vertical"))
-        this.options.vertical = true;
+      this.checkAndApplyAttribute("vertical");
+      this.checkAndApplyAttribute("inverted");
       window.addEventListener("resize", () => {
         requestAnimationFrame(this.setupSecondImage.bind(this));
       });
@@ -233,11 +232,25 @@
       }
       this.element.addEventListener("draginertia", this.boundUpdateVisibleHandler);
     }
+    checkAndApplyAttribute(attribute) {
+      if (this.element.dataset[attribute] || this.element.hasAttribute(attribute))
+        this.options[attribute] = true;
+    }
     setupSecondImage() {
       const width = this.element.offsetWidth + "px";
       this.second.style.width = width;
     }
     updateVisibleHandler(e) {
+      if (this.options.inverted) {
+        if (this.options.vertical) {
+          this.frame.style.height = 100 - e.detail.yPercentage + "%";
+          this.handle.style.top = 100 - e.detail.yPercentage + "%";
+          return;
+        }
+        this.frame.style.width = 100 - e.detail.xPercentage + "%";
+        this.handle.style.left = 100 - e.detail.xPercentage + "%";
+        return;
+      }
       if (this.options.vertical) {
         this.frame.style.height = e.detail.yPercentage + "%";
         this.handle.style.top = e.detail.yPercentage + "%";
