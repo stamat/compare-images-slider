@@ -326,7 +326,7 @@ button.reset,
 }
 
 .btn {
-  background-color: #824F2D;
+  background-color: #340EE6;
   border-radius: 4px;
   color: #ffffff;
   cursor: pointer;
@@ -347,7 +347,7 @@ button.reset,
 }
 @media only screen and (min-width: 960px) {
   .btn-inverted:hover {
-    background-color: #824F2D;
+    background-color: #340EE6;
   }
 }
 
@@ -382,11 +382,19 @@ button.reset,
 }
 
 .text-primary {
-  color: #824F2D;
+  color: #340EE6;
 }
 
-.text-brownish {
-  color: #DCC8AC;
+.text-secondary {
+  color: #FC9107;
+}
+
+.text-gray {
+  color: #858585;
+}
+
+.text-gray-light {
+  color: #F4F4F4;
 }
 
 .text-gray-900 {
@@ -438,11 +446,19 @@ button.reset,
 }
 
 .bg-primary {
-  background-color: #824F2D;
+  background-color: #340EE6;
 }
 
-.bg-brownish {
-  background-color: #DCC8AC;
+.bg-secondary {
+  background-color: #FC9107;
+}
+
+.bg-gray {
+  background-color: #858585;
+}
+
+.bg-gray-light {
+  background-color: #F4F4F4;
 }
 
 .bg-gray-900 {
@@ -490,11 +506,19 @@ button.reset,
 }
 
 .border-primary {
-  border-color: #824F2D;
+  border-color: #340EE6;
 }
 
-.border-brownish {
-  border-color: #DCC8AC;
+.border-secondary {
+  border-color: #FC9107;
+}
+
+.border-gray {
+  border-color: #858585;
+}
+
+.border-gray-light {
+  border-color: #F4F4F4;
 }
 
 .border-gray-900 {

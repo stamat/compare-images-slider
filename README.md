@@ -51,15 +51,27 @@ document.addEventListener('CompareImagesSliderLoaded', function() {
 
 ## Options
 
-Coming soon...
+```javascript
+// Default options
+const options = {
+  inertia: false, // inertia physics, you can flick the handle
+  friction: 0.9, // the friction of the inertia
+  bounce: false, // will bounce back when intertia is enabled and the boundary is reached
+  bounceFactor: 0.1, // the force of the bounce
+  vertical: false // vertical slider
+  onlyHandle: true // only the handle is draggable
+}
+
+new CompareImagesSlider(slider, options);
+```
 
 ## TODO:
 
-- [ ] Add options
-- [ ] Scroll block on drag
-- [ ] Vertical option
-- [ ] Add factory class, migrate the general factory class to the book of spells prior to that
-- [ ] Refactor onDrag and move it to the book of spells
+- [x] Add options
+- [x] Scroll block on drag
+- [x] Vertical option
+- [ ] Add factory class, migrate the general factory class to the book of spells prior to that? Better turn this into custom element!
+- [x] Refactor onDrag and move it to the book of spells
 - [ ] Add initialized state, don't initialize twice
 
 ---

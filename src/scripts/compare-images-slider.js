@@ -12,13 +12,15 @@ export default class CompareImagesSlider {
       bounce: false,
       friction: 0.9,
       bounceFactor: 0.1,
-      onlyHandleActivation: false,
+      onlyHandle: true,
       vertical: false
     }
 
     if (options) shallowMerge(this.options, options);
 
     this.checkAndApplyAttribute('vertical');
+    if (this.options.vertical && !(this.element.dataset.vertical || this.element.hasAttribute('vertical'))) this.element.setAttribute('vertical', '');
+    if (this.options.onlyHandle) this.options.preventDefaultTouch = false;
 
     window.addEventListener('resize', () => {
       requestAnimationFrame(this.setupSecondImage.bind(this));
@@ -30,11 +32,22 @@ export default class CompareImagesSlider {
     this.handleDragBound = false;
     this.boundUpdateVisibleHandler = this.updateVisibleHandler.bind(this);
 
+    const preventDefault = (e) => {
+      if (this.handleDragBound) e.preventDefault();
+    }
+
     const addEventListeners = () => {
       if (this.handleDragBound) return;
       this.handleDragBound = true;
+
       this.element.addEventListener('dragstart', this.boundUpdateVisibleHandler);
       this.element.addEventListener('drag', this.boundUpdateVisibleHandler);
+      this.element.addEventListener('draginertia', this.boundUpdateVisibleHandler);
+      this.element.addEventListener('draginertiaend', () => {
+        this.element.removeEventListener('draginertia', this.boundUpdateVisibleHandler);
+      });
+
+      this.element.addEventListener('touchstart', preventDefault);
     };
   
     const removeEventListeners = () => {
@@ -42,9 +55,10 @@ export default class CompareImagesSlider {
       this.handleDragBound = false;
       this.element.removeEventListener('dragstart', this.boundUpdateVisibleHandler);
       this.element.removeEventListener('drag', this.boundUpdateVisibleHandler);
+      this.element.removeEventListener('touchstart', preventDefault);
     };
 
-    if (this.options.onlyHandleActivation) {
+    if (this.options.onlyHandle) {
       this.handle.addEventListener('mousedown', addEventListeners);
       this.handle.addEventListener('touchstart', addEventListeners);
       document.addEventListener('mouseup', removeEventListeners);
@@ -52,8 +66,8 @@ export default class CompareImagesSlider {
     } else {
       this.element.addEventListener('dragstart', this.boundUpdateVisibleHandler);
       this.element.addEventListener('drag', this.boundUpdateVisibleHandler);
+      this.element.addEventListener('draginertia', this.boundUpdateVisibleHandler);
     }
-    this.element.addEventListener('draginertia', this.boundUpdateVisibleHandler);
   }
 
   checkAndApplyAttribute(attribute) {

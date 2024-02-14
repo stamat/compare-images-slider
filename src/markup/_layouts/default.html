@@ -13,7 +13,7 @@
 
   <meta property="og:title" content="{{ page.title or site.title }}" />
   <meta property="og:description" content="{{ page.description or site.description }}" />
-  <meta property="og:image" content="{{ relativePathPrefix }}dist/assets/social.jpg" />
+  <meta property="og:image" content="http://stamat.github.io/compare-images-slider/dist/assets/social.jpg" />
 
   {% set fontparts = '' %}
   
@@ -37,8 +37,9 @@
   <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
 </head>
 <body>
-  {% block content %} {% endblock %}
-
+  <div class="container">
+    {% block content %} {% endblock %}
+  </div>
   <script>hljs.highlightAll();</script>
   
   <script async type="text/javascript" src="{{ relativePathPrefix }}dist/compare-images-slider.min.js"></script>
