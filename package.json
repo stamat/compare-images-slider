@@ -31,6 +31,6 @@
     "sulphuris": "^1.0.5"
   },
   "dependencies": {
-    "book-of-spells": "^1.0.22"
+    "book-of-spells": "^1.0.27"
   }
 }

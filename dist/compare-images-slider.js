@@ -7,14 +7,20 @@
     }
     return target;
   }
+  function isObject(o) {
+    return typeof o === "object" && !Array.isArray(o) && o !== null;
+  }
+  function isFunction(o) {
+    return typeof o === "function";
+  }
   function percentage(num, total) {
     if (!num || !total || Number.isNaN(num) || Number.isNaN(total))
       return 0;
     return num / total * 100;
   }
 
-  // src/scripts/compare-images-slider.js
-  function onDragWithInertia(element, opts) {
+  // node_modules/book-of-spells/src/dom.mjs
+  function drag(element, opts) {
     let x = 0;
     let y = 0;
     let prevX = 0;
@@ -31,9 +37,9 @@
       bounceFactor: 0.5,
       callback: null
     };
-    if (typeof opts === "function") {
+    if (isFunction(opts)) {
       options.callback = opts;
-    } else if (typeof opts === "object") {
+    } else if (isObject(opts)) {
       shallowMerge(options, opts);
     }
     if (!element)
@@ -173,6 +179,8 @@
       }
     };
   }
+
+  // src/scripts/compare-images-slider.js
   var CompareImagesSlider = class {
     constructor(element, options) {
       this.element = element;
@@ -183,7 +191,7 @@
         requestAnimationFrame(this.setupSecondImage.bind(this));
       });
       this.setupSecondImage();
-      this.drag = onDragWithInertia(this.element, {
+      this.drag = drag(this.element, {
         inertia: true,
         bounce: true
       });
