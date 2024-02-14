@@ -189,7 +189,10 @@
       this.handle = this.element.querySelector(".handle");
       this.options = {
         inertia: false,
-        bounce: false
+        bounce: false,
+        friction: 0.9,
+        bounceFactor: 0.1,
+        onlyHandleActivation: false
       };
       if (options)
         shallowMerge(this.options, options);
@@ -198,9 +201,32 @@
       });
       this.setupSecondImage();
       this.drag = drag(this.element, this.options);
-      this.element.addEventListener("dragstart", this.updateVisibleHandler.bind(this));
-      this.element.addEventListener("drag", this.updateVisibleHandler.bind(this));
-      this.element.addEventListener("draginertia", this.updateVisibleHandler.bind(this));
+      this.bound = false;
+      this.boundUpdateVisibleHandler = this.updateVisibleHandler.bind(this);
+      const addEventListeners = () => {
+        if (this.bound)
+          return;
+        this.bound = true;
+        this.element.addEventListener("dragstart", this.boundUpdateVisibleHandler);
+        this.element.addEventListener("drag", this.boundUpdateVisibleHandler);
+      };
+      const removeEventListeners = () => {
+        if (!this.bound)
+          return;
+        this.bound = false;
+        this.element.removeEventListener("dragstart", this.boundUpdateVisibleHandler);
+        this.element.removeEventListener("drag", this.boundUpdateVisibleHandler);
+      };
+      if (this.options.onlyHandleActivation) {
+        this.handle.addEventListener("mousedown", addEventListeners);
+        this.handle.addEventListener("touchstart", addEventListeners);
+        document.addEventListener("mouseup", removeEventListeners);
+        document.addEventListener("touchend", removeEventListeners);
+      } else {
+        this.element.addEventListener("dragstart", this.boundUpdateVisibleHandler);
+        this.element.addEventListener("drag", this.boundUpdateVisibleHandler);
+      }
+      this.element.addEventListener("draginertia", this.boundUpdateVisibleHandler);
     }
     setupSecondImage() {
       const width = this.element.offsetWidth + "px";
@@ -212,9 +238,9 @@
     }
     destroy() {
       this.drag.destroy();
-      this.element.removeEventListener("dragstart", this.updateVisibleHandler.bind(this));
-      this.element.removeEventListener("drag", this.updateVisibleHandler.bind(this));
-      this.element.removeEventListener("draginertia", this.updateVisibleHandler.bind(this));
+      this.element.removeEventListener("dragstart", this.boundUpdateVisibleHandler);
+      this.element.removeEventListener("drag", this.boundUpdateVisibleHandler);
+      this.element.removeEventListener("draginertia", this.boundUpdateVisibleHandler);
     }
   };
 
