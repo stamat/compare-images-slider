@@ -1,57 +1,48 @@
 import { percentage } from 'book-of-spells'
 
 function onDrag(element, callback) {
-  let startX = 0;
-  let startY = 0;
-  let endX = 0;
-  let endY = 0;
+  let x = 0;
+  let y = 0;
   let dragging = false;
   let rect = element.getBoundingClientRect();
 
   const handleStart = function(e) {
     const carrier = e.type === 'touchstart' ? e.touches[0] : e;
-    startX = carrier.clientX;
-    startY = carrier.clientY;
+    x = carrier.clientX;
+    y = carrier.clientY;
     dragging = true;
-    rect = element.getBoundingClientRect();
-    const xPercentage = percentage(startX - rect.left, rect.width);
-    const yPercentage = percentage(startY - rect.top, rect.height);
-    const event = new CustomEvent('dragstart', { detail: { target: element, startX, startY, rect, xPercentage, yPercentage } });
+    const event = new CustomEvent('dragstart', { detail: getDetail() });
     element.dispatchEvent(event);
   };
 
   const handleMove = function(e) {
     if (!dragging) return;
     const carrier = e.type === 'touchmove' ? e.touches[0] : e;
-    endX = carrier.clientX;
-    endY = carrier.clientY;
-    handleDragGesture();
+    x = carrier.clientX;
+    y = carrier.clientY;
+
+    const event = new CustomEvent('drag', { detail: getDetail() });
+    element.dispatchEvent(event);
   };
 
   const handleEnd = function() {
     dragging = false;
-    const event = new CustomEvent('dragend', { detail: { target: element, startX, startY, rect, endX, endY } });
+    const event = new CustomEvent('dragend', { detail: { target: element, x, y, rect } });
     element.dispatchEvent(event);
   };
 
-  const handleDragGesture = function() {
-    const deltaX = endX - startX;
-    const deltaY = endY - startY;
-    const left = deltaX < 0;
-    const up = deltaY < 0;
-    const xPercentage = percentage(endX - rect.left, rect.width);
-    const yPercentage = percentage(endY - rect.top, rect.height);
+  const getDetail = function() {
+    const relativeX = x - rect.left;
+    const relativeY = y - rect.top;
+    const xPercentage = percentage(relativeX, rect.width);
+    const yPercentage = percentage(relativeY, rect.height);
 
     const detail = {
       target: element,
-      deltaX: deltaX,
-      deltaY: deltaY,
-      startX: startX,
-      startY: startY,
-      endX: endX,
-      endY: endY,
-      horizontalDirection: left ? 'left' : 'right',
-      verticalDirection: up ? 'up' : 'down',
+      x: x,
+      y: y,
+      relativeX: relativeX,
+      relativeY: relativeY,
       xPercentage: xPercentage,
       yPercentage: yPercentage
     };
@@ -72,13 +63,8 @@ function onDrag(element, callback) {
       detail.yPercentage = 100;
     }
 
-    if (callback) {
-      callback(detail);
-    }
-
-    const event = new CustomEvent('drag', { detail: detail });
-    element.dispatchEvent(event);
-  };
+    return detail;
+  }
 
   element.addEventListener('mousedown', handleStart);
   element.addEventListener('mousemove', handleMove);
