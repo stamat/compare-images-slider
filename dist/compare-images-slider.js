@@ -1,6 +1,12 @@
 /* compare-images-slider v1.0.0 | https://stamat.github.io/compare-images-slider/ | MIT License */
 (() => {
   // node_modules/book-of-spells/src/helpers.mjs
+  function shallowMerge(target, source) {
+    for (const key in source) {
+      target[key] = source[key];
+    }
+    return target;
+  }
   function percentage(num, total) {
     if (!num || !total || Number.isNaN(num) || Number.isNaN(total))
       return 0;
@@ -8,8 +14,7 @@
   }
 
   // src/scripts/compare-images-slider.js
-  function onDragWithInertia(element, callback) {
-    const friction = 0.9;
+  function onDragWithInertia(element, opts) {
     let x = 0;
     let y = 0;
     let prevX = 0;
@@ -19,9 +24,28 @@
     let dragging = false;
     let rect = element.getBoundingClientRect();
     let inertiaId = null;
+    const options = {
+      inertia: false,
+      bounce: false,
+      friction: 0.9,
+      bounceFactor: 0.5,
+      callback: null
+    };
+    if (typeof opts === "function") {
+      options.callback = opts;
+    } else if (typeof opts === "object") {
+      shallowMerge(options, opts);
+    }
+    if (!element)
+      return;
+    if (element.getAttribute("drag-enabled") === "true")
+      return;
+    element.setAttribute("drag-enabled", "true");
+    element.setAttribute("dragging", "false");
     const handleStart = function(e) {
       setXY(e);
       dragging = true;
+      element.setAttribute("dragging", "true");
       if (inertiaId) {
         cancelAnimationFrame(inertiaId);
         inertiaId = null;
@@ -36,14 +60,16 @@
       velocityX = x - prevX;
       velocityY = y - prevY;
       const detail = getDetail();
-      if (callback)
-        callback(detail);
+      if (options.callback)
+        options.callback(detail);
       const event = new CustomEvent("drag", { detail });
       element.dispatchEvent(event);
     };
     const handleEnd = function() {
       dragging = false;
-      inertiaId = requestAnimationFrame(inertia);
+      element.setAttribute("dragging", "false");
+      if (options.inertia)
+        inertiaId = requestAnimationFrame(inertia);
       const event = new CustomEvent("dragend", { detail: getDetail() });
       element.dispatchEvent(event);
     };
@@ -68,7 +94,11 @@
         relativeX,
         relativeY,
         xPercentage,
-        yPercentage
+        yPercentage,
+        velocityX,
+        velocityY,
+        prevX,
+        prevY
       };
       if (xPercentage < 0)
         detail.xPercentage = 0;
@@ -83,23 +113,41 @@
     const inertia = function() {
       x += velocityX;
       y += velocityY;
-      velocityX *= friction;
-      velocityY *= friction;
+      velocityX *= options.friction;
+      velocityY *= options.friction;
+      if (options.bounce) {
+        if (x < rect.left) {
+          x = rect.left;
+          velocityX *= -options.bounceFactor;
+        }
+        if (x > rect.width + rect.left) {
+          x = rect.width + rect.left;
+          velocityX *= -options.bounceFactor;
+        }
+        if (y < rect.top) {
+          y = rect.top;
+          velocityY *= -options.bounceFactor;
+        }
+        if (y > rect.height + rect.top) {
+          y = rect.height + rect.top;
+          velocityY *= -options.bounceFactor;
+        }
+      }
       if (Math.abs(velocityX) < 0.1)
         velocityX = 0;
       if (Math.abs(velocityY) < 0.1)
         velocityY = 0;
       const detail = getDetail();
       if (velocityX !== 0 || velocityY !== 0) {
-        if (callback)
-          callback(detail);
+        if (options.callback)
+          options.callback(detail);
         const event = new CustomEvent("draginertia", { detail });
         element.dispatchEvent(event);
         inertiaId = requestAnimationFrame(inertia);
       } else {
         inertiaId = null;
-        if (callback)
-          callback(detail);
+        if (options.callback)
+          options.callback(detail);
         const event = new CustomEvent("draginertiaend", { detail });
         element.dispatchEvent(event);
       }
@@ -131,12 +179,14 @@
       this.frame = this.element.querySelector(".frame");
       this.second = this.frame.querySelector(":scope > img");
       this.handle = this.element.querySelector(".handle");
-      this.options = {};
       window.addEventListener("resize", () => {
         requestAnimationFrame(this.setupSecondImage.bind(this));
       });
       this.setupSecondImage();
-      this.drag = onDragWithInertia(this.element);
+      this.drag = onDragWithInertia(this.element, {
+        inertia: true,
+        bounce: true
+      });
       this.element.addEventListener("dragstart", this.updateVisibleHandler.bind(this));
       this.element.addEventListener("drag", this.updateVisibleHandler.bind(this));
       this.element.addEventListener("draginertia", this.updateVisibleHandler.bind(this));
