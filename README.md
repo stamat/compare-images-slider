@@ -2,7 +2,7 @@
 
 A simple slider for comparing two images visually.
 
-![Screenshot](https://imgur.com/e9m4QaU)
+<img style="max-width: 100%" src="https://i.imgur.com/e9m4QaU.jpeg" alt="Compare Images Slider Screenshot">
 
 ## Features
 
@@ -76,11 +76,25 @@ const options = {
   friction: 0.9, // the friction of the inertia
   bounce: false, // will bounce back when intertia is enabled and the boundary is reached
   bounceFactor: 0.1, // the force of the bounce
-  vertical: false // vertical slider
+  vertical: false, // vertical slider
   onlyHandle: true // only the handle is draggable
 }
 
 new CompareImagesSlider(slider, options);
+```
+
+Available attribute options:
+
+- `vertical` - vertical slider or `data-vertical`
+
+```html
+<div class="js-compare-images-slider compare-images-slider" vertical>
+  <img src="img.jpg" alt="">
+  <div class="frame">
+    <img src="img-alt.jpg" alt="">
+  </div>
+  <span class="handle"></span>
+</div>
 ```
 
 ## TODO:
