@@ -1,4 +1,4 @@
-import { drag, shallowMerge } from 'book-of-spells'
+import { drag, shallowMerge } from 'book-of-spells';
 
 export default class CompareImagesSlider {
   constructor(element, options) {
@@ -12,10 +12,14 @@ export default class CompareImagesSlider {
       bounce: false,
       friction: 0.9,
       bounceFactor: 0.1,
-      onlyHandleActivation: false
+      onlyHandleActivation: true,
+      vertical: false
     }
 
     if (options) shallowMerge(this.options, options);
+
+    if (this.element.dataset.vertical) this.options.vertical = true;
+    if (this.element.hasAttribute('vertical')) this.options.vertical = true;
 
     window.addEventListener('resize', () => {
       requestAnimationFrame(this.setupSecondImage.bind(this));
@@ -24,19 +28,19 @@ export default class CompareImagesSlider {
 
     this.drag = drag(this.element, this.options);
 
-    this.bound = false;
+    this.handleDragBound = false;
     this.boundUpdateVisibleHandler = this.updateVisibleHandler.bind(this);
 
     const addEventListeners = () => {
-      if (this.bound) return;
-      this.bound = true;
+      if (this.handleDragBound) return;
+      this.handleDragBound = true;
       this.element.addEventListener('dragstart', this.boundUpdateVisibleHandler);
       this.element.addEventListener('drag', this.boundUpdateVisibleHandler);
     };
   
     const removeEventListeners = () => {
-      if (!this.bound) return;
-      this.bound = false;
+      if (!this.handleDragBound) return;
+      this.handleDragBound = false;
       this.element.removeEventListener('dragstart', this.boundUpdateVisibleHandler);
       this.element.removeEventListener('drag', this.boundUpdateVisibleHandler);
     };
@@ -59,6 +63,12 @@ export default class CompareImagesSlider {
   }
 
   updateVisibleHandler(e) {
+    if (this.options.vertical) {
+      this.frame.style.height = e.detail.yPercentage + '%';
+      this.handle.style.top = e.detail.yPercentage + '%';
+      return;
+    }
+
     this.frame.style.width = e.detail.xPercentage + '%';
     this.handle.style.left = e.detail.xPercentage + '%';
   }

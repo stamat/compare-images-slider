@@ -85,8 +85,8 @@
         e.preventDefault();
       prevX = x;
       prevY = y;
-      x = carrier.clientX;
-      y = carrier.clientY;
+      x = carrier.pageX;
+      y = carrier.pageY;
     };
     const getDetail = function() {
       const relativeX = x - rect.left;
@@ -192,28 +192,33 @@
         bounce: false,
         friction: 0.9,
         bounceFactor: 0.1,
-        onlyHandleActivation: false
+        onlyHandleActivation: true,
+        vertical: false
       };
       if (options)
         shallowMerge(this.options, options);
+      if (this.element.dataset.vertical)
+        this.options.vertical = true;
+      if (this.element.hasAttribute("vertical"))
+        this.options.vertical = true;
       window.addEventListener("resize", () => {
         requestAnimationFrame(this.setupSecondImage.bind(this));
       });
       this.setupSecondImage();
       this.drag = drag(this.element, this.options);
-      this.bound = false;
+      this.handleDragBound = false;
       this.boundUpdateVisibleHandler = this.updateVisibleHandler.bind(this);
       const addEventListeners = () => {
-        if (this.bound)
+        if (this.handleDragBound)
           return;
-        this.bound = true;
+        this.handleDragBound = true;
         this.element.addEventListener("dragstart", this.boundUpdateVisibleHandler);
         this.element.addEventListener("drag", this.boundUpdateVisibleHandler);
       };
       const removeEventListeners = () => {
-        if (!this.bound)
+        if (!this.handleDragBound)
           return;
-        this.bound = false;
+        this.handleDragBound = false;
         this.element.removeEventListener("dragstart", this.boundUpdateVisibleHandler);
         this.element.removeEventListener("drag", this.boundUpdateVisibleHandler);
       };
@@ -233,6 +238,11 @@
       this.second.style.width = width;
     }
     updateVisibleHandler(e) {
+      if (this.options.vertical) {
+        this.frame.style.height = e.detail.yPercentage + "%";
+        this.handle.style.top = e.detail.yPercentage + "%";
+        return;
+      }
       this.frame.style.width = e.detail.xPercentage + "%";
       this.handle.style.left = e.detail.xPercentage + "%";
     }

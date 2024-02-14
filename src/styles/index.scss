@@ -47,6 +47,7 @@
   .handle:after {
     position: absolute;
     top: 50%;
+    left: 50%;
     width: 42px;
     height: 42px;
     transform: translate3d(-50%, -50%, 0);
@@ -57,5 +58,27 @@
     background: #fff;
     text-align: center;
     border-radius: 21px;
+  }
+
+  &[data-vertical],
+  &[vertical] {
+    .frame {
+      width: 100%;
+      height: var(--compare-images-slider-initial-position);
+    }
+
+    .handle {
+      left: 0;
+      top: var(--compare-images-slider-initial-position);
+      width: 100%;
+      height: 2px;
+      margin-top: -1px;
+      margin-left: 0;
+      cursor: ns-resize;
+    }
+
+    .handle:after {
+      content:'↕';
+    }
   }
 }
