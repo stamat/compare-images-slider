@@ -1,6 +1,6 @@
 {
   "name": "compare-images-slider",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "A simple slider for comparing two images.",
   "main": "src/scripts/compare-images-slider.js",
   "style": "src/styles/index.scss",
