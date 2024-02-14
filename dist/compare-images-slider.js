@@ -1,4 +1,4 @@
-/* compare-images-slider v1.0.0 | https://stamat.github.io/compare-images-slider/ | MIT License */
+/* compare-images-slider v1.0.1 | https://stamat.github.io/compare-images-slider/ | MIT License */
 (() => {
   // node_modules/book-of-spells/src/helpers.mjs
   function shallowMerge(target, source) {
