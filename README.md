@@ -6,7 +6,8 @@ A simple slider for comparing two images visually.
 
 ## Features
 
-- Lightweight and minimal DOM depth
+- Lightweight
+- Minimal DOM depth
 - No dependencies
 - Mobile friendly
 - Vertical slider
