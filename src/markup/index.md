@@ -17,22 +17,37 @@ layout: default
     <span class="handle"></span>
   </div>
 
+  Photo by <a href="https://unsplash.com/@necone?utm_content=creditCopyText&utm_medium=referral&utm_source=unsplash">Nenad Radojčić</a> on <a href="https://unsplash.com/photos/gray-concrete-building-under-white-sky-during-daytime-JBm5eNo6B4E?utm_content=creditCopyText&utm_medium=referral&utm_source=unsplash">Unsplash</a>
+
+  <div class="js-compare-images-slider compare-images-slider" vertical>
+    <img width="1680" height="1120" src="{{ relativePathPrefix }}dist/assets/img2.jpg" loading="lazy" alt="">
+    <div class="frame">
+      <img width="1680" height="1120" src="{{ relativePathPrefix }}dist/assets/img2-alt.jpg" loading="lazy" alt="">
+    </div>
+    <span class="handle"></span>
+  </div>
+
+  Photo by <a href="https://unsplash.com/@valentinsalja?utm_content=creditCopyText&utm_medium=referral&utm_source=unsplash">Valentin Salja</a> on <a href="https://unsplash.com/photos/withered-tree-covered-in-snow-AqcD0Q1JLpE?utm_content=creditCopyText&utm_medium=referral&utm_source=unsplash">Unsplash</a>
+
+
   <script>
-    const slider = document.querySelector('.js-compare-images-slider');
+    const sliders = document.querySelectorAll('.js-compare-images-slider');
     const options = {
       inertia: true,
       bounce: true,
     }
 
     if (window.CompareImagesSlider) {
-      const compareImagesSlider = new CompareImagesSlider(slider, options);
+      for (let i = 0; i < sliders.length; i++) {
+        const compareImagesSlider = new CompareImagesSlider(sliders[i], options);
+      }
     } else {
       document.addEventListener('CompareImagesSliderLoaded', function() {
-        const compareImagesSlider = new CompareImagesSlider(slider, options);
+        for (let i = 0; i < sliders.length; i++) {
+          const compareImagesSlider = new CompareImagesSlider(sliders[i], options);
+        }
       }); 
     }
   </script>
-
-  Photo by <a href="https://unsplash.com/@necone?utm_content=creditCopyText&utm_medium=referral&utm_source=unsplash">Nenad Radojčić</a> on <a href="https://unsplash.com/photos/gray-concrete-building-under-white-sky-during-daytime-JBm5eNo6B4E?utm_content=creditCopyText&utm_medium=referral&utm_source=unsplash">Unsplash</a>
 </div>
   

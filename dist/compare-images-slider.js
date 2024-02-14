@@ -21,6 +21,10 @@
 
   // node_modules/book-of-spells/src/dom.mjs
   function drag(element, opts) {
+    if (!element || !(element instanceof Element))
+      return;
+    if (element.getAttribute("drag-enabled") === "true")
+      return;
     let x = 0;
     let y = 0;
     let prevX = 0;
@@ -28,7 +32,7 @@
     let velocityX = 0;
     let velocityY = 0;
     let dragging = false;
-    let rect = element.getBoundingClientRect();
+    let rect = null;
     let inertiaId = null;
     const options = {
       inertia: false,
@@ -42,15 +46,25 @@
     } else if (isObject(opts)) {
       shallowMerge(options, opts);
     }
-    if (!element)
-      return;
-    if (element.getAttribute("drag-enabled") === "true")
-      return;
+    options.friction = Math.abs(options.friction);
+    options.bounceFactor = Math.abs(options.bounceFactor);
     element.setAttribute("drag-enabled", "true");
     element.setAttribute("dragging", "false");
+    const calcPageRelativeRect = function() {
+      const origRect = element.getBoundingClientRect();
+      const rect2 = {
+        top: origRect.top + window.scrollY,
+        left: origRect.left + window.scrollX,
+        width: origRect.width,
+        height: origRect.height
+      };
+      return rect2;
+    };
+    rect = calcPageRelativeRect();
     const handleStart = function(e) {
       setXY(e);
       dragging = true;
+      rect = calcPageRelativeRect();
       element.setAttribute("dragging", "true");
       if (inertiaId) {
         cancelAnimationFrame(inertiaId);

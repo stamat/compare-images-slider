@@ -17,6 +17,7 @@
 .compare-images-slider > img {
   max-width: 100%;
   height: auto;
+  display: block;
 }
 .compare-images-slider .frame {
   position: absolute;
@@ -29,6 +30,7 @@
 }
 .compare-images-slider .frame > img {
   height: auto;
+  display: block;
 }
 .compare-images-slider .handle {
   position: absolute;

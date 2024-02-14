@@ -1,4 +1,4 @@
-import { drag, shallowMerge } from 'book-of-spells';
+import { shallowMerge, drag } from 'book-of-spells';
 
 export default class CompareImagesSlider {
   constructor(element, options) {

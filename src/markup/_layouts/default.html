@@ -11,6 +11,10 @@
   <link rel="stylesheet" href="{{ relativePathPrefix }}dist/site.min.css">
   <link rel="stylesheet" href="{{ relativePathPrefix }}dist/compare-images-slider.min.css">
 
+  <meta property="og:title" content="{{ page.title or site.title }}" />
+  <meta property="og:description" content="{{ page.description or site.description }}" />
+  <meta property="og:image" content="{{ relativePathPrefix }}dist/assets/social.jpg" />
+
   {% set fontparts = '' %}
   
   {% for font in fonts %}

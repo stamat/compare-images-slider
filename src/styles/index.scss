@@ -16,6 +16,7 @@
   & > img {
     max-width: 100%;
     height: auto;
+    display: block;
   }
 
   .frame {
@@ -29,6 +30,7 @@
 
     & > img {
       height: auto;
+      display: block;
     }
   }
 
