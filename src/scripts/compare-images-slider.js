@@ -15,6 +15,7 @@ import { shallowMerge, drag } from 'book-of-spells';
  * @todo Double click the handle to go to extremes.
  * @todo Accessibility - aria attributes.
  * @todo make a custom element.
+ * @todo when onlyHandle is true, cancel the update while inertia
  */
 export default class CompareImagesSlider {
   constructor(element, options) {
