@@ -7183,6 +7183,10 @@ template {
   padding: 16px;
 }
 
+a {
+  color: #340EE6;
+}
+
 .compare-images-slider > img {
   border-radius: 16px;
 }
