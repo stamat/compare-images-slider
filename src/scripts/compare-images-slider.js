@@ -1,5 +1,21 @@
 import { shallowMerge, drag } from 'book-of-spells';
 
+/**
+ * @class CompareImagesSlider
+ * @classdesc A class to create a compare images slider.
+ * @param {HTMLElement} element - The element to create the compare images slider on.
+ * @param {Object} options - The options for the compare images slider.
+ * @param {Boolean} [options.inertia=false] - Whether to use inertia when dragging.
+ * @param {Boolean} [options.bounce=false] - Whether to use bounce when dragging.
+ * @param {Number} [options.friction=0.9] - The friction to use when dragging.
+ * @param {Number} [options.bounceFactor=0.1] - The bounce factor to use when dragging.
+ * @param {Boolean} [options.onlyHandle=true] - Whether to only allow dragging the handle.
+ * @param {Boolean} [options.vertical=false] - Whether to make the slider vertical.
+ * @todo Keyboard controls - left and right arrow keys. Or up and down arrow keys if vertical. But the handle should be focused first - meaning it should be a button or a focusable element.
+ * @todo Double click the handle to go to extremes.
+ * @todo Accessibility - aria attributes.
+ * @todo make a custom element.
+ */
 export default class CompareImagesSlider {
   constructor(element, options) {
     this.element = element;
