@@ -51,6 +51,38 @@ export function capVelocity(velocity, max) {
 }
 
 /**
+ * Compute the next position for a discrete keyboard action.
+ * @param {number} current - Current position (0-100).
+ * @param {string} key - KeyboardEvent.key value.
+ * @param {number} step - Arrow-key step in percent.
+ * @param {number} pageStep - Page-key step in percent.
+ * @returns {number|null} New clamped position, or null if the key is unhandled.
+ */
+export function keyboardStep(current, key, step, pageStep) {
+  switch (key) {
+    case 'ArrowRight':
+    case 'ArrowDown':
+      return clamp(current + step, 0, 100);
+    case 'ArrowLeft':
+    case 'ArrowUp':
+      return clamp(current - step, 0, 100);
+    case 'PageUp':
+      return clamp(current + pageStep, 0, 100);
+    case 'PageDown':
+      return clamp(current - pageStep, 0, 100);
+    case 'Home':
+      return 0;
+    case 'End':
+      return 100;
+    default:
+      return null;
+  }
+}
+
+// Monotonic counter for generating unique ids for aria-controls wiring.
+let sliderCount = 0;
+
+/**
  * @class CompareImagesSlider
  * @classdesc Compare two images by dragging a handle. Self-contained: pointer
  * physics, inertia, keyboard controls and ARIA are all handled here with no
@@ -109,14 +141,53 @@ export default class CompareImagesSlider {
     this.onPointerMove = this.onPointerMove.bind(this);
     this.onPointerUp = this.onPointerUp.bind(this);
     this.onResize = () => requestAnimationFrame(this.setupSecondImage.bind(this));
+    this.onKeyDown = this.onKeyDown.bind(this);
+    this.onDoubleClick = this.onDoubleClick.bind(this);
 
     window.addEventListener('resize', this.onResize);
     this.setupSecondImage();
+    this.setupAccessibility();
 
     this.dragTarget = this.options.onlyHandle ? this.handle : this.element;
     this.dragTarget.addEventListener('pointerdown', this.onPointerDown);
+    this.handle.addEventListener('keydown', this.onKeyDown);
+    this.handle.addEventListener('dblclick', this.onDoubleClick);
 
     this.render();
+  }
+
+  /**
+   * Wire up the W3C APG Window Splitter pattern on the handle:
+   * a focusable role="separator" reporting its position via ARIA.
+   * @see https://www.w3.org/WAI/ARIA/apg/patterns/windowsplitter/
+   */
+  setupAccessibility() {
+    if (!this.frame.id) this.frame.id = 'compare-images-slider-frame-' + (++sliderCount);
+
+    this.handle.setAttribute('role', 'separator');
+    this.handle.setAttribute('tabindex', '0');
+    this.handle.setAttribute('aria-controls', this.frame.id);
+    // A separator that splits left/right is itself vertical, and vice versa.
+    this.handle.setAttribute('aria-orientation', this.options.vertical ? 'horizontal' : 'vertical');
+    this.handle.setAttribute('aria-valuemin', '0');
+    this.handle.setAttribute('aria-valuemax', '100');
+    if (!this.handle.hasAttribute('aria-label') && !this.handle.hasAttribute('aria-labelledby')) {
+      this.handle.setAttribute('aria-label', this.element.getAttribute('aria-label') || 'Image comparison slider');
+    }
+  }
+
+  onKeyDown(e) {
+    const next = keyboardStep(this.position, e.key, this.options.step, this.options.pageStep);
+    if (next === null) return;
+    e.preventDefault();
+    this.stopInertia();
+    this.setPosition(next);
+  }
+
+  /** Double-click the handle to snap to the nearest extreme (0 or 100). */
+  onDoubleClick() {
+    this.stopInertia();
+    this.setPosition(this.position < 50 ? 100 : 0);
   }
 
   checkAndApplyAttribute(attribute) {
@@ -243,6 +314,9 @@ export default class CompareImagesSlider {
       this.frame.style.width = value;
       this.handle.style.left = value;
     }
+    const rounded = Math.round(this.position);
+    this.handle.setAttribute('aria-valuenow', String(rounded));
+    this.handle.setAttribute('aria-valuetext', rounded + '%');
   }
 
   destroy() {
@@ -252,5 +326,7 @@ export default class CompareImagesSlider {
     this.dragTarget.removeEventListener('pointermove', this.onPointerMove);
     this.dragTarget.removeEventListener('pointerup', this.onPointerUp);
     this.dragTarget.removeEventListener('pointercancel', this.onPointerUp);
+    this.handle.removeEventListener('keydown', this.onKeyDown);
+    this.handle.removeEventListener('dblclick', this.onDoubleClick);
   }
 }

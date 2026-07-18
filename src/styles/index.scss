@@ -63,6 +63,16 @@
     border-radius: 21px;
   }
 
+  .handle:focus-visible {
+    outline: none;
+  }
+
+  .handle:focus-visible:after {
+    outline: 3px solid Highlight;
+    outline: 3px solid -webkit-focus-ring-color;
+    outline-offset: 2px;
+  }
+
   &[data-vertical],
   &[vertical] {
     .frame {
