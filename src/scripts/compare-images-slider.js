@@ -330,3 +330,66 @@ export default class CompareImagesSlider {
     this.handle.removeEventListener('dblclick', this.onDoubleClick);
   }
 }
+
+// Boolean options settable via bare/`data-` attributes on the custom element.
+const BOOL_OPTIONS = ['inertia', 'bounce', 'vertical', 'onlyHandle'];
+// Numeric options and the attribute name they map to.
+const NUMBER_OPTIONS = {
+  friction: 'friction',
+  bounceFactor: 'bounce-factor',
+  maxFlickVelocity: 'max-flick-velocity',
+  initialPosition: 'initial-position',
+  step: 'step',
+  pageStep: 'page-step'
+};
+
+/**
+ * Read slider options from an element's attributes (bare, `data-*` or kebab).
+ * @param {HTMLElement} el
+ * @returns {Object}
+ */
+export function readOptionsFromElement(el) {
+  const options = {};
+  for (const key of BOOL_OPTIONS) {
+    const kebab = key.replace(/[A-Z]/g, (m) => '-' + m.toLowerCase());
+    const raw = el.dataset[key] != null ? el.dataset[key] : el.getAttribute(kebab);
+    if (raw == null) continue;
+    options[key] = raw !== 'false' && raw !== '0';
+  }
+  for (const key in NUMBER_OPTIONS) {
+    const raw = el.dataset[key] != null ? el.dataset[key] : el.getAttribute(NUMBER_OPTIONS[key]);
+    if (raw == null || raw === '') continue;
+    const num = parseFloat(raw);
+    if (!Number.isNaN(num)) options[key] = num;
+  }
+  return options;
+}
+
+// Fall back to a plain base when HTMLElement is absent (e.g. Node under test),
+// so the module stays importable outside the browser.
+const ElementBase = typeof HTMLElement !== 'undefined' ? HTMLElement : class {};
+
+/**
+ * `<compare-images-slider>` custom element. Uses light DOM (no shadow root) so
+ * the images, frame and handle stay fully stylable by the page author.
+ */
+export class CompareImagesSliderElement extends ElementBase {
+  connectedCallback() {
+    // Wait until the required light-DOM children have been parsed.
+    if (this.slider || !this.querySelector('.frame') || !this.querySelector('.handle')) return;
+    this.slider = new CompareImagesSlider(this, readOptionsFromElement(this));
+  }
+
+  disconnectedCallback() {
+    if (this.slider) {
+      this.slider.destroy();
+      this.slider = null;
+    }
+  }
+}
+
+// Register on load in the browser only; guarded so the module is safe to import
+// under Node (tests) where custom elements do not exist.
+if (typeof customElements !== 'undefined' && !customElements.get('compare-images-slider')) {
+  customElements.define('compare-images-slider', CompareImagesSliderElement);
+}
