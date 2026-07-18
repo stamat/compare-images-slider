@@ -25,13 +25,14 @@
   },
   "scripts": {
     "dev": "poops",
-    "build": "poops -b"
+    "build": "poops -b",
+    "test": "node --test",
+    "lint": "eslint ."
   },
   "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "eslint": "^10.7.0",
     "poops": "^1.0.18",
     "sulphuris": "^1.0.5"
-  },
-  "dependencies": {
-    "book-of-spells": "^1.0.31"
   }
 }

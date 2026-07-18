@@ -245,7 +245,7 @@ export default class CompareImagesSlider {
     this.dragTarget.removeEventListener('pointerup', this.onPointerUp);
     this.dragTarget.removeEventListener('pointercancel', this.onPointerUp);
     if (this.dragTarget.releasePointerCapture) {
-      try { this.dragTarget.releasePointerCapture(e.pointerId); } catch (_) { /* already released */ }
+      try { this.dragTarget.releasePointerCapture(e.pointerId); } catch { /* already released */ }
     }
     this.pointerId = null;
 
