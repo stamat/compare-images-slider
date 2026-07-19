@@ -76,6 +76,20 @@ attributes (bare, `data-*`, or kebab-case):
 </compare-images-slider>
 ```
 
+</div>
+
+<compare-images-slider inertia initial-position="35">
+  <img width="1680" height="1120" src="https://i.imgur.com/Ju4pEb7.jpeg" loading="lazy" alt="Building, before edit">
+  <div class="frame">
+    <img width="1680" height="1120" src="https://i.imgur.com/pvWyCKw.jpeg" loading="lazy" alt="Building, after edit">
+  </div>
+  <span class="handle"></span>
+</compare-images-slider>
+
+<p class="text-gray text-italic">A live <code>&lt;compare-images-slider&gt;</code> element — it upgrades itself on connect, with no JavaScript instantiation.</p>
+
+<div class="markdown-body">
+
 ## Vertical
 
 Add the `vertical` attribute (or pass `{ vertical: true }`) to split top and
