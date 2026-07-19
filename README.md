@@ -11,8 +11,10 @@ A simple slider for comparing two images visually.
 - No dependencies
 - Mobile friendly
 - Vertical slider
-- Inertia physics
+- Inertia physics with capped, natural-feeling flicks
 - Bounce back
+- Keyboard accessible ([W3C APG Window Splitter](https://www.w3.org/WAI/ARIA/apg/patterns/windowsplitter/))
+- Custom element, no shadow DOM
 - Customizable via CSS
 
 ## Demo
@@ -67,6 +69,31 @@ document.addEventListener('CompareImagesSliderLoaded', function() {
 @import 'node_modules/compare-images-slider/src/styles/index.scss';
 ```
 
+## Custom element
+
+The same markup wrapped in a `<compare-images-slider>` tag upgrades itself — no
+JavaScript call needed. It uses light DOM (no shadow root), so the images, frame
+and handle stay fully stylable. Options are read from attributes (bare, `data-*`
+or kebab-case):
+
+```html
+<compare-images-slider inertia initial-position="35">
+  <img src="img.jpg" alt="">
+  <div class="frame">
+    <img src="img-alt.jpg" alt="">
+  </div>
+  <span class="handle"></span>
+</compare-images-slider>
+```
+
+## Accessibility
+
+The handle is a focusable `role="separator"` implementing the
+[W3C APG Window Splitter pattern](https://www.w3.org/WAI/ARIA/apg/patterns/windowsplitter/)
+with `aria-valuenow`/`min`/`max`, `aria-orientation` and `aria-controls`. Once
+focused: arrow keys move by `step`, Page Up/Down by `pageStep`, Home/End jump to
+the extremes, and double-click snaps to the nearest extreme.
+
 ## Options
 
 ```javascript
@@ -74,18 +101,24 @@ document.addEventListener('CompareImagesSliderLoaded', function() {
 const options = {
   inertia: false, // inertia physics, you can flick the handle
   friction: 0.9, // the friction of the inertia
-  bounce: false, // will bounce back when intertia is enabled and the boundary is reached
+  bounce: false, // will bounce back when inertia is enabled and the boundary is reached
   bounceFactor: 0.1, // the force of the bounce
+  maxFlickVelocity: 0.5, // cap on flick velocity (% per ms), tames hard flicks
   vertical: false, // vertical slider
-  onlyHandle: true // only the handle is draggable
+  onlyHandle: true, // only the handle is draggable
+  initialPosition: 50, // starting position (0-100)
+  step: 5, // arrow-key step (percent)
+  pageStep: 25 // Page Up/Down step (percent)
 }
 
 new CompareImagesSlider(slider, options);
 ```
 
-Available attribute options:
+Available attribute options (bare, `data-*` or kebab-case):
 
-- `vertical` - vertical slider or `data-vertical`
+- `vertical` - vertical slider
+- `inertia`, `bounce`, `only-handle` - booleans
+- `friction`, `bounce-factor`, `max-flick-velocity`, `initial-position`, `step`, `page-step` - numbers
 
 ```html
 <div class="js-compare-images-slider compare-images-slider" vertical>
@@ -97,14 +130,23 @@ Available attribute options:
 </div>
 ```
 
+## Development
+
+```bash
+npm install
+npm test   # unit tests (node:test)
+npm run lint
+npm run build
+```
+
 ## TODO:
 
 - [x] Add options
 - [x] Scroll block on drag
 - [x] Vertical option
-- [ ] Add factory class, migrate the general factory class to the book of spells prior to that? Better turn this into custom element!
-- [x] Refactor onDrag and move it to the book of spells
-- [ ] Add initialized state, don't initialize twice
+- [x] Turn this into a custom element
+- [x] Keyboard controls and ARIA (accessibility)
+- [x] Fix flick physics overshooting to extremes
 
 ---
 

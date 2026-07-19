@@ -2,7 +2,8 @@
   --compare-images-slider-initial-position: 50%;
 }
 
-.compare-images-slider {
+.compare-images-slider,
+compare-images-slider {
   display: block;
   position: relative;
   user-select: none;
@@ -44,6 +45,7 @@
     height: 100%;
     cursor: ew-resize;
     z-index: 3;
+    touch-action: none;
   }
 
   .handle:after {
@@ -60,6 +62,16 @@
     background: #fff;
     text-align: center;
     border-radius: 21px;
+  }
+
+  .handle:focus-visible {
+    outline: none;
+  }
+
+  .handle:focus-visible:after {
+    outline: 3px solid Highlight;
+    outline: 3px solid -webkit-focus-ring-color;
+    outline-offset: 2px;
   }
 
   &[data-vertical],

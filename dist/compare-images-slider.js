@@ -1,292 +1,292 @@
 /* compare-images-slider v1.0.2 | https://stamat.github.io/compare-images-slider/ | MIT License */
 (() => {
-  // node_modules/book-of-spells/src/helpers.mjs
-  function shallowMerge(target, source) {
-    for (const key in source) {
-      target[key] = source[key];
-    }
-    return target;
-  }
-  function isObject(o) {
-    return typeof o === "object" && !Array.isArray(o) && o !== null;
-  }
-  function isFunction(o) {
-    return typeof o === "function";
-  }
-  function percentage(num, total) {
-    if (!num || !total || Number.isNaN(num) || Number.isNaN(total))
-      return 0;
-    return num / total * 100;
-  }
-
-  // node_modules/book-of-spells/src/dom.mjs
-  function drag(element, opts) {
-    if (!element || !(element instanceof Element))
-      return;
-    if (element.getAttribute("drag-enabled") === "true")
-      return;
-    let x = 0;
-    let y = 0;
-    let prevX = 0;
-    let prevY = 0;
-    let velocityX = 0;
-    let velocityY = 0;
-    let dragging = false;
-    let rect = null;
-    let inertiaId = null;
-    const options = {
-      inertia: false,
-      bounce: false,
-      friction: 0.9,
-      bounceFactor: 0.2,
-      callback: null,
-      preventDefaultTouch: true
-    };
-    if (isFunction(opts)) {
-      options.callback = opts;
-    } else if (isObject(opts)) {
-      shallowMerge(options, opts);
-    }
-    options.friction = Math.abs(options.friction);
-    options.bounceFactor = Math.abs(options.bounceFactor);
-    element.setAttribute("drag-enabled", "true");
-    element.setAttribute("dragging", "false");
-    const calcPageRelativeRect = function() {
-      const origRect = element.getBoundingClientRect();
-      const rect2 = {
-        top: origRect.top + window.scrollY,
-        left: origRect.left + window.scrollX,
-        width: origRect.width,
-        height: origRect.height
-      };
-      return rect2;
-    };
-    rect = calcPageRelativeRect();
-    const handleStart = function(e) {
-      setXY(e);
-      dragging = true;
-      rect = calcPageRelativeRect();
-      element.setAttribute("dragging", "true");
-      if (inertiaId) {
-        cancelAnimationFrame(inertiaId);
-        inertiaId = null;
-      }
-      const event = new CustomEvent("dragstart", { detail: getDetail() });
-      element.dispatchEvent(event);
-    };
-    const handleMove = function(e) {
-      if (!dragging)
-        return;
-      setXY(e);
-      velocityX = x - prevX;
-      velocityY = y - prevY;
-      const detail = getDetail();
-      if (options.callback)
-        options.callback(detail);
-      const event = new CustomEvent("drag", { detail });
-      element.dispatchEvent(event);
-    };
-    const handleEnd = function() {
-      dragging = false;
-      element.setAttribute("dragging", "false");
-      if (options.inertia)
-        inertiaId = requestAnimationFrame(inertia);
-      const event = new CustomEvent("dragend", { detail: getDetail() });
-      element.dispatchEvent(event);
-    };
-    const setXY = function(e) {
-      const carrier = e.touches ? e.touches[0] : e;
-      if (e.touches && options.preventDefaultTouch)
-        e.preventDefault();
-      prevX = x;
-      prevY = y;
-      x = carrier.pageX;
-      y = carrier.pageY;
-    };
-    const getDetail = function() {
-      const relativeX = x - rect.left;
-      const relativeY = y - rect.top;
-      const xPercentage = percentage(relativeX, rect.width);
-      const yPercentage = percentage(relativeY, rect.height);
-      const detail = {
-        target: element,
-        x,
-        y,
-        relativeX,
-        relativeY,
-        xPercentage,
-        yPercentage,
-        velocityX,
-        velocityY,
-        prevX,
-        prevY
-      };
-      if (xPercentage < 0)
-        detail.xPercentage = 0;
-      if (xPercentage > 100)
-        detail.xPercentage = 100;
-      if (yPercentage < 0)
-        detail.yPercentage = 0;
-      if (yPercentage > 100)
-        detail.yPercentage = 100;
-      return detail;
-    };
-    const inertia = function() {
-      x += velocityX;
-      y += velocityY;
-      velocityX *= options.friction;
-      velocityY *= options.friction;
-      if (options.bounce) {
-        if (x < rect.left) {
-          x = rect.left;
-          velocityX *= -options.bounceFactor;
-        }
-        if (x > rect.width + rect.left) {
-          x = rect.width + rect.left;
-          velocityX *= -options.bounceFactor;
-        }
-        if (y < rect.top) {
-          y = rect.top;
-          velocityY *= -options.bounceFactor;
-        }
-        if (y > rect.height + rect.top) {
-          y = rect.height + rect.top;
-          velocityY *= -options.bounceFactor;
-        }
-      }
-      if (Math.abs(velocityX) < 0.1)
-        velocityX = 0;
-      if (Math.abs(velocityY) < 0.1)
-        velocityY = 0;
-      const detail = getDetail();
-      if (velocityX !== 0 || velocityY !== 0) {
-        if (options.callback)
-          options.callback(detail);
-        const event = new CustomEvent("draginertia", { detail });
-        element.dispatchEvent(event);
-        inertiaId = requestAnimationFrame(inertia);
-      } else {
-        inertiaId = null;
-        if (options.callback)
-          options.callback(detail);
-        const event = new CustomEvent("draginertiaend", { detail });
-        element.dispatchEvent(event);
-      }
-    };
-    element.addEventListener("mousedown", handleStart);
-    element.addEventListener("mousemove", handleMove);
-    element.addEventListener("mouseup", handleEnd);
-    element.addEventListener("touchstart", handleStart);
-    element.addEventListener("touchmove", handleMove);
-    element.addEventListener("touchend", handleEnd);
-    return {
-      destroy: function() {
-        element.removeEventListener("mousedown", handleStart);
-        element.removeEventListener("mousemove", handleMove);
-        element.removeEventListener("mouseup", handleEnd);
-        element.removeEventListener("touchstart", handleStart);
-        element.removeEventListener("touchmove", handleMove);
-        element.removeEventListener("touchend", handleEnd);
-        if (inertiaId) {
-          cancelAnimationFrame(inertiaId);
-          inertiaId = null;
-        }
-      }
-    };
-  }
-
   // src/scripts/compare-images-slider.js
+  function clamp(value, min, max) {
+    if (value < min) return min;
+    if (value > max) return max;
+    return value;
+  }
+  function sampleVelocity(samples, windowMs = 80) {
+    if (!samples || samples.length < 2) return 0;
+    const last = samples[samples.length - 1];
+    let start = samples[0];
+    for (let i = samples.length - 1; i >= 0; i--) {
+      start = samples[i];
+      if (last.t - samples[i].t >= windowMs) break;
+    }
+    const dt = last.t - start.t;
+    if (dt <= 0) return 0;
+    return (last.pos - start.pos) / dt;
+  }
+  function capVelocity(velocity, max) {
+    if (velocity > max) return max;
+    if (velocity < -max) return -max;
+    return velocity;
+  }
+  function keyboardStep(current, key, step, pageStep) {
+    switch (key) {
+      case "ArrowRight":
+      case "ArrowDown":
+        return clamp(current + step, 0, 100);
+      case "ArrowLeft":
+      case "ArrowUp":
+        return clamp(current - step, 0, 100);
+      case "PageUp":
+        return clamp(current + pageStep, 0, 100);
+      case "PageDown":
+        return clamp(current - pageStep, 0, 100);
+      case "Home":
+        return 0;
+      case "End":
+        return 100;
+      default:
+        return null;
+    }
+  }
+  var sliderCount = 0;
   var CompareImagesSlider = class {
     constructor(element, options) {
       this.element = element;
       this.frame = this.element.querySelector(".frame");
       this.second = this.frame.querySelector(":scope > img");
       this.handle = this.element.querySelector(".handle");
-      this.options = {
+      this.options = Object.assign({
         inertia: false,
         bounce: false,
         friction: 0.9,
         bounceFactor: 0.1,
+        maxFlickVelocity: 0.5,
         onlyHandle: true,
-        vertical: false
-      };
-      if (options)
-        shallowMerge(this.options, options);
+        vertical: false,
+        initialPosition: 50,
+        step: 5,
+        pageStep: 25
+      }, options || {});
       this.checkAndApplyAttribute("vertical");
-      if (this.options.vertical && !(this.element.dataset.vertical || this.element.hasAttribute("vertical")))
+      this.checkAndApplyNumberAttribute("initialPosition", "initial-position");
+      if (this.options.vertical && !(this.element.dataset.vertical || this.element.hasAttribute("vertical"))) {
         this.element.setAttribute("vertical", "");
-      if (this.options.onlyHandle)
-        this.options.preventDefaultTouch = false;
-      window.addEventListener("resize", () => {
-        requestAnimationFrame(this.setupSecondImage.bind(this));
-      });
-      this.setupSecondImage();
-      this.drag = drag(this.element, this.options);
-      this.handleDragBound = false;
-      this.boundUpdateVisibleHandler = this.updateVisibleHandler.bind(this);
-      const preventDefault = (e) => {
-        if (this.handleDragBound)
-          e.preventDefault();
-      };
-      const addEventListeners = () => {
-        if (this.handleDragBound)
-          return;
-        this.handleDragBound = true;
-        this.element.addEventListener("dragstart", this.boundUpdateVisibleHandler);
-        this.element.addEventListener("drag", this.boundUpdateVisibleHandler);
-        this.element.addEventListener("draginertia", this.boundUpdateVisibleHandler);
-        this.element.addEventListener("draginertiaend", () => {
-          this.element.removeEventListener("draginertia", this.boundUpdateVisibleHandler);
-        });
-        this.element.addEventListener("touchstart", preventDefault);
-      };
-      const removeEventListeners = () => {
-        if (!this.handleDragBound)
-          return;
-        this.handleDragBound = false;
-        this.element.removeEventListener("dragstart", this.boundUpdateVisibleHandler);
-        this.element.removeEventListener("drag", this.boundUpdateVisibleHandler);
-        this.element.removeEventListener("touchstart", preventDefault);
-      };
-      if (this.options.onlyHandle) {
-        this.handle.addEventListener("mousedown", addEventListeners);
-        this.handle.addEventListener("touchstart", addEventListeners);
-        document.addEventListener("mouseup", removeEventListeners);
-        document.addEventListener("touchend", removeEventListeners);
-      } else {
-        this.element.addEventListener("dragstart", this.boundUpdateVisibleHandler);
-        this.element.addEventListener("drag", this.boundUpdateVisibleHandler);
-        this.element.addEventListener("draginertia", this.boundUpdateVisibleHandler);
       }
+      this.position = clamp(this.options.initialPosition, 0, 100);
+      this.dragging = false;
+      this.pointerId = null;
+      this.samples = [];
+      this.velocity = 0;
+      this.inertiaId = null;
+      this.lastFrameTime = 0;
+      this.onPointerDown = this.onPointerDown.bind(this);
+      this.onPointerMove = this.onPointerMove.bind(this);
+      this.onPointerUp = this.onPointerUp.bind(this);
+      this.onResize = () => requestAnimationFrame(this.setupSecondImage.bind(this));
+      this.onKeyDown = this.onKeyDown.bind(this);
+      this.onDoubleClick = this.onDoubleClick.bind(this);
+      window.addEventListener("resize", this.onResize);
+      this.setupSecondImage();
+      this.setupAccessibility();
+      this.dragTarget = this.options.onlyHandle ? this.handle : this.element;
+      this.dragTarget.addEventListener("pointerdown", this.onPointerDown);
+      this.handle.addEventListener("keydown", this.onKeyDown);
+      this.handle.addEventListener("dblclick", this.onDoubleClick);
+      this.render();
+    }
+    /**
+     * Wire up the W3C APG Window Splitter pattern on the handle:
+     * a focusable role="separator" reporting its position via ARIA.
+     * @see https://www.w3.org/WAI/ARIA/apg/patterns/windowsplitter/
+     */
+    setupAccessibility() {
+      if (!this.frame.id) this.frame.id = "compare-images-slider-frame-" + ++sliderCount;
+      this.handle.setAttribute("role", "separator");
+      this.handle.setAttribute("tabindex", "0");
+      this.handle.setAttribute("aria-controls", this.frame.id);
+      this.handle.setAttribute("aria-orientation", this.options.vertical ? "horizontal" : "vertical");
+      this.handle.setAttribute("aria-valuemin", "0");
+      this.handle.setAttribute("aria-valuemax", "100");
+      if (!this.handle.hasAttribute("aria-label") && !this.handle.hasAttribute("aria-labelledby")) {
+        this.handle.setAttribute("aria-label", this.element.getAttribute("aria-label") || "Image comparison slider");
+      }
+    }
+    onKeyDown(e) {
+      const next = keyboardStep(this.position, e.key, this.options.step, this.options.pageStep);
+      if (next === null) return;
+      e.preventDefault();
+      this.stopInertia();
+      this.setPosition(next);
+    }
+    /** Double-click the handle to snap to the nearest extreme (0 or 100). */
+    onDoubleClick() {
+      this.stopInertia();
+      this.setPosition(this.position < 50 ? 100 : 0);
     }
     checkAndApplyAttribute(attribute) {
-      if (this.element.dataset[attribute] || this.element.hasAttribute(attribute))
-        this.options[attribute] = true;
+      if (this.element.dataset[attribute] || this.element.hasAttribute(attribute)) this.options[attribute] = true;
+    }
+    /** Read a numeric option from a `data-*` or bare attribute if present. */
+    checkAndApplyNumberAttribute(optionKey, attribute) {
+      const raw = this.element.dataset[optionKey] != null ? this.element.dataset[optionKey] : this.element.getAttribute(attribute);
+      if (raw == null || raw === "") return;
+      const num = parseFloat(raw);
+      if (!Number.isNaN(num)) this.options[optionKey] = num;
     }
     setupSecondImage() {
-      const width = this.element.offsetWidth + "px";
-      this.second.style.width = width;
+      this.second.style.width = this.element.offsetWidth + "px";
     }
-    updateVisibleHandler(e) {
+    /** Convert a client coordinate to a 0-100 position along the slider axis. */
+    positionFromEvent(e) {
+      const rect = this.element.getBoundingClientRect();
       if (this.options.vertical) {
-        this.frame.style.height = e.detail.yPercentage + "%";
-        this.handle.style.top = e.detail.yPercentage + "%";
-        return;
+        return clamp((e.clientY - rect.top) / rect.height * 100, 0, 100);
       }
-      this.frame.style.width = e.detail.xPercentage + "%";
-      this.handle.style.left = e.detail.xPercentage + "%";
+      return clamp((e.clientX - rect.left) / rect.width * 100, 0, 100);
+    }
+    onPointerDown(e) {
+      this.stopInertia();
+      this.dragging = true;
+      this.pointerId = e.pointerId;
+      this.samples = [];
+      if (this.dragTarget.setPointerCapture) this.dragTarget.setPointerCapture(e.pointerId);
+      this.dragTarget.addEventListener("pointermove", this.onPointerMove);
+      this.dragTarget.addEventListener("pointerup", this.onPointerUp);
+      this.dragTarget.addEventListener("pointercancel", this.onPointerUp);
+      this.pushSample(this.positionFromEvent(e));
+      this.setPosition(this.positionFromEvent(e));
+      e.preventDefault();
+    }
+    onPointerMove(e) {
+      if (!this.dragging || e.pointerId !== this.pointerId) return;
+      const pos = this.positionFromEvent(e);
+      this.pushSample(pos);
+      this.setPosition(pos);
+    }
+    onPointerUp(e) {
+      if (!this.dragging || e.pointerId !== this.pointerId) return;
+      this.dragging = false;
+      this.dragTarget.removeEventListener("pointermove", this.onPointerMove);
+      this.dragTarget.removeEventListener("pointerup", this.onPointerUp);
+      this.dragTarget.removeEventListener("pointercancel", this.onPointerUp);
+      if (this.dragTarget.releasePointerCapture) {
+        try {
+          this.dragTarget.releasePointerCapture(e.pointerId);
+        } catch {
+        }
+      }
+      this.pointerId = null;
+      if (this.options.inertia) {
+        this.velocity = capVelocity(sampleVelocity(this.samples), this.options.maxFlickVelocity);
+        if (Math.abs(this.velocity) > 0) this.startInertia();
+      }
+    }
+    pushSample(pos) {
+      this.samples.push({ t: performance.now(), pos });
+      if (this.samples.length > 10) this.samples.shift();
+    }
+    startInertia() {
+      this.stopInertia();
+      this.lastFrameTime = performance.now();
+      const step = (now) => {
+        const dt = now - this.lastFrameTime;
+        this.lastFrameTime = now;
+        let next = this.position + this.velocity * dt;
+        this.velocity *= Math.pow(this.options.friction, dt / 16.6667);
+        if (next <= 0 || next >= 100) {
+          next = clamp(next, 0, 100);
+          if (this.options.bounce) {
+            this.velocity *= -this.options.bounceFactor;
+          } else {
+            this.velocity = 0;
+          }
+        }
+        this.setPosition(next);
+        if (Math.abs(this.velocity) < 5e-4) {
+          this.inertiaId = null;
+          return;
+        }
+        this.inertiaId = requestAnimationFrame(step);
+      };
+      this.inertiaId = requestAnimationFrame(step);
+    }
+    stopInertia() {
+      if (this.inertiaId) {
+        cancelAnimationFrame(this.inertiaId);
+        this.inertiaId = null;
+      }
+    }
+    /** Set the position (0-100), clamped, and re-render. */
+    setPosition(pct) {
+      this.position = clamp(pct, 0, 100);
+      this.render();
+    }
+    render() {
+      const value = this.position + "%";
+      if (this.options.vertical) {
+        this.frame.style.height = value;
+        this.handle.style.top = value;
+      } else {
+        this.frame.style.width = value;
+        this.handle.style.left = value;
+      }
+      const rounded = Math.round(this.position);
+      this.handle.setAttribute("aria-valuenow", String(rounded));
+      this.handle.setAttribute("aria-valuetext", rounded + "%");
     }
     destroy() {
-      this.drag.destroy();
-      this.element.removeEventListener("dragstart", this.boundUpdateVisibleHandler);
-      this.element.removeEventListener("drag", this.boundUpdateVisibleHandler);
-      this.element.removeEventListener("draginertia", this.boundUpdateVisibleHandler);
+      this.stopInertia();
+      window.removeEventListener("resize", this.onResize);
+      this.dragTarget.removeEventListener("pointerdown", this.onPointerDown);
+      this.dragTarget.removeEventListener("pointermove", this.onPointerMove);
+      this.dragTarget.removeEventListener("pointerup", this.onPointerUp);
+      this.dragTarget.removeEventListener("pointercancel", this.onPointerUp);
+      this.handle.removeEventListener("keydown", this.onKeyDown);
+      this.handle.removeEventListener("dblclick", this.onDoubleClick);
     }
   };
+  var BOOL_OPTIONS = ["inertia", "bounce", "vertical", "onlyHandle"];
+  var NUMBER_OPTIONS = {
+    friction: "friction",
+    bounceFactor: "bounce-factor",
+    maxFlickVelocity: "max-flick-velocity",
+    initialPosition: "initial-position",
+    step: "step",
+    pageStep: "page-step"
+  };
+  function readOptionsFromElement(el) {
+    const options = {};
+    for (const key of BOOL_OPTIONS) {
+      const kebab = key.replace(/[A-Z]/g, (m) => "-" + m.toLowerCase());
+      const raw = el.dataset[key] != null ? el.dataset[key] : el.getAttribute(kebab);
+      if (raw == null) continue;
+      options[key] = raw !== "false" && raw !== "0";
+    }
+    for (const key in NUMBER_OPTIONS) {
+      const raw = el.dataset[key] != null ? el.dataset[key] : el.getAttribute(NUMBER_OPTIONS[key]);
+      if (raw == null || raw === "") continue;
+      const num = parseFloat(raw);
+      if (!Number.isNaN(num)) options[key] = num;
+    }
+    return options;
+  }
+  var ElementBase = typeof HTMLElement !== "undefined" ? HTMLElement : class {
+  };
+  var CompareImagesSliderElement = class extends ElementBase {
+    connectedCallback() {
+      if (this.slider || !this.querySelector(".frame") || !this.querySelector(".handle")) return;
+      this.slider = new CompareImagesSlider(this, readOptionsFromElement(this));
+    }
+    disconnectedCallback() {
+      if (this.slider) {
+        this.slider.destroy();
+        this.slider = null;
+      }
+    }
+  };
+  if (typeof customElements !== "undefined" && !customElements.get("compare-images-slider")) {
+    customElements.define("compare-images-slider", CompareImagesSliderElement);
+  }
 
   // src/scripts/iife.js
   if (!window.CompareImagesSlider) {
     window.CompareImagesSlider = CompareImagesSlider;
+    window.CompareImagesSliderElement = CompareImagesSliderElement;
     document.dispatchEvent(new CustomEvent("CompareImagesSliderLoaded"));
   }
 })();

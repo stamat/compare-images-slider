@@ -30,7 +30,7 @@
   }],
   "markup": {
     "in": "src/markup",
-    "out": "/",
+    "out": ".",
     "options": {
       "site": {
         "title": "Compare Images Slider",
