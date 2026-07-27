@@ -1,6 +1,6 @@
 {
   "name": "compare-images-slider",
-  "version": "1.0.2",
+  "version": "1.1.0",
   "description": "A simple slider for comparing two images.",
   "type": "module",
   "main": "src/scripts/compare-images-slider.js",
@@ -33,6 +33,6 @@
     "@eslint/js": "^10.0.1",
     "eslint": "^10.7.0",
     "poops": "^1.9.1",
-    "poops-docs-theme": "^1.1.1"
+    "poops-docs-theme": "^1.1.2"
   }
 }
