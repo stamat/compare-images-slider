@@ -11,4 +11,7 @@ compare-images-slider {
   img {
     border-radius: var(--radius);
   }
+
+  --compare-images-slider-handle-bg: var(--bg);
+  --compare-images-slider-handle-fg: var(--fg);
 }
