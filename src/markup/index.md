@@ -11,10 +11,14 @@ A simple slider for comparing two images visually.
   <div class="frame">
     <img width="1680" height="1120" src="https://i.imgur.com/pvWyCKw.jpeg" loading="lazy" alt="Building, after edit">
   </div>
-  <span class="handle"></span>
+  <span class="handle">
+    <span class="handle-knob">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16"><path d="M3.72 3.72a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042L2.56 7h10.88l-2.22-2.22a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018l3.5 3.5a.75.75 0 0 1 0 1.06l-3.5 3.5a.749.749 0 0 1-1.275-.326.749.749 0 0 1 .215-.734l2.22-2.22H2.56l2.22 2.22a.749.749 0 0 1-.326 1.275.749.749 0 0 1-.734-.215l-3.5-3.5a.75.75 0 0 1 0-1.06Z"></path></svg>
+    </span>
+  </span>
 </div>
 
-*Photo by [Nenad Radojčić](https://unsplash.com/@necone?utm_content=creditCopyText&utm_medium=referral&utm_source=unsplash) on [Unsplash](https://unsplash.com/photos/gray-concrete-building-under-white-sky-during-daytime-JBm5eNo6B4E?utm_content=creditCopyText&utm_medium=referral&utm_source=unsplash). Drag the handle, or focus it and use the arrow keys.*
+_Photo by [Nenad Radojčić](https://unsplash.com/@necone?utm_content=creditCopyText&utm_medium=referral&utm_source=unsplash) on [Unsplash](https://unsplash.com/photos/gray-concrete-building-under-white-sky-during-daytime-JBm5eNo6B4E?utm_content=creditCopyText&utm_medium=referral&utm_source=unsplash). Drag the handle, or focus it and use the arrow keys._
 
 ## Overview
 
@@ -30,18 +34,18 @@ Drop in the markup and instantiate the slider on it. Set the intrinsic
 
 ```html
 <div class="js-compare-images-slider compare-images-slider">
-  <img width="1680" height="1120" src="before.jpg" alt="Before">
+  <img width="1680" height="1120" src="before.jpg" alt="Before" />
   <div class="frame">
-    <img width="1680" height="1120" src="after.jpg" alt="After">
+    <img width="1680" height="1120" src="after.jpg" alt="After" />
   </div>
   <span class="handle"></span>
 </div>
 ```
 
 ```javascript
-import CompareImagesSlider from 'compare-images-slider';
+import CompareImagesSlider from "compare-images-slider";
 
-const el = document.querySelector('.js-compare-images-slider');
+const el = document.querySelector(".js-compare-images-slider");
 new CompareImagesSlider(el, { inertia: true });
 ```
 
@@ -49,8 +53,8 @@ Loading the bundle asynchronously? Wait for the `CompareImagesSliderLoaded`
 event before instantiating:
 
 ```javascript
-document.addEventListener('CompareImagesSliderLoaded', () => {
-  const el = document.querySelector('.js-compare-images-slider');
+document.addEventListener("CompareImagesSliderLoaded", () => {
+  const el = document.querySelector(".js-compare-images-slider");
   new CompareImagesSlider(el, { inertia: true });
 });
 ```
@@ -63,9 +67,9 @@ attributes (bare, `data-*`, or kebab-case):
 
 ```html
 <compare-images-slider inertia initial-position="35">
-  <img width="1680" height="1120" src="before.jpg" alt="Before">
+  <img width="1680" height="1120" src="before.jpg" alt="Before" />
   <div class="frame">
-    <img width="1680" height="1120" src="after.jpg" alt="After">
+    <img width="1680" height="1120" src="after.jpg" alt="After" />
   </div>
   <span class="handle"></span>
 </compare-images-slider>
@@ -76,10 +80,14 @@ attributes (bare, `data-*`, or kebab-case):
   <div class="frame">
     <img width="1680" height="1120" src="https://i.imgur.com/pvWyCKw.jpeg" loading="lazy" alt="Building, after edit">
   </div>
-  <span class="handle"></span>
+  <span class="handle">
+    <span class="handle-knob">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16"><path d="M3.72 3.72a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042L2.56 7h10.88l-2.22-2.22a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018l3.5 3.5a.75.75 0 0 1 0 1.06l-3.5 3.5a.749.749 0 0 1-1.275-.326.749.749 0 0 1 .215-.734l2.22-2.22H2.56l2.22 2.22a.749.749 0 0 1-.326 1.275.749.749 0 0 1-.734-.215l-3.5-3.5a.75.75 0 0 1 0-1.06Z"></path></svg>
+    </span>
+  </span>
 </compare-images-slider>
 
-*A live `<compare-images-slider>` element — it upgrades itself on connect, with no JavaScript instantiation.*
+_A live `<compare-images-slider>` element — it upgrades itself on connect, with no JavaScript instantiation._
 
 ## Vertical
 
@@ -97,25 +105,29 @@ bottom instead of left and right.
   <div class="frame">
     <img width="1680" height="1120" src="https://i.imgur.com/C7zhEkz.jpeg" loading="lazy" alt="Tree, after edit">
   </div>
-  <span class="handle"></span>
+  <span class="handle">
+    <span class="handle-knob">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16"><path d="M3.72 3.72a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042L2.56 7h10.88l-2.22-2.22a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018l3.5 3.5a.75.75 0 0 1 0 1.06l-3.5 3.5a.749.749 0 0 1-1.275-.326.749.749 0 0 1 .215-.734l2.22-2.22H2.56l2.22 2.22a.749.749 0 0 1-.326 1.275.749.749 0 0 1-.734-.215l-3.5-3.5a.75.75 0 0 1 0-1.06Z"></path></svg>
+    </span>
+  </span>
 </div>
 
-*Photo by [Valentin Salja](https://unsplash.com/@valentinsalja?utm_content=creditCopyText&utm_medium=referral&utm_source=unsplash) on [Unsplash](https://unsplash.com/photos/withered-tree-covered-in-snow-AqcD0Q1JLpE?utm_content=creditCopyText&utm_medium=referral&utm_source=unsplash).*
+_Photo by [Valentin Salja](https://unsplash.com/@valentinsalja?utm_content=creditCopyText&utm_medium=referral&utm_source=unsplash) on [Unsplash](https://unsplash.com/photos/withered-tree-covered-in-snow-AqcD0Q1JLpE?utm_content=creditCopyText&utm_medium=referral&utm_source=unsplash)._
 
 ## Options
 
-| Option | Type | Default | Description |
-| --- | --- | --- | --- |
-| `inertia` | boolean | `false` | Keep gliding after a flick. |
-| `bounce` | boolean | `false` | Bounce off the edges while under inertia. |
-| `friction` | number | `0.9` | Inertia decay per frame (0–1). |
-| `bounceFactor` | number | `0.1` | Energy kept on a bounce (0–1). |
-| `maxFlickVelocity` | number | `0.5` | Cap on flick velocity (% per ms). |
-| `onlyHandle` | boolean | `true` | Only the handle starts a drag. |
-| `vertical` | boolean | `false` | Split top/bottom instead of left/right. |
-| `initialPosition` | number | `50` | Starting position (0–100). |
-| `step` | number | `5` | Arrow-key step (percent). |
-| `pageStep` | number | `25` | Page Up/Down step (percent). |
+| Option             | Type    | Default | Description                               |
+| ------------------ | ------- | ------- | ----------------------------------------- |
+| `inertia`          | boolean | `false` | Keep gliding after a flick.               |
+| `bounce`           | boolean | `false` | Bounce off the edges while under inertia. |
+| `friction`         | number  | `0.9`   | Inertia decay per frame (0–1).            |
+| `bounceFactor`     | number  | `0.1`   | Energy kept on a bounce (0–1).            |
+| `maxFlickVelocity` | number  | `0.5`   | Cap on flick velocity (% per ms).         |
+| `onlyHandle`       | boolean | `true`  | Only the handle starts a drag.            |
+| `vertical`         | boolean | `false` | Split top/bottom instead of left/right.   |
+| `initialPosition`  | number  | `50`    | Starting position (0–100).                |
+| `step`             | number  | `5`     | Arrow-key step (percent).                 |
+| `pageStep`         | number  | `25`    | Page Up/Down step (percent).              |
 
 > [!NOTE]
 > Set the intrinsic dimensions of the images. This eliminates layout shifts and
@@ -136,13 +148,13 @@ it is a focusable `role="separator"` exposing `aria-valuenow`, `aria-valuemin`,
 `aria-valuemax`, and `aria-orientation`, wired to the revealed pane via
 `aria-controls`. Once focused it is fully keyboard operable:
 
-| Key | Action |
-| --- | --- |
-| <kbd>Left</kbd> / <kbd>Up</kbd> | Move by one step |
-| <kbd>Right</kbd> / <kbd>Down</kbd> | Move by one step the other way |
-| <kbd>Page Up</kbd> / <kbd>Page Down</kbd> | Move by a larger step |
-| <kbd>Home</kbd> / <kbd>End</kbd> | Jump to either extreme |
-| Double-click | Snap to the nearest extreme |
+| Key                                       | Action                         |
+| ----------------------------------------- | ------------------------------ |
+| <kbd>Left</kbd> / <kbd>Up</kbd>           | Move by one step               |
+| <kbd>Right</kbd> / <kbd>Down</kbd>        | Move by one step the other way |
+| <kbd>Page Up</kbd> / <kbd>Page Down</kbd> | Move by a larger step          |
+| <kbd>Home</kbd> / <kbd>End</kbd>          | Jump to either extreme         |
+| Double-click                              | Snap to the nearest extreme    |
 
 ## Styling
 

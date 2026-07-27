@@ -14,4 +14,37 @@ compare-images-slider {
 
   --compare-images-slider-handle-bg: var(--bg);
   --compare-images-slider-handle-fg: var(--fg);
+
+  .handle::after {
+    display: none;
+  }
+
+  .handle-knob {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: var(--compare-images-slider-handle-size);
+    height: var(--compare-images-slider-handle-size);
+    transform: translate3d(-50%, -50%, 0);
+
+    background: var(--compare-images-slider-handle-bg);
+    color: var(--compare-images-slider-handle-fg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 21px;
+
+    svg {
+      width: 24px;
+      height: 24px;
+      fill: currentColor;
+    }
+  }
+
+    &[data-vertical],
+    &[vertical] {
+      .handle-knob {
+        transform: translate3d(-50%, -50%, 0) rotate(90deg);
+      }
+    }
 }
