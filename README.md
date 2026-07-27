@@ -21,7 +21,6 @@ A simple slider for comparing two images visually.
 
 [Check out the demo](https://stamat.github.io/compare-images-slider/)
 
-
 ## Installation
 
 ```bash
@@ -32,16 +31,19 @@ or use the CDN:
 
 ```html
 <script src="https://unpkg.com/compare-images-slider/dist/compare-images-slider.min.js"></script>
-<link rel="stylesheet" href="https://unpkg.com/compare-images-slider/dist/compare-images-slider.min.css">
+<link
+  rel="stylesheet"
+  href="https://unpkg.com/compare-images-slider/dist/compare-images-slider.min.css"
+/>
 ```
 
 ## Usage
 
 ```html
 <div class="js-compare-images-slider compare-images-slider">
-  <img src="img.jpg" alt="">
+  <img src="img.jpg" alt="" />
   <div class="frame">
-    <img src="img-alt.jpg" alt="">
+    <img src="img-alt.jpg" alt="" />
   </div>
   <span class="handle"></span>
 </div>
@@ -50,23 +52,23 @@ or use the CDN:
 **⚠️ Note:** Don't be lazy and please set the intrinsic dimensions of the images. This eliminates layout shifts and will ensure the slider works as expected.
 
 ```javascript
-import CompareImagesSlider from 'compare-images-slider';
+import CompareImagesSlider from "compare-images-slider";
 
-const slider = document.querySelector('.js-compare-images-slider');
+const slider = document.querySelector(".js-compare-images-slider");
 const compareImagesSlider = new CompareImagesSlider(slider);
 ```
 
 If you are loading the script asynchronously, you can listen for the `CompareImagesSliderLoaded` event to initialize the slider:
 
 ```javascript
-document.addEventListener('CompareImagesSliderLoaded', function() {
-  const slider = document.querySelector('.js-compare-images-slider');
+document.addEventListener("CompareImagesSliderLoaded", function () {
+  const slider = document.querySelector(".js-compare-images-slider");
   const compareImagesSlider = new CompareImagesSlider(slider);
 });
 ```
 
 ```scss
-@import 'node_modules/compare-images-slider/src/styles/index.scss';
+@import "node_modules/compare-images-slider/src/styles/index.scss";
 ```
 
 ## Custom element
@@ -78,9 +80,9 @@ or kebab-case):
 
 ```html
 <compare-images-slider inertia initial-position="35">
-  <img src="img.jpg" alt="">
+  <img src="img.jpg" alt="" />
   <div class="frame">
-    <img src="img-alt.jpg" alt="">
+    <img src="img-alt.jpg" alt="" />
   </div>
   <span class="handle"></span>
 </compare-images-slider>
@@ -108,8 +110,8 @@ const options = {
   onlyHandle: true, // only the handle is draggable
   initialPosition: 50, // starting position (0-100)
   step: 5, // arrow-key step (percent)
-  pageStep: 25 // Page Up/Down step (percent)
-}
+  pageStep: 25, // Page Up/Down step (percent)
+};
 
 new CompareImagesSlider(slider, options);
 ```
@@ -122,9 +124,9 @@ Available attribute options (bare, `data-*` or kebab-case):
 
 ```html
 <div class="js-compare-images-slider compare-images-slider" vertical>
-  <img src="img.jpg" alt="">
+  <img src="img.jpg" alt="" />
   <div class="frame">
-    <img src="img-alt.jpg" alt="">
+    <img src="img-alt.jpg" alt="" />
   </div>
   <span class="handle"></span>
 </div>
@@ -138,15 +140,6 @@ npm test   # unit tests (node:test)
 npm run lint
 npm run build
 ```
-
-## TODO:
-
-- [x] Add options
-- [x] Scroll block on drag
-- [x] Vertical option
-- [x] Turn this into a custom element
-- [x] Keyboard controls and ARIA (accessibility)
-- [x] Fix flick physics overshooting to extremes
 
 ---
 
