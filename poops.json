@@ -50,9 +50,9 @@
       "repo": "https://github.com/stamat/compare-images-slider",
       "branch": "main",
       "links": [
-        { "title": "npm", "url": "https://www.npmjs.com/package/compare-images-slider" },
-        { "title": "Releases", "url": "https://github.com/stamat/compare-images-slider/releases" }
-      ]
+        { "title": "npm", "url": "https://www.npmjs.com/package/compare-images-slider" }
+      ],
+      "theme": "light"
     }
   },
   "banner": "/* {{ name }} v{{ version }} | {{ homepage }} | {{ license }} License */",
