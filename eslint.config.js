@@ -12,7 +12,7 @@ const browserGlobals = {
 };
 
 export default [
-  { ignores: ['dist/**', 'node_modules/**'] },
+  { ignores: ['dist/**', 'js/**', 'node_modules/**'] },
   js.configs.recommended,
   {
     files: ['src/**/*.js'],

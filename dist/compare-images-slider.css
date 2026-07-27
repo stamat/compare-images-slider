@@ -36,6 +36,9 @@ compare-images-slider .frame {
 compare-images-slider .frame > img {
   height: auto;
   display: block;
+  /* The script sets this image's width to the slider's full width; a page-level
+     `img { max-width: 100% }` would clamp it to the frame and break the reveal. */
+  max-width: none;
 }
 .compare-images-slider .handle,
 compare-images-slider .handle {

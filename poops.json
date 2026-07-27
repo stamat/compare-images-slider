@@ -9,6 +9,16 @@
       "format": "iife",
       "target": "es2019"
     }
+  },
+  {
+    "in": "node_modules/poops-docs-theme/src/prose.ts",
+    "out": "js/prose.js",
+    "options": {
+      "minify": true,
+      "justMinified": true,
+      "format": "iife",
+      "target": "es2019"
+    }
   }],
   "styles": [{
     "in": "src/styles/index.scss",
@@ -20,37 +30,34 @@
     }
   },
   {
-    "in": "src/styles/site.scss",
-    "out": "dist/site.css",
+    "in": "src/styles/prose.scss",
+    "out": "css/prose.css",
     "options": {
-      "sourcemap": true,
       "minify": true,
-      "justMinified": false
+      "justMinified": true
     }
   }],
   "markup": {
     "in": "src/markup",
     "out": ".",
-    "options": {
-      "site": {
-        "title": "Compare Images Slider",
-        "description": "A simple slider for comparing two images visually.",
-        "url": "https://stamat.github.io/compare-images-slider"
-      },
-      "data": [
-        "_data/fonts.yaml"
-      ],
-      "includePaths": [
-        "_layouts",
-        "_partials"
-      ],
-      "timeDateFormat": "MMM D, YYYY"
+    "site": {
+      "title": "Compare Images Slider",
+      "brand": "compare-images-slider",
+      "brandMark": "🖼️",
+      "description": "A simple slider for comparing two images visually.",
+      "lang": "en",
+      "url": "https://stamat.github.io/compare-images-slider",
+      "repo": "https://github.com/stamat/compare-images-slider",
+      "branch": "main",
+      "links": [
+        { "title": "npm", "url": "https://www.npmjs.com/package/compare-images-slider" },
+        { "title": "Releases", "url": "https://github.com/stamat/compare-images-slider/releases" }
+      ]
     }
   },
   "banner": "/* {{ name }} v{{ version }} | {{ homepage }} | {{ license }} License */",
   "serve" : {
-    "port": 4040,
-    "base": "/"
+    "port": 4040
   },
   "livereload": true,
   "watch": [

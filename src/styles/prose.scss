@@ -1,0 +1,14 @@
+// Landing page bundle: the poops-docs-theme prose layout styles plus the slider
+// itself, so the page needs a single stylesheet (the prose layout has no head block
+// to link a second one from).
+@use "poops-docs-theme/scss/prose-only";
+@use "./index";
+
+// .prose gives every img a border-radius; the slider's two images have to match or
+// the reveal edge shows a corner seam.
+.compare-images-slider,
+compare-images-slider {
+  img {
+    border-radius: var(--radius);
+  }
+}

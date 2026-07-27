@@ -1,13 +1,10 @@
 ---
-layout: default
+layout: poops-docs-theme/prose
 ---
-<div class="github-buttons">
-  <a class="github-button" href="https://github.com/stamat/compare-images-slider" data-size="large" aria-label="Download stamat/compare-images-slider on GitHub">View on GitHub</a>
-</div>
 
+# Compare Images Slider
 
-<h1 class="mb-0 mt-lg-128 mt-80">{{ site.title }}</h1>
-<p class="p1 mb-64 mt-16 text-gray">{{ site.description }}</p>
+A simple slider for comparing two images visually.
 
 <div class="js-compare-images-slider compare-images-slider">
   <img width="1680" height="1120" src="https://i.imgur.com/Ju4pEb7.jpeg" loading="lazy" alt="Building, before edit">
@@ -17,9 +14,7 @@ layout: default
   <span class="handle"></span>
 </div>
 
-<p class="text-gray text-italic">Photo by <a href="https://unsplash.com/@necone?utm_content=creditCopyText&utm_medium=referral&utm_source=unsplash">Nenad Radojčić</a> on <a href="https://unsplash.com/photos/gray-concrete-building-under-white-sky-during-daytime-JBm5eNo6B4E?utm_content=creditCopyText&utm_medium=referral&utm_source=unsplash">Unsplash</a>. Drag the handle, or focus it and use the arrow keys.</p>
-
-<div class="markdown-body">
+*Photo by [Nenad Radojčić](https://unsplash.com/@necone?utm_content=creditCopyText&utm_medium=referral&utm_source=unsplash) on [Unsplash](https://unsplash.com/photos/gray-concrete-building-under-white-sky-during-daytime-JBm5eNo6B4E?utm_content=creditCopyText&utm_medium=referral&utm_source=unsplash). Drag the handle, or focus it and use the arrow keys.*
 
 ## Overview
 
@@ -76,8 +71,6 @@ attributes (bare, `data-*`, or kebab-case):
 </compare-images-slider>
 ```
 
-</div>
-
 <compare-images-slider inertia initial-position="35">
   <img width="1680" height="1120" src="https://i.imgur.com/Ju4pEb7.jpeg" loading="lazy" alt="Building, before edit">
   <div class="frame">
@@ -86,9 +79,7 @@ attributes (bare, `data-*`, or kebab-case):
   <span class="handle"></span>
 </compare-images-slider>
 
-<p class="text-gray text-italic">A live <code>&lt;compare-images-slider&gt;</code> element — it upgrades itself on connect, with no JavaScript instantiation.</p>
-
-<div class="markdown-body">
+*A live `<compare-images-slider>` element — it upgrades itself on connect, with no JavaScript instantiation.*
 
 ## Vertical
 
@@ -101,8 +92,6 @@ bottom instead of left and right.
 </div>
 ```
 
-</div>
-
 <div class="js-compare-images-slider compare-images-slider" vertical>
   <img width="1680" height="1120" src="https://i.imgur.com/VWdIu81.jpeg" loading="lazy" alt="Tree, before edit">
   <div class="frame">
@@ -111,9 +100,7 @@ bottom instead of left and right.
   <span class="handle"></span>
 </div>
 
-<p class="text-gray text-italic">Photo by <a href="https://unsplash.com/@valentinsalja?utm_content=creditCopyText&utm_medium=referral&utm_source=unsplash">Valentin Salja</a> on <a href="https://unsplash.com/photos/withered-tree-covered-in-snow-AqcD0Q1JLpE?utm_content=creditCopyText&utm_medium=referral&utm_source=unsplash">Unsplash</a></p>
-
-<div class="markdown-body">
+*Photo by [Valentin Salja](https://unsplash.com/@valentinsalja?utm_content=creditCopyText&utm_medium=referral&utm_source=unsplash) on [Unsplash](https://unsplash.com/photos/withered-tree-covered-in-snow-AqcD0Q1JLpE?utm_content=creditCopyText&utm_medium=referral&utm_source=unsplash).*
 
 ## Options
 
@@ -130,8 +117,9 @@ bottom instead of left and right.
 | `step` | number | `5` | Arrow-key step (percent). |
 | `pageStep` | number | `25` | Page Up/Down step (percent). |
 
-> **Note:** Set the intrinsic dimensions of the images. This eliminates layout
-> shifts and ensures the slider measures correctly on load.
+> [!NOTE]
+> Set the intrinsic dimensions of the images. This eliminates layout shifts and
+> ensures the slider measures correctly on load.
 
 ## Flick physics
 
@@ -167,8 +155,7 @@ compare-images-slider {
 }
 ```
 
-</div>
-
+<script src="{{ relativePathPrefix }}dist/compare-images-slider.min.js"></script>
 <script>
   const sliders = document.querySelectorAll('.js-compare-images-slider');
   const options = {
@@ -187,7 +174,3 @@ compare-images-slider {
     document.addEventListener('CompareImagesSliderLoaded', init);
   }
 </script>
-
-<div class="my-64 text-right text-gray text-italic">
-Made with ❤️ by <a href="https://github.com/stamat">@stamat</a>.
-</div>

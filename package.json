@@ -32,7 +32,7 @@
   "devDependencies": {
     "@eslint/js": "^10.0.1",
     "eslint": "^10.7.0",
-    "poops": "^1.0.18",
-    "sulphuris": "^1.0.5"
+    "poops": "^1.9.1",
+    "poops-docs-theme": "^1.1.1"
   }
 }
