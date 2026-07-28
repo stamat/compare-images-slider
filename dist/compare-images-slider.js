@@ -1,4 +1,4 @@
-/* compare-images-slider v1.0.2 | https://stamat.github.io/compare-images-slider/ | MIT License */
+/* compare-images-slider v1.1.0 | https://stamat.github.io/compare-images-slider/ | MIT License */
 (() => {
   // src/scripts/compare-images-slider.js
   function clamp(value, min, max) {
