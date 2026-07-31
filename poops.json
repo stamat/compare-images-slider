@@ -6,8 +6,7 @@
       "sourcemap": true,
       "minify": true,
       "justMinified": false,
-      "format": "iife",
-      "target": "es2019"
+      "format": "iife"
     }
   },
   {
@@ -16,8 +15,7 @@
     "options": {
       "minify": true,
       "justMinified": true,
-      "format": "iife",
-      "target": "es2019"
+      "format": "iife"
     }
   }],
   "styles": [{
@@ -40,19 +38,21 @@
   "markup": {
     "in": "src/markup",
     "out": ".",
-    "site": {
-      "title": "Compare Images Slider",
-      "brand": "compare-images-slider",
-      "brandMark": "🖼️",
-      "description": "A simple slider for comparing two images visually.",
-      "lang": "en",
-      "url": "https://stamat.github.io/compare-images-slider",
-      "repo": "https://github.com/stamat/compare-images-slider",
-      "branch": "main",
-      "links": [
-        { "title": "npm", "url": "https://www.npmjs.com/package/compare-images-slider" }
-      ],
-      "theme": "light"
+    "options": {
+      "site": {
+        "title": "Compare Images Slider",
+        "brand": "compare-images-slider",
+        "brandMark": "🖼️",
+        "description": "A simple slider for comparing two images visually.",
+        "lang": "en",
+        "url": "https://stamat.github.io/compare-images-slider",
+        "repo": "https://github.com/stamat/compare-images-slider",
+        "branch": "main",
+        "links": [
+          { "title": "npm", "url": "https://www.npmjs.com/package/compare-images-slider" }
+        ],
+        "theme": "light"
+      }
     }
   },
   "banner": "/* {{ name }} v{{ version }} | {{ homepage }} | {{ license }} License */",
