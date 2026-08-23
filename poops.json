@@ -48,13 +48,20 @@
     "in": "src/markup",
     "out": ".",
     "options": {
+      "sitemap": "sitemap.xml",
+      "robots": "robots.txt",
+      "llms": {
+        "out": "llms.txt",
+        "full": true
+      },
       "site": {
         "title": "Compare Images Slider",
         "brand": "compare-images-slider",
         "brandMark": "🖼️",
-        "description": "A simple slider for comparing two images visually.",
+        "description": "A dependency-free before/after image comparison slider \u2014 a compare-images-slider custom element or a class you instantiate, with no shadow DOM to fight.",
+        "image": "img/og.jpg",
         "lang": "en",
-        "url": "https://stamat.github.io/compare-images-slider",
+        "url": "https://stamat.github.io/compare-images-slider/",
         "repo": "https://github.com/stamat/compare-images-slider",
         "branch": "main",
         "iconLinks": [

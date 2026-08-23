@@ -1,0 +1,7 @@
+# Compare Images Slider
+
+> A dependency-free before/after image comparison slider — a compare-images-slider custom element or a class you instantiate, with no shadow DOM to fight.
+
+## Pages
+
+- [Before/after image comparison web component](https://stamat.github.io/compare-images-slider/)

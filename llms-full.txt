@@ -1,21 +1,13 @@
----
-layout: poops-docs-theme/prose
-title: Before/after image comparison web component
-jsonld:
-  "@type": SoftwareSourceCode
-  name: compare-images-slider
-  codeRepository: https://github.com/stamat/compare-images-slider
-  programmingLanguage: JavaScript
-  runtimePlatform: Browser
-  license: https://opensource.org/licenses/MIT
-  author:
-    "@type": Person
-    name: Nikola Stamatovic
-og:
-  "og:image:alt": The compare-images-slider wordmark over a split photo of a concrete monument, one half flat orange and purple, the other half as shot
+# Full Documentation Archive for Compare Images Slider
+
+This file contains the complete Markdown documentation for Compare Images Slider.
+
+> A dependency-free before/after image comparison slider — a compare-images-slider custom element or a class you instantiate, with no shadow DOM to fight.
+
 ---
 
 # Compare Images Slider
+URL: https://stamat.github.io/compare-images-slider/
 
 A dependency-free before/after image comparison slider — a custom element or a
 class you instantiate, with no shadow DOM to fight.
@@ -162,14 +154,10 @@ the [manifest](https://github.com/webcomponents/custom-elements-manifest) this p
 ships. Turning one rewrites the attribute in the code, so what you read is always what
 is running.
 
-<link rel="stylesheet" href="{{ relativePathPrefix }}css/code-preview.min.css">
-<script src="{{ relativePathPrefix }}js/code-preview-hljs.min.js" defer></script>
-<script src="{{ relativePathPrefix }}js/code-preview-options.min.js" defer></script>
-
 <!-- The frame's padding is where the handle knob's overhanging half lands at either
 extreme; `$frame-pad` in `src/styles/prose.scss` is the same 6%, and the frame's height
 is derived from it. Change one and change the other, or the sample scrolls inside. -->
-<code-preview css="{{ relativePathPrefix }}dist/compare-images-slider.min.css" js="{{ relativePathPrefix }}dist/compare-images-slider.min.js" manifest="{{ relativePathPrefix }}dist/custom-elements.json" theme-attribute="data-theme" head="&lt;style&gt;body{margin:0;padding:6%}&lt;/style&gt;">
+<code-preview css="dist/compare-images-slider.min.css" js="dist/compare-images-slider.min.js" manifest="dist/custom-elements.json" theme-attribute="data-theme" head="&lt;style&gt;body{margin:0;padding:6%}&lt;/style&gt;">
 
 ```html
 <compare-images-slider inertia initial-position="35">
@@ -267,23 +255,3 @@ because every rule in the theme sits behind `:has(.handle-knob)`.
 >   --compare-images-slider-handle-fg: var(--fg);
 > }
 > ```
-
-<script src="{{ relativePathPrefix }}dist/compare-images-slider.min.js"></script>
-<script>
-  const sliders = document.querySelectorAll('.js-compare-images-slider');
-  const options = {
-    inertia: true
-  }
-
-  function init() {
-    for (let i = 0; i < sliders.length; i++) {
-      new CompareImagesSlider(sliders[i], options);
-    }
-  }
-
-  if (window.CompareImagesSlider) {
-    init();
-  } else {
-    document.addEventListener('CompareImagesSliderLoaded', init);
-  }
-</script>

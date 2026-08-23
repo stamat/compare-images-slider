@@ -27,13 +27,34 @@ script/test      # run the tests
 script/lint      # run eslint
 ```
 
-`src/` is the source of truth. `dist/`, `index.html`, `css/` and `js/` are all
-build output and are committed — so a change to any of them made by hand is a
-change the next `script/build` throws away. `src/markup/index.md` is the docs
-page; `src/styles/prose.scss` is what that page wears, and it is not part of
-what the package ships. `src/styles/theme.scss` is — it is the optional look
+`src/` is the source of truth. `dist/`, `index.html`, `css/`, `js/`,
+`sitemap.xml`, `robots.txt`, `llms.txt` and `llms-full.txt` are all build output
+and are committed — so a change to any of them made by hand is a change the
+next `script/build` throws away. `src/markup/index.md` is the docs page;
+`src/styles/prose.scss` is what that page wears, and it is not part of what the
+package ships. `src/styles/theme.scss` is — it is the optional look
 for the handle, shipped as `dist/compare-images-slider-theme.css`, and the docs
 page loads it through `prose.scss` rather than keeping a copy of it.
+
+`img/og.jpg` is the one committed asset the build does not produce. It is the
+social card behind `og:image`: the README's key art
+(<https://i.imgur.com/e9m4QaU.jpeg>, 1200×800) recomposed to the 1200×630 that
+social cards are cropped to. Bottom-aligned, because a centred crop takes the
+wordmark off the bottom — and `sips --cropOffset` silently drops the crop rather
+than honouring it, so the recomposition goes through headless Chrome instead
+(macOS paths below):
+
+```bash
+curl -sSLo key-art.jpg https://i.imgur.com/e9m4QaU.jpeg
+printf '%s' '<style>html,body{margin:0}img{display:block;width:1200px;height:630px;object-fit:cover;object-position:bottom}</style><img src="key-art.jpg">' > card.html
+"/Applications/Google Chrome.app/Contents/MacOS/Google Chrome" --headless \
+  --hide-scrollbars --window-size=1200,630 --virtual-time-budget=4000 \
+  --screenshot=card.png "file://$PWD/card.html"
+sips -s format jpeg -s formatOptions 82 card.png --out img/og.jpg
+```
+
+Update the `og:image:alt` line in the front matter of `src/markup/index.md` if
+what the card shows has changed.
 
 `dist/custom-elements.json` is generated too, by `cem analyze` from the JSDoc
 block on `CompareImagesSliderElement`. That block is where an attribute or a

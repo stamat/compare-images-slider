@@ -33,6 +33,29 @@ error that is now thrown, output that moved.
 
 ## [Unreleased]
 
+### Added
+
+- **`llms.txt`, `llms-full.txt`, `sitemap.xml` and `robots.txt`.** poops generates
+  all four from the compiled pages and none of them were switched on, so a crawler
+  or a model arriving at the site had nothing but the page to work from.
+  `llms-full.txt` is the whole docs page as Markdown in one file — the cheap way
+  for a model to read it end to end instead of parsing the rendered HTML.
+
+- **A social card, `img/og.jpg`.** `twitter:card` was `summary` with no image
+  behind it, so a shared link was a text row. The card is the README’s key art
+  recomposed to 1200×630 and served from the site rather than hotlinked, and
+  `og:image:alt` describes it for anyone who cannot see it.
+
+### Changed
+
+- **The page names what it is.** `<title>` was the bare brand, and the tagline
+  under the `h1` — which is also the meta description, the `og:description` and
+  the JSON-LD description — said "a simple slider for comparing two images
+  visually", which matches nothing anyone would type looking for one. Both say
+  before/after image comparison web component now. The JSON-LD block was a generic
+  `WebPage`; it is `SoftwareSourceCode`, carrying the repository, the licence, the
+  language and the runtime platform, because that is what the page documents.
+
 ## [2.0.0] - 2026-08-23
 
 ### Added
