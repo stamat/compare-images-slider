@@ -42,6 +42,7 @@ compare-images-slider {
       width: 24px;
       height: 24px;
       fill: currentColor;
+      margin-top: 1px; // optical centering for the ↔ glyph, which is a bit high in its box
     }
   }
 
