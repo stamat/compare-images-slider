@@ -6,6 +6,24 @@
   "main": "src/scripts/compare-images-slider.js",
   "style": "src/styles/index.scss",
   "customElements": "dist/custom-elements.json",
+  "exports": {
+    ".": "./src/scripts/compare-images-slider.js",
+    "./style.scss": "./src/styles/index.scss",
+    "./style.css": "./dist/compare-images-slider.css",
+    "./theme.scss": "./src/styles/theme.scss",
+    "./theme.css": "./dist/compare-images-slider-theme.css",
+    "./custom-elements.json": "./dist/custom-elements.json",
+    "./styles/*": "./src/styles/*",
+    "./dist/*": "./dist/*",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist",
+    "src/scripts",
+    "src/styles/index.scss",
+    "src/styles/theme.scss",
+    "CHANGELOG.md"
+  ],
   "homepage": "https://stamat.github.io/compare-images-slider/",
   "repository": {
     "type": "git",

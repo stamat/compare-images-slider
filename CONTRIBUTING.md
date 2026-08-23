@@ -31,7 +31,9 @@ script/lint      # run eslint
 build output and are committed — so a change to any of them made by hand is a
 change the next `script/build` throws away. `src/markup/index.md` is the docs
 page; `src/styles/prose.scss` is what that page wears, and it is not part of
-what the package ships.
+what the package ships. `src/styles/theme.scss` is — it is the optional look
+for the handle, shipped as `dist/compare-images-slider-theme.css`, and the docs
+page loads it through `prose.scss` rather than keeping a copy of it.
 
 `dist/custom-elements.json` is generated too, by `cem analyze` from the JSDoc
 block on `CompareImagesSliderElement`. That block is where an attribute or a

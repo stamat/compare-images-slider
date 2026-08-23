@@ -28,6 +28,15 @@
     }
   },
   {
+    "in": "src/styles/theme.scss",
+    "out": "dist/compare-images-slider-theme.css",
+    "options": {
+      "sourcemap": true,
+      "minify": true,
+      "justMinified": false
+    }
+  },
+  {
     "in": "src/styles/prose.scss",
     "out": "css/prose.css",
     "options": {

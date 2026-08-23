@@ -164,8 +164,9 @@ is running.
 </code-preview>
 
 The frame loads only `compare-images-slider.min.css`, so the handle there is the
-library's own `↔` glyph rather than the svg knob this page draws over it — that knob is
-markup and CSS from the demo, not something the package ships.
+library's own `↔` glyph rather than the svg knob this page draws over it. That knob is
+the [optional theme](#optional-theme) plus a span in this page's markup — both shipped,
+neither loaded in the frame.
 
 ## Flick physics
 
@@ -200,6 +201,52 @@ compare-images-slider {
   --compare-images-slider-initial-position: 35%;
 }
 ```
+
+### Optional theme
+
+`compare-images-slider.css` is the slider working — the frame, the handle, the reveal.
+The handle it draws is an `↔` glyph in a white circle, and white on black is all it can
+be: the stylesheet knows nothing about the page it landed on.
+
+The look done properly is a second file, because a light-DOM element cannot scope a look
+away from a page that never asked for one:
+
+```html
+<link rel="stylesheet" href="https://unpkg.com/compare-images-slider/dist/compare-images-slider-theme.min.css">
+```
+
+```scss
+@use "compare-images-slider/src/styles/theme";
+```
+
+It paints the handle in `Canvas`/`CanvasText`, the page's own pair — so the knob inverts
+with a dark page, and is repainted rather than lost in forced-colors mode — and it takes
+an icon of your own from a `.handle-knob` span inside the handle, which is the knob this
+page wears:
+
+```html
+<span class="handle">
+  <span class="handle-knob">
+    <svg viewBox="0 0 16 16" width="16" height="16"><!-- your icon --></svg>
+  </span>
+</span>
+```
+
+The knob is markup, so the icon is yours; a handle without one keeps the `↔` glyph,
+because every rule in the theme sits behind `:has(.handle-knob)`.
+
+> [!NOTE]
+> `Canvas` reads the page's `color-scheme`. A page that themes in custom properties
+> without declaring one keeps a light `Canvas` when it goes dark, and the knob goes with
+> it. Point the two properties at that page's own tokens instead — two lines, and what
+> this page does:
+>
+> ```css
+> compare-images-slider {
+>   --compare-images-slider-handle-bg: var(--bg);
+>   --compare-images-slider-handle-fg: var(--fg);
+> }
+> ```
 
 <script src="{{ relativePathPrefix }}dist/compare-images-slider.min.js"></script>
 <script>

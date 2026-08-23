@@ -221,8 +221,9 @@ is running.</p>
   <span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;handle&quot;</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span>
 <span class="hljs-tag">&lt;/<span class="hljs-name">compare-images-slider</span>&gt;</span></code></pre>
 </code-preview><p>The frame loads only <code>compare-images-slider.min.css</code>, so the handle there is the
-library&#39;s own <code>↔</code> glyph rather than the svg knob this page draws over it — that knob is
-markup and CSS from the demo, not something the package ships.</p>
+library&#39;s own <code>↔</code> glyph rather than the svg knob this page draws over it. That knob is
+the <a href="#optional-theme">optional theme</a> plus a span in this page&#39;s markup — both shipped,
+neither loaded in the frame.</p>
 <h2 id="flick-physics">Flick physics<a class="heading-anchor" href="#flick-physics" tabindex="-1" aria-hidden="true"></a></h2>
 <p>Quick flicks used to shoot straight to the edges. Velocity is now sampled over a
 short time window instead of a single frame and capped, so a fast flick carries
@@ -268,6 +269,36 @@ reveal position is exposed as a CSS custom property:</p>
 <pre><code class="hljs language-css">compare-images-slider {
   <span class="hljs-attr">--compare-images-slider-initial-position</span>: <span class="hljs-number">35%</span>;
 }</code></pre>
+<h3 id="optional-theme">Optional theme<a class="heading-anchor" href="#optional-theme" tabindex="-1" aria-hidden="true"></a></h3>
+<p><code>compare-images-slider.css</code> is the slider working — the frame, the handle, the reveal.
+The handle it draws is an <code>↔</code> glyph in a white circle, and white on black is all it can
+be: the stylesheet knows nothing about the page it landed on.</p>
+<p>The look done properly is a second file, because a light-DOM element cannot scope a look
+away from a page that never asked for one:</p>
+<pre><code class="hljs language-html"><span class="hljs-tag">&lt;<span class="hljs-name">link</span> <span class="hljs-attr">rel</span>=<span class="hljs-string">&quot;stylesheet&quot;</span> <span class="hljs-attr">href</span>=<span class="hljs-string">&quot;https://unpkg.com/compare-images-slider/dist/compare-images-slider-theme.min.css&quot;</span>&gt;</span></code></pre>
+<pre><code class="hljs language-scss"><span class="hljs-keyword">@use</span> <span class="hljs-string">&quot;compare-images-slider/src/styles/theme&quot;</span>;</code></pre>
+<p>It paints the handle in <code>Canvas</code>/<code>CanvasText</code>, the page&#39;s own pair — so the knob inverts
+with a dark page, and is repainted rather than lost in forced-colors mode — and it takes
+an icon of your own from a <code>.handle-knob</code> span inside the handle, which is the knob this
+page wears:</p>
+<pre><code class="hljs language-html"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;handle&quot;</span>&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;handle-knob&quot;</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">svg</span> <span class="hljs-attr">viewBox</span>=<span class="hljs-string">&quot;0 0 16 16&quot;</span> <span class="hljs-attr">width</span>=<span class="hljs-string">&quot;16&quot;</span> <span class="hljs-attr">height</span>=<span class="hljs-string">&quot;16&quot;</span>&gt;</span><span class="hljs-comment">&lt;!-- your icon --&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">svg</span>&gt;</span>
+  <span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span>
+<span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></code></pre>
+<p>The knob is markup, so the icon is yours; a handle without one keeps the <code>↔</code> glyph,
+because every rule in the theme sits behind <code>:has(.handle-knob)</code>.</p>
+<div class="marked-github-alert marked-github-alert-note">
+<p class="marked-github-alert-title"><svg version="1.1" width="16" height="16" viewBox="0 0 16 16" class="octicon octicon-info marked-github-alert-icon" aria-hidden="true" data-component="Octicon"><path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8Zm8-6.5a6.5 6.5 0 1 0 0 13 6.5 6.5 0 0 0 0-13ZM6.5 7.75A.75.75 0 0 1 7.25 7h1a.75.75 0 0 1 .75.75v2.75h.25a.75.75 0 0 1 0 1.5h-2a.75.75 0 0 1 0-1.5h.25v-2h-.25a.75.75 0 0 1-.75-.75ZM8 6a1 1 0 1 1 0-2 1 1 0 0 1 0 2Z"></path></svg><span>Note</span></p>
+<p><code>Canvas</code> reads the page&#39;s <code>color-scheme</code>. A page that themes in custom properties
+without declaring one keeps a light <code>Canvas</code> when it goes dark, and the knob goes with
+it. Point the two properties at that page&#39;s own tokens instead — two lines, and what
+this page does:</p>
+<pre><code class="hljs language-css">compare-images-slider {
+  <span class="hljs-attr">--compare-images-slider-handle-bg</span>: <span class="hljs-built_in">var</span>(--bg);
+  <span class="hljs-attr">--compare-images-slider-handle-fg</span>: <span class="hljs-built_in">var</span>(--fg);
+}</code></pre>
+</div>
 <script src="./dist/compare-images-slider.min.js"></script>
 <script>
   const sliders = document.querySelectorAll('.js-compare-images-slider');

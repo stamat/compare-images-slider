@@ -1,0 +1,62 @@
+// The optional look for the handle: a round knob carrying an icon of your own, painted
+// in the page's palette rather than the black on white `index.scss` falls back to. It is
+// not in that stylesheet and not in the bundle, because a light-DOM element cannot scope
+// a look away from a page that never asked for one. Import this when you want it.
+//
+// The knob is markup - `<span class="handle-knob">` inside the handle, with your svg
+// inside that - so the icon stays yours. A handle without one keeps the `↔` glyph the
+// base stylesheet draws, which is why every rule here is behind `:has(.handle-knob)`.
+
+.compare-images-slider,
+compare-images-slider {
+  // The system pair, so the knob inverts with the page instead of staying white on a
+  // dark one, and is repainted rather than lost in forced-colors mode. It reads the
+  // page's `color-scheme`, so a page that themes in custom properties without also
+  // declaring one keeps a light `Canvas` when it goes dark - point these two at that
+  // page's own tokens instead, which is one line and what the docs page does.
+  --compare-images-slider-handle-bg: Canvas;
+  --compare-images-slider-handle-fg: CanvasText;
+
+  .handle:has(.handle-knob)::after {
+    display: none;
+  }
+
+  .handle-knob {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: var(--compare-images-slider-handle-size);
+    height: var(--compare-images-slider-handle-size);
+    transform: translate3d(-50%, -50%, 0);
+
+    background: var(--compare-images-slider-handle-bg);
+    color: var(--compare-images-slider-handle-fg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    // Round at whatever size the property is set to, where the glyph's own radius is a
+    // fixed 21px that stops being a circle the moment the handle is resized.
+    border-radius: 50%;
+
+    svg {
+      width: 24px;
+      height: 24px;
+      fill: currentColor;
+    }
+  }
+
+  // The base stylesheet outlines the glyph, and the glyph is gone here - without this
+  // the handle keeps focus and shows nothing for it.
+  .handle:focus-visible .handle-knob {
+    outline: 3px solid Highlight;
+    outline: 3px solid -webkit-focus-ring-color;
+    outline-offset: 2px;
+  }
+
+  &[data-vertical],
+  &[vertical] {
+    .handle-knob {
+      transform: translate3d(-50%, -50%, 0) rotate(90deg);
+    }
+  }
+}

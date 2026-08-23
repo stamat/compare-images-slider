@@ -1,50 +1,21 @@
-// Landing page bundle: the poops-docs-theme prose layout styles plus the slider
-// itself, so the page needs a single stylesheet (the prose layout has no head block
-// to link a second one from).
+// Landing page bundle: the poops-docs-theme prose layout styles plus the slider and its
+// optional theme, so the page needs a single stylesheet (the prose layout has no head
+// block to link a second one from).
 @use "poops-docs-theme/scss/prose-only";
 @use "./index";
+@use "./theme";
 
-// .prose gives every img a border-radius; the slider's two images have to match or
-// the reveal edge shows a corner seam.
 .compare-images-slider,
 compare-images-slider {
-  img {
-    border-radius: var(--radius);
-  }
-
+  // The theme's `Canvas` is the UA's idea of the page background, which is near the docs
+  // theme's own but not it - a knob a shade off the surrounding page is visible at the
+  // edge. The tokens are the page's actual pair, and they swap on `[data-theme]` too.
   --compare-images-slider-handle-bg: var(--bg);
   --compare-images-slider-handle-fg: var(--fg);
 
-  .handle::after {
-    display: none;
+  // .prose gives every img a border-radius; the slider's two images have to match or
+  // the reveal edge shows a corner seam.
+  img {
+    border-radius: var(--radius);
   }
-
-  .handle-knob {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: var(--compare-images-slider-handle-size);
-    height: var(--compare-images-slider-handle-size);
-    transform: translate3d(-50%, -50%, 0);
-
-    background: var(--compare-images-slider-handle-bg);
-    color: var(--compare-images-slider-handle-fg);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 21px;
-
-    svg {
-      width: 24px;
-      height: 24px;
-      fill: currentColor;
-    }
-  }
-
-    &[data-vertical],
-    &[vertical] {
-      .handle-knob {
-        transform: translate3d(-50%, -50%, 0) rotate(90deg);
-      }
-    }
 }

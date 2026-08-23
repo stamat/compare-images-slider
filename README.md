@@ -68,7 +68,61 @@ document.addEventListener("CompareImagesSliderLoaded", function () {
 ```
 
 ```scss
-@import "node_modules/compare-images-slider/src/styles/index.scss";
+@use "compare-images-slider/src/styles/index";
+```
+
+That is a plain load path into `node_modules`, not the package's `exports` map —
+Sass resolves the file, not the subpath. Bundlers and anything that reads
+`exports` get the same two stylesheets as `compare-images-slider/style.css` and
+`compare-images-slider/theme.css`.
+
+## Optional theme
+
+The stylesheet above is the slider working: the frame, the handle, the reveal.
+It draws the handle as an `↔` glyph in a white circle, which is a look, and a
+look that has to be black on white because it knows nothing about the page it
+landed on.
+
+The theme is that look done properly, and it is a separate file because a
+light-DOM element cannot scope a look away from a page that never asked for one:
+
+```html
+<link
+  rel="stylesheet"
+  href="https://unpkg.com/compare-images-slider/dist/compare-images-slider-theme.min.css"
+/>
+```
+
+```scss
+@use "compare-images-slider/src/styles/theme";
+```
+
+It paints the handle in `Canvas`/`CanvasText` — the page's own pair, so the knob
+inverts with a dark page and is repainted rather than lost in forced-colors mode
+— and it picks up an icon of your own from a `.handle-knob` span inside the
+handle:
+
+```html
+<span class="handle">
+  <span class="handle-knob">
+    <svg viewBox="0 0 16 16" width="16" height="16"><!-- your icon --></svg>
+  </span>
+</span>
+```
+
+The knob is markup, so the icon is yours. A handle without one keeps the `↔`
+glyph: every rule in the theme sits behind `:has(.handle-knob)`.
+
+**One caveat:** `Canvas` reads the page's `color-scheme`. A page that themes in
+custom properties without also declaring one keeps a light `Canvas` when it goes
+dark, and the knob goes with it. Two lines fix it, and that is what this repo's
+own docs page does:
+
+```css
+compare-images-slider {
+  --compare-images-slider-handle-bg: var(--your-bg);
+  --compare-images-slider-handle-fg: var(--your-fg);
+}
 ```
 
 ## Custom element
