@@ -372,6 +372,27 @@ const ElementBase = typeof HTMLElement !== 'undefined' ? HTMLElement : class {};
 /**
  * `<compare-images-slider>` custom element. Uses light DOM (no shadow root) so
  * the images, frame and handle stay fully stylable by the page author.
+ *
+ * Every attribute below is also readable as `data-*` or passed to the
+ * `CompareImagesSlider` constructor in its camelCase form — `readOptionsFromElement`
+ * is what reconciles the three, and `data-*` wins where both are written.
+ *
+ * @attr {boolean} [inertia=false] - Keep gliding after a flick.
+ * @attr {boolean} [bounce=false] - Bounce off the edges while under inertia. Does nothing without `inertia`.
+ * @attr {boolean} [vertical=false] - Split top and bottom instead of left and right.
+ * @attr {boolean} [only-handle=true] - Only the handle starts a drag. Off, a press anywhere on the images does.
+ * @attr {number} [friction=0.9] - Inertia decay per frame, 0-1. Applied frame-rate independently, so the feel holds across displays.
+ * @attr {number} [bounce-factor=0.1] - Energy kept on a bounce, 0-1.
+ * @attr {number} [max-flick-velocity=0.5] - Cap on flick velocity, percent per millisecond.
+ * @attr {number} [initial-position=50] - Starting position, 0-100. Paint it with `--compare-images-slider-initial-position` too, or the frame is at 50% until the script runs.
+ * @attr {number} [step=5] - Arrow-key step, in percent.
+ * @attr {number} [page-step=25] - Page Up/Down step, in percent.
+ *
+ * @cssprop {<length-percentage>} [--compare-images-slider-initial-position=50%] - Where the reveal edge sits before the script has run. Declared on `:root`, so it is the pre-upgrade paint and not the live position.
+ * @cssprop {<color>} [--compare-images-slider-handle-bg=#fff] - Handle fill.
+ * @cssprop {<color>} [--compare-images-slider-handle-fg=#000] - Handle foreground — the knob's arrows.
+ * @cssprop {<length>} [--compare-images-slider-handle-size=42px] - Handle diameter.
+ * @cssprop {<length>} [--compare-images-slider-handle-font-size=28px] - Handle glyph size, for a handle drawn with text rather than the svg knob.
  */
 export class CompareImagesSliderElement extends ElementBase {
   connectedCallback() {

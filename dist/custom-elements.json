@@ -1,0 +1,559 @@
+{
+  "schemaVersion": "1.0.0",
+  "readme": "",
+  "modules": [
+    {
+      "kind": "javascript-module",
+      "path": "src/scripts/compare-images-slider.js",
+      "declarations": [
+        {
+          "kind": "function",
+          "name": "clamp",
+          "parameters": [
+            {
+              "name": "value",
+              "type": {
+                "text": "number"
+              }
+            },
+            {
+              "name": "min",
+              "type": {
+                "text": "number"
+              }
+            },
+            {
+              "name": "max",
+              "type": {
+                "text": "number"
+              }
+            }
+          ],
+          "description": "Clamp a number to an inclusive range.",
+          "return": {
+            "type": {
+              "text": "number"
+            }
+          }
+        },
+        {
+          "kind": "function",
+          "name": "sampleVelocity",
+          "parameters": [
+            {
+              "name": "samples",
+              "description": "Ordered pointer samples.",
+              "type": {
+                "text": "Array<{ t: number, pos: number }>"
+              }
+            },
+            {
+              "name": "windowMs",
+              "default": "80",
+              "description": "Look-back window in milliseconds.",
+              "optional": true,
+              "type": {
+                "text": "number"
+              }
+            }
+          ],
+          "description": "Compute a flick velocity (percent per millisecond) from recent pointer samples.\n\nThe velocity is measured over a time window rather than a single frame delta.\nA single-frame delta spikes on quick flicks - one large jump between the last\ntwo move events makes inertia shoot straight to an extreme. Averaging the\ndisplacement over the last `windowMs` of movement smooths those spikes out.",
+          "return": {
+            "type": {
+              "text": "number"
+            }
+          }
+        },
+        {
+          "kind": "function",
+          "name": "capVelocity",
+          "parameters": [
+            {
+              "name": "velocity",
+              "type": {
+                "text": "number"
+              }
+            },
+            {
+              "name": "max",
+              "description": "Maximum absolute velocity.",
+              "type": {
+                "text": "number"
+              }
+            }
+          ],
+          "description": "Cap the magnitude of a velocity while preserving its sign.\nPrevents a hard flick from carrying the handle to an extreme every time.",
+          "return": {
+            "type": {
+              "text": "number"
+            }
+          }
+        },
+        {
+          "kind": "function",
+          "name": "keyboardStep",
+          "parameters": [
+            {
+              "name": "current",
+              "description": "Current position (0-100).",
+              "type": {
+                "text": "number"
+              }
+            },
+            {
+              "name": "key",
+              "description": "KeyboardEvent.key value.",
+              "type": {
+                "text": "string"
+              }
+            },
+            {
+              "name": "step",
+              "description": "Arrow-key step in percent.",
+              "type": {
+                "text": "number"
+              }
+            },
+            {
+              "name": "pageStep",
+              "description": "Page-key step in percent.",
+              "type": {
+                "text": "number"
+              }
+            }
+          ],
+          "description": "Compute the next position for a discrete keyboard action.",
+          "return": {
+            "type": {
+              "text": "number|null"
+            }
+          }
+        },
+        {
+          "kind": "class",
+          "description": "",
+          "name": "CompareImagesSlider",
+          "members": [
+            {
+              "kind": "method",
+              "name": "setupAccessibility",
+              "description": "Wire up the W3C APG Window Splitter pattern on the handle:\na focusable role=\"separator\" reporting its position via ARIA."
+            },
+            {
+              "kind": "method",
+              "name": "onKeyDown",
+              "parameters": [
+                {
+                  "name": "e"
+                }
+              ]
+            },
+            {
+              "kind": "method",
+              "name": "onDoubleClick",
+              "description": "Double-click the handle to snap to the nearest extreme (0 or 100)."
+            },
+            {
+              "kind": "method",
+              "name": "checkAndApplyAttribute",
+              "parameters": [
+                {
+                  "name": "attribute"
+                }
+              ]
+            },
+            {
+              "kind": "method",
+              "name": "checkAndApplyNumberAttribute",
+              "parameters": [
+                {
+                  "name": "optionKey"
+                },
+                {
+                  "name": "attribute"
+                }
+              ],
+              "description": "Read a numeric option from a `data-*` or bare attribute if present."
+            },
+            {
+              "kind": "method",
+              "name": "setupSecondImage"
+            },
+            {
+              "kind": "method",
+              "name": "positionFromEvent",
+              "parameters": [
+                {
+                  "name": "e"
+                }
+              ],
+              "description": "Convert a client coordinate to a 0-100 position along the slider axis."
+            },
+            {
+              "kind": "method",
+              "name": "onPointerDown",
+              "parameters": [
+                {
+                  "name": "e"
+                }
+              ]
+            },
+            {
+              "kind": "method",
+              "name": "onPointerMove",
+              "parameters": [
+                {
+                  "name": "e"
+                }
+              ]
+            },
+            {
+              "kind": "method",
+              "name": "onPointerUp",
+              "parameters": [
+                {
+                  "name": "e"
+                }
+              ]
+            },
+            {
+              "kind": "method",
+              "name": "pushSample",
+              "parameters": [
+                {
+                  "name": "pos"
+                }
+              ]
+            },
+            {
+              "kind": "method",
+              "name": "startInertia"
+            },
+            {
+              "kind": "method",
+              "name": "stopInertia"
+            },
+            {
+              "kind": "method",
+              "name": "setPosition",
+              "parameters": [
+                {
+                  "name": "pct"
+                }
+              ],
+              "description": "Set the position (0-100), clamped, and re-render."
+            },
+            {
+              "kind": "method",
+              "name": "render"
+            },
+            {
+              "kind": "method",
+              "name": "destroy"
+            },
+            {
+              "kind": "field",
+              "name": "element",
+              "default": "element"
+            },
+            {
+              "kind": "field",
+              "name": "frame"
+            },
+            {
+              "kind": "field",
+              "name": "second"
+            },
+            {
+              "kind": "field",
+              "name": "handle"
+            },
+            {
+              "kind": "field",
+              "name": "options"
+            },
+            {
+              "kind": "field",
+              "name": "position"
+            },
+            {
+              "kind": "field",
+              "name": "dragging",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false"
+            },
+            {
+              "kind": "field",
+              "name": "pointerId",
+              "type": {
+                "text": "null"
+              },
+              "default": "null"
+            },
+            {
+              "kind": "field",
+              "name": "samples",
+              "type": {
+                "text": "array"
+              },
+              "default": "[]"
+            },
+            {
+              "kind": "field",
+              "name": "velocity",
+              "type": {
+                "text": "number"
+              },
+              "default": "0"
+            },
+            {
+              "kind": "field",
+              "name": "inertiaId",
+              "type": {
+                "text": "null"
+              },
+              "default": "null"
+            },
+            {
+              "kind": "field",
+              "name": "lastFrameTime",
+              "type": {
+                "text": "number"
+              },
+              "default": "0"
+            },
+            {
+              "kind": "field",
+              "name": "onResize"
+            },
+            {
+              "kind": "field",
+              "name": "dragTarget"
+            }
+          ]
+        },
+        {
+          "kind": "function",
+          "name": "readOptionsFromElement",
+          "parameters": [
+            {
+              "name": "el",
+              "type": {
+                "text": "HTMLElement"
+              }
+            }
+          ],
+          "description": "Read slider options from an element's attributes (bare, `data-*` or kebab).",
+          "return": {
+            "type": {
+              "text": "Object"
+            }
+          }
+        },
+        {
+          "kind": "class",
+          "description": "`<compare-images-slider>` custom element. Uses light DOM (no shadow root) so\nthe images, frame and handle stay fully stylable by the page author.\n\nEvery attribute below is also readable as `data-*` or passed to the\n`CompareImagesSlider` constructor in its camelCase form — `readOptionsFromElement`\nis what reconciles the three, and `data-*` wins where both are written.",
+          "name": "CompareImagesSliderElement",
+          "cssProperties": [
+            {
+              "type": {
+                "text": "<length-percentage>"
+              },
+              "description": "Where the reveal edge sits before the script has run. Declared on `:root`, so it is the pre-upgrade paint and not the live position.",
+              "name": "--compare-images-slider-initial-position",
+              "default": "50%"
+            },
+            {
+              "type": {
+                "text": "<color>"
+              },
+              "description": "Handle fill.",
+              "name": "--compare-images-slider-handle-bg",
+              "default": "#fff"
+            },
+            {
+              "type": {
+                "text": "<color>"
+              },
+              "description": "Handle foreground — the knob's arrows.",
+              "name": "--compare-images-slider-handle-fg",
+              "default": "#000"
+            },
+            {
+              "type": {
+                "text": "<length>"
+              },
+              "description": "Handle diameter.",
+              "name": "--compare-images-slider-handle-size",
+              "default": "42px"
+            },
+            {
+              "type": {
+                "text": "<length>"
+              },
+              "description": "Handle glyph size, for a handle drawn with text rather than the svg knob.",
+              "name": "--compare-images-slider-handle-font-size",
+              "default": "28px"
+            }
+          ],
+          "attributes": [
+            {
+              "type": {
+                "text": "boolean"
+              },
+              "description": "Keep gliding after a flick.",
+              "name": "inertia",
+              "default": "false"
+            },
+            {
+              "type": {
+                "text": "boolean"
+              },
+              "description": "Bounce off the edges while under inertia. Does nothing without `inertia`.",
+              "name": "bounce",
+              "default": "false"
+            },
+            {
+              "type": {
+                "text": "boolean"
+              },
+              "description": "Split top and bottom instead of left and right.",
+              "name": "vertical",
+              "default": "false"
+            },
+            {
+              "type": {
+                "text": "boolean"
+              },
+              "description": "Only the handle starts a drag. Off, a press anywhere on the images does.",
+              "name": "only-handle",
+              "default": "true"
+            },
+            {
+              "type": {
+                "text": "number"
+              },
+              "description": "Inertia decay per frame, 0-1. Applied frame-rate independently, so the feel holds across displays.",
+              "name": "friction",
+              "default": "0.9"
+            },
+            {
+              "type": {
+                "text": "number"
+              },
+              "description": "Energy kept on a bounce, 0-1.",
+              "name": "bounce-factor",
+              "default": "0.1"
+            },
+            {
+              "type": {
+                "text": "number"
+              },
+              "description": "Cap on flick velocity, percent per millisecond.",
+              "name": "max-flick-velocity",
+              "default": "0.5"
+            },
+            {
+              "type": {
+                "text": "number"
+              },
+              "description": "Starting position, 0-100. Paint it with `--compare-images-slider-initial-position` too, or the frame is at 50% until the script runs.",
+              "name": "initial-position",
+              "default": "50"
+            },
+            {
+              "type": {
+                "text": "number"
+              },
+              "description": "Arrow-key step, in percent.",
+              "name": "step",
+              "default": "5"
+            },
+            {
+              "type": {
+                "text": "number"
+              },
+              "description": "Page Up/Down step, in percent.",
+              "name": "page-step",
+              "default": "25"
+            }
+          ],
+          "superclass": {
+            "name": "ElementBase",
+            "module": "src/scripts/compare-images-slider.js"
+          },
+          "tagName": "compare-images-slider",
+          "customElement": true
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "clamp",
+          "declaration": {
+            "name": "clamp",
+            "module": "src/scripts/compare-images-slider.js"
+          }
+        },
+        {
+          "kind": "js",
+          "name": "sampleVelocity",
+          "declaration": {
+            "name": "sampleVelocity",
+            "module": "src/scripts/compare-images-slider.js"
+          }
+        },
+        {
+          "kind": "js",
+          "name": "capVelocity",
+          "declaration": {
+            "name": "capVelocity",
+            "module": "src/scripts/compare-images-slider.js"
+          }
+        },
+        {
+          "kind": "js",
+          "name": "keyboardStep",
+          "declaration": {
+            "name": "keyboardStep",
+            "module": "src/scripts/compare-images-slider.js"
+          }
+        },
+        {
+          "kind": "js",
+          "name": "default",
+          "declaration": {
+            "name": "CompareImagesSlider",
+            "module": "src/scripts/compare-images-slider.js"
+          }
+        },
+        {
+          "kind": "js",
+          "name": "readOptionsFromElement",
+          "declaration": {
+            "name": "readOptionsFromElement",
+            "module": "src/scripts/compare-images-slider.js"
+          }
+        },
+        {
+          "kind": "js",
+          "name": "CompareImagesSliderElement",
+          "declaration": {
+            "name": "CompareImagesSliderElement",
+            "module": "src/scripts/compare-images-slider.js"
+          }
+        },
+        {
+          "kind": "custom-element-definition",
+          "name": "compare-images-slider",
+          "declaration": {
+            "name": "CompareImagesSliderElement",
+            "module": "src/scripts/compare-images-slider.js"
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -88,6 +88,15 @@ or kebab-case):
 </compare-images-slider>
 ```
 
+The package ships a
+[Custom Elements Manifest](https://github.com/webcomponents/custom-elements-manifest)
+at `dist/custom-elements.json`, pointed at by the `customElements` key — every
+attribute and custom property above, described once in the JSDoc block on
+`CompareImagesSliderElement` and generated from it by
+[`cem analyze`](https://custom-elements-manifest.open-wc.org/analyzer/getting-started/).
+That is what buys editor autocomplete on the tag, and a tool a description of
+this element it did not have to be told by hand.
+
 ## Accessibility
 
 The handle is a focusable `role="separator"` implementing the

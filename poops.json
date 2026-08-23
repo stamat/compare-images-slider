@@ -55,6 +55,9 @@
       }
     }
   },
+  "exec": {
+    "scripts": "npx cem analyze --globs src/scripts/compare-images-slider.js --outdir dist"
+  },
   "banner": "/* {{ name }} v{{ version }} | {{ homepage }} | {{ license }} License */",
   "serve" : {
     "port": 4040
