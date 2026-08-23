@@ -1,4 +1,4 @@
-/* compare-images-slider v3.0.0 | https://stamat.github.io/compare-images-slider/ | MIT License */
+/* compare-images-slider v3.0.1 | https://stamat.github.io/compare-images-slider/ | MIT License */
 (() => {
   // src/scripts/compare-images-slider.js
   function clamp(value, min, max) {
@@ -117,7 +117,12 @@
       this.handle.setAttribute("aria-valuemin", "0");
       this.handle.setAttribute("aria-valuemax", "100");
       if (!this.handle.hasAttribute("aria-label") && !this.handle.hasAttribute("aria-labelledby")) {
-        this.handle.setAttribute("aria-label", this.element.getAttribute("aria-label") || "Image comparison slider");
+        const labelledby = this.element.getAttribute("aria-labelledby");
+        if (labelledby) {
+          this.handle.setAttribute("aria-labelledby", labelledby);
+        } else {
+          this.handle.setAttribute("aria-label", this.element.getAttribute("aria-label") || "Image comparison slider");
+        }
       }
     }
     onKeyDown(e) {

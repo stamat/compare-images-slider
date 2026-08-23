@@ -261,6 +261,24 @@ library's own:
 The pattern's other optional key, <kbd>F6</kbd>, cycles focus between window panes.
 There is one pane here and nothing to cycle to, so it is not implemented.
 
+### Naming the handle
+
+The accessible name is `Image comparison slider` until you give it one, and that
+string is English with no locale switch behind it. Both ARIA naming attributes work,
+on the `.handle` or on the element itself — from the element they are copied down
+onto the handle, so the translated string sits in the markup you already render:
+
+```html
+<h2 id="restoration-label">Pre i posle restauracije</h2>
+<compare-images-slider aria-labelledby="restoration-label">
+  ...
+</compare-images-slider>
+```
+
+`aria-labelledby` wins over `aria-label`, as it does in ARIA itself. An attribute
+already on the handle is left alone, so nothing here overwrites a name you set there
+directly.
+
 Two details worth knowing before reading the DOM and calling either a bug:
 
 - `aria-orientation` describes the divider, not the layout. A left/right slider has

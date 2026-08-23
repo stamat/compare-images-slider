@@ -347,6 +347,18 @@ library&#39;s own:</p>
 </tbody></table>
 <p>The pattern&#39;s other optional key, <kbd>F6</kbd>, cycles focus between window panes.
 There is one pane here and nothing to cycle to, so it is not implemented.</p>
+<h3 id="naming-the-handle">Naming the handle<a class="heading-anchor" href="#naming-the-handle" tabindex="-1" aria-hidden="true"></a></h3>
+<p>The accessible name is <code>Image comparison slider</code> until you give it one, and that
+string is English with no locale switch behind it. Both ARIA naming attributes work,
+on the <code>.handle</code> or on the element itself — from the element they are copied down
+onto the handle, so the translated string sits in the markup you already render:</p>
+<pre><code class="hljs language-html"><span class="hljs-tag">&lt;<span class="hljs-name">h2</span> <span class="hljs-attr">id</span>=<span class="hljs-string">&quot;restoration-label&quot;</span>&gt;</span>Pre i posle restauracije<span class="hljs-tag">&lt;/<span class="hljs-name">h2</span>&gt;</span>
+<span class="hljs-tag">&lt;<span class="hljs-name">compare-images-slider</span> <span class="hljs-attr">aria-labelledby</span>=<span class="hljs-string">&quot;restoration-label&quot;</span>&gt;</span>
+  ...
+<span class="hljs-tag">&lt;/<span class="hljs-name">compare-images-slider</span>&gt;</span></code></pre>
+<p><code>aria-labelledby</code> wins over <code>aria-label</code>, as it does in ARIA itself. An attribute
+already on the handle is left alone, so nothing here overwrites a name you set there
+directly.</p>
 <p>Two details worth knowing before reading the DOM and calling either a bug:</p>
 <ul>
 <li><code>aria-orientation</code> describes the divider, not the layout. A left/right slider has
@@ -572,7 +584,7 @@ element in React and out of it.</p>
 
     </article>
     <footer class="page-footer">
-  <a href="https://stamat.github.io/compare-images-slider/" target="_blank" rel="noopener">compare-images-slider</a> v3.0.0 —
+  <a href="https://stamat.github.io/compare-images-slider/" target="_blank" rel="noopener">compare-images-slider</a> v3.0.1 —
   MIT &copy; <a href="https://github.com/stamat" target="_blank" rel="noopener">@stamat</a>.
   Built with <span aria-hidden="true">💩</span> <a href="https://github.com/stamat/poops" target="_blank" rel="noopener">Poops</a>, <a href="https://github.com/stamat/poops-docs-theme" target="_blank" rel="noopener">poops-docs-theme</a> and <a href="https://github.com/stamat/code-preview-element" target="_blank" rel="noopener">code-preview-element</a>.
   
