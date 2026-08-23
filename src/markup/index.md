@@ -6,7 +6,7 @@ layout: poops-docs-theme/prose
 
 A simple slider for comparing two images visually.
 
-<div class="js-compare-images-slider compare-images-slider">
+<compare-images-slider inertia>
   <img width="1680" height="1120" src="https://i.imgur.com/Ju4pEb7.jpeg" loading="lazy" alt="Building, before edit">
   <div class="frame">
     <img width="1680" height="1120" src="https://i.imgur.com/pvWyCKw.jpeg" loading="lazy" alt="Building, after edit">
@@ -16,21 +16,39 @@ A simple slider for comparing two images visually.
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16"><path d="M3.72 3.72a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042L2.56 7h10.88l-2.22-2.22a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018l3.5 3.5a.75.75 0 0 1 0 1.06l-3.5 3.5a.749.749 0 0 1-1.275-.326.749.749 0 0 1 .215-.734l2.22-2.22H2.56l2.22 2.22a.749.749 0 0 1-.326 1.275.749.749 0 0 1-.734-.215l-3.5-3.5a.75.75 0 0 1 0-1.06Z"></path></svg>
     </span>
   </span>
-</div>
+</compare-images-slider>
 
-_Photo by [Nenad Radojčić](https://unsplash.com/@necone?utm_content=creditCopyText&utm_medium=referral&utm_source=unsplash) on [Unsplash](https://unsplash.com/photos/gray-concrete-building-under-white-sky-during-daytime-JBm5eNo6B4E?utm_content=creditCopyText&utm_medium=referral&utm_source=unsplash). Drag the handle, or focus it and use the arrow keys._
+_A live `<compare-images-slider>`, upgraded on connect with no JavaScript instantiation. Photo by [Nenad Radojčić](https://unsplash.com/@necone?utm_content=creditCopyText&utm_medium=referral&utm_source=unsplash) on [Unsplash](https://unsplash.com/photos/gray-concrete-building-under-white-sky-during-daytime-JBm5eNo6B4E?utm_content=creditCopyText&utm_medium=referral&utm_source=unsplash). Drag the handle, or focus it and use the arrow keys._
 
 ## Overview
 
 **Compare Images Slider** overlays two images and reveals one over the other as
 you drag a handle across them. It is lightweight, dependency-free, mobile
-friendly, and works as either a class you instantiate or a `<compare-images-slider>`
-custom element. Because it uses no shadow DOM, every part stays yours to style.
+friendly, and works as a `<compare-images-slider>` custom element or as a class
+you instantiate. Because it uses no shadow DOM, every part stays yours to style.
 
 ## Usage
 
-Drop in the markup and instantiate the slider on it. Set the intrinsic
-`width`/`height` on the images so the layout does not shift while they load.
+Drop in the markup and the tag upgrades itself on connect — no JavaScript call
+needed. Options are read from attributes (bare, `data-*`, or kebab-case). Set the
+intrinsic `width`/`height` on the images so the layout does not shift while they
+load.
+
+```html
+<compare-images-slider inertia initial-position="35">
+  <img width="1680" height="1120" src="before.jpg" alt="Before" />
+  <div class="frame">
+    <img width="1680" height="1120" src="after.jpg" alt="After" />
+  </div>
+  <span class="handle"></span>
+</compare-images-slider>
+```
+
+## Without the custom element
+
+The same markup on a plain element works too — give it the `compare-images-slider`
+class for the styles, and instantiate the slider on it yourself. That is the path
+for markup whose tag name is not yours to choose, or a slider built after load.
 
 ```html
 <div class="js-compare-images-slider compare-images-slider">
@@ -59,23 +77,7 @@ document.addEventListener("CompareImagesSliderLoaded", () => {
 });
 ```
 
-## Custom element
-
-For the same markup wrapped in a `<compare-images-slider>` tag, no JavaScript
-call is needed — the element upgrades itself on connect. Options are read from
-attributes (bare, `data-*`, or kebab-case):
-
-```html
-<compare-images-slider inertia initial-position="35">
-  <img width="1680" height="1120" src="before.jpg" alt="Before" />
-  <div class="frame">
-    <img width="1680" height="1120" src="after.jpg" alt="After" />
-  </div>
-  <span class="handle"></span>
-</compare-images-slider>
-```
-
-<compare-images-slider inertia initial-position="35">
+<div class="js-compare-images-slider compare-images-slider">
   <img width="1680" height="1120" src="https://i.imgur.com/Ju4pEb7.jpeg" loading="lazy" alt="Building, before edit">
   <div class="frame">
     <img width="1680" height="1120" src="https://i.imgur.com/pvWyCKw.jpeg" loading="lazy" alt="Building, after edit">
@@ -85,9 +87,9 @@ attributes (bare, `data-*`, or kebab-case):
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16"><path d="M3.72 3.72a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042L2.56 7h10.88l-2.22-2.22a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018l3.5 3.5a.75.75 0 0 1 0 1.06l-3.5 3.5a.749.749 0 0 1-1.275-.326.749.749 0 0 1 .215-.734l2.22-2.22H2.56l2.22 2.22a.749.749 0 0 1-.326 1.275.749.749 0 0 1-.734-.215l-3.5-3.5a.75.75 0 0 1 0-1.06Z"></path></svg>
     </span>
   </span>
-</compare-images-slider>
+</div>
 
-_A live `<compare-images-slider>` element — it upgrades itself on connect, with no JavaScript instantiation._
+_The same slider as a `div`, instantiated by hand — same markup, same behaviour._
 
 ## Vertical
 
@@ -95,12 +97,12 @@ Add the `vertical` attribute (or pass `{ vertical: true }`) to split top and
 bottom instead of left and right.
 
 ```html
-<div class="js-compare-images-slider compare-images-slider" vertical>
+<compare-images-slider vertical>
   <!-- ...same inner markup... -->
-</div>
+</compare-images-slider>
 ```
 
-<div class="js-compare-images-slider compare-images-slider" vertical>
+<compare-images-slider vertical inertia>
   <img width="1680" height="1120" src="https://i.imgur.com/VWdIu81.jpeg" loading="lazy" alt="Tree, before edit">
   <div class="frame">
     <img width="1680" height="1120" src="https://i.imgur.com/C7zhEkz.jpeg" loading="lazy" alt="Tree, after edit">
@@ -110,7 +112,7 @@ bottom instead of left and right.
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16"><path d="M3.72 3.72a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042L2.56 7h10.88l-2.22-2.22a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018l3.5 3.5a.75.75 0 0 1 0 1.06l-3.5 3.5a.749.749 0 0 1-1.275-.326.749.749 0 0 1 .215-.734l2.22-2.22H2.56l2.22 2.22a.749.749 0 0 1-.326 1.275.749.749 0 0 1-.734-.215l-3.5-3.5a.75.75 0 0 1 0-1.06Z"></path></svg>
     </span>
   </span>
-</div>
+</compare-images-slider>
 
 _Photo by [Valentin Salja](https://unsplash.com/@valentinsalja?utm_content=creditCopyText&utm_medium=referral&utm_source=unsplash) on [Unsplash](https://unsplash.com/photos/withered-tree-covered-in-snow-AqcD0Q1JLpE?utm_content=creditCopyText&utm_medium=referral&utm_source=unsplash)._
 
@@ -129,9 +131,10 @@ _Photo by [Valentin Salja](https://unsplash.com/@valentinsalja?utm_content=credi
 | `step`             | number  | `5`     | Arrow-key step (percent).                 |
 | `pageStep`         | number  | `25`    | Page Up/Down step (percent).              |
 
-Each one is also an attribute in kebab-case - bare, or `data-` prefixed - read
-whether you write `<compare-images-slider>` or call the constructor yourself. An
-attribute beats the options object, and a boolean is turned off with `="false"`.
+Each one is an attribute in kebab-case - bare, or `data-` prefixed - and the same
+name in camelCase on the options object, read whether you write
+`<compare-images-slider>` or call the constructor yourself. An attribute beats the
+options object, and a boolean is turned off with `="false"`.
 
 > [!NOTE]
 > Set the intrinsic dimensions of the images. This eliminates layout shifts and

@@ -51,7 +51,7 @@
       
 <h1 id="compare-images-slider">Compare Images Slider<a class="heading-anchor" href="#compare-images-slider" tabindex="-1" aria-hidden="true"></a></h1>
 <p>A simple slider for comparing two images visually.</p>
-<div class="js-compare-images-slider compare-images-slider">
+<compare-images-slider inertia>
   <img width="1680" height="1120" src="https://i.imgur.com/Ju4pEb7.jpeg" loading="lazy" alt="Building, before edit">
   <div class="frame">
     <img width="1680" height="1120" src="https://i.imgur.com/pvWyCKw.jpeg" loading="lazy" alt="Building, after edit">
@@ -61,15 +61,28 @@
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16"><path d="M3.72 3.72a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042L2.56 7h10.88l-2.22-2.22a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018l3.5 3.5a.75.75 0 0 1 0 1.06l-3.5 3.5a.749.749 0 0 1-1.275-.326.749.749 0 0 1 .215-.734l2.22-2.22H2.56l2.22 2.22a.749.749 0 0 1-.326 1.275.749.749 0 0 1-.734-.215l-3.5-3.5a.75.75 0 0 1 0-1.06Z"></path></svg>
     </span>
   </span>
-</div><p><em>Photo by <a href="https://unsplash.com/@necone?utm_content=creditCopyText&utm_medium=referral&utm_source=unsplash">Nenad Radojčić</a> on <a href="https://unsplash.com/photos/gray-concrete-building-under-white-sky-during-daytime-JBm5eNo6B4E?utm_content=creditCopyText&utm_medium=referral&utm_source=unsplash">Unsplash</a>. Drag the handle, or focus it and use the arrow keys.</em></p>
+</compare-images-slider><p><em>A live <code>&lt;compare-images-slider&gt;</code>, upgraded on connect with no JavaScript instantiation. Photo by <a href="https://unsplash.com/@necone?utm_content=creditCopyText&utm_medium=referral&utm_source=unsplash">Nenad Radojčić</a> on <a href="https://unsplash.com/photos/gray-concrete-building-under-white-sky-during-daytime-JBm5eNo6B4E?utm_content=creditCopyText&utm_medium=referral&utm_source=unsplash">Unsplash</a>. Drag the handle, or focus it and use the arrow keys.</em></p>
 <h2 id="overview">Overview<a class="heading-anchor" href="#overview" tabindex="-1" aria-hidden="true"></a></h2>
 <p><strong>Compare Images Slider</strong> overlays two images and reveals one over the other as
 you drag a handle across them. It is lightweight, dependency-free, mobile
-friendly, and works as either a class you instantiate or a <code>&lt;compare-images-slider&gt;</code>
-custom element. Because it uses no shadow DOM, every part stays yours to style.</p>
+friendly, and works as a <code>&lt;compare-images-slider&gt;</code> custom element or as a class
+you instantiate. Because it uses no shadow DOM, every part stays yours to style.</p>
 <h2 id="usage">Usage<a class="heading-anchor" href="#usage" tabindex="-1" aria-hidden="true"></a></h2>
-<p>Drop in the markup and instantiate the slider on it. Set the intrinsic
-<code>width</code>/<code>height</code> on the images so the layout does not shift while they load.</p>
+<p>Drop in the markup and the tag upgrades itself on connect — no JavaScript call
+needed. Options are read from attributes (bare, <code>data-*</code>, or kebab-case). Set the
+intrinsic <code>width</code>/<code>height</code> on the images so the layout does not shift while they
+load.</p>
+<pre><code class="hljs language-html"><span class="hljs-tag">&lt;<span class="hljs-name">compare-images-slider</span> <span class="hljs-attr">inertia</span> <span class="hljs-attr">initial-position</span>=<span class="hljs-string">&quot;35&quot;</span>&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">img</span> <span class="hljs-attr">width</span>=<span class="hljs-string">&quot;1680&quot;</span> <span class="hljs-attr">height</span>=<span class="hljs-string">&quot;1120&quot;</span> <span class="hljs-attr">src</span>=<span class="hljs-string">&quot;before.jpg&quot;</span> <span class="hljs-attr">alt</span>=<span class="hljs-string">&quot;Before&quot;</span> /&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;frame&quot;</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">img</span> <span class="hljs-attr">width</span>=<span class="hljs-string">&quot;1680&quot;</span> <span class="hljs-attr">height</span>=<span class="hljs-string">&quot;1120&quot;</span> <span class="hljs-attr">src</span>=<span class="hljs-string">&quot;after.jpg&quot;</span> <span class="hljs-attr">alt</span>=<span class="hljs-string">&quot;After&quot;</span> /&gt;</span>
+  <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;handle&quot;</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span>
+<span class="hljs-tag">&lt;/<span class="hljs-name">compare-images-slider</span>&gt;</span></code></pre>
+<h2 id="without-the-custom-element">Without the custom element<a class="heading-anchor" href="#without-the-custom-element" tabindex="-1" aria-hidden="true"></a></h2>
+<p>The same markup on a plain element works too — give it the <code>compare-images-slider</code>
+class for the styles, and instantiate the slider on it yourself. That is the path
+for markup whose tag name is not yours to choose, or a slider built after load.</p>
 <pre><code class="hljs language-html"><span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;js-compare-images-slider compare-images-slider&quot;</span>&gt;</span>
   <span class="hljs-tag">&lt;<span class="hljs-name">img</span> <span class="hljs-attr">width</span>=<span class="hljs-string">&quot;1680&quot;</span> <span class="hljs-attr">height</span>=<span class="hljs-string">&quot;1120&quot;</span> <span class="hljs-attr">src</span>=<span class="hljs-string">&quot;before.jpg&quot;</span> <span class="hljs-attr">alt</span>=<span class="hljs-string">&quot;Before&quot;</span> /&gt;</span>
   <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;frame&quot;</span>&gt;</span>
@@ -87,18 +100,7 @@ event before instantiating:</p>
   <span class="hljs-keyword">const</span> el = <span class="hljs-variable language_">document</span>.<span class="hljs-title function_">querySelector</span>(<span class="hljs-string">&quot;.js-compare-images-slider&quot;</span>);
   <span class="hljs-keyword">new</span> <span class="hljs-title class_">CompareImagesSlider</span>(el, { <span class="hljs-attr">inertia</span>: <span class="hljs-literal">true</span> });
 });</code></pre>
-<h2 id="custom-element">Custom element<a class="heading-anchor" href="#custom-element" tabindex="-1" aria-hidden="true"></a></h2>
-<p>For the same markup wrapped in a <code>&lt;compare-images-slider&gt;</code> tag, no JavaScript
-call is needed — the element upgrades itself on connect. Options are read from
-attributes (bare, <code>data-*</code>, or kebab-case):</p>
-<pre><code class="hljs language-html"><span class="hljs-tag">&lt;<span class="hljs-name">compare-images-slider</span> <span class="hljs-attr">inertia</span> <span class="hljs-attr">initial-position</span>=<span class="hljs-string">&quot;35&quot;</span>&gt;</span>
-  <span class="hljs-tag">&lt;<span class="hljs-name">img</span> <span class="hljs-attr">width</span>=<span class="hljs-string">&quot;1680&quot;</span> <span class="hljs-attr">height</span>=<span class="hljs-string">&quot;1120&quot;</span> <span class="hljs-attr">src</span>=<span class="hljs-string">&quot;before.jpg&quot;</span> <span class="hljs-attr">alt</span>=<span class="hljs-string">&quot;Before&quot;</span> /&gt;</span>
-  <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;frame&quot;</span>&gt;</span>
-    <span class="hljs-tag">&lt;<span class="hljs-name">img</span> <span class="hljs-attr">width</span>=<span class="hljs-string">&quot;1680&quot;</span> <span class="hljs-attr">height</span>=<span class="hljs-string">&quot;1120&quot;</span> <span class="hljs-attr">src</span>=<span class="hljs-string">&quot;after.jpg&quot;</span> <span class="hljs-attr">alt</span>=<span class="hljs-string">&quot;After&quot;</span> /&gt;</span>
-  <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
-  <span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;handle&quot;</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span>
-<span class="hljs-tag">&lt;/<span class="hljs-name">compare-images-slider</span>&gt;</span></code></pre>
-<compare-images-slider inertia initial-position="35">
+<div class="js-compare-images-slider compare-images-slider">
   <img width="1680" height="1120" src="https://i.imgur.com/Ju4pEb7.jpeg" loading="lazy" alt="Building, before edit">
   <div class="frame">
     <img width="1680" height="1120" src="https://i.imgur.com/pvWyCKw.jpeg" loading="lazy" alt="Building, after edit">
@@ -108,14 +110,14 @@ attributes (bare, <code>data-*</code>, or kebab-case):</p>
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16"><path d="M3.72 3.72a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042L2.56 7h10.88l-2.22-2.22a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018l3.5 3.5a.75.75 0 0 1 0 1.06l-3.5 3.5a.749.749 0 0 1-1.275-.326.749.749 0 0 1 .215-.734l2.22-2.22H2.56l2.22 2.22a.749.749 0 0 1-.326 1.275.749.749 0 0 1-.734-.215l-3.5-3.5a.75.75 0 0 1 0-1.06Z"></path></svg>
     </span>
   </span>
-</compare-images-slider><p><em>A live <code>&lt;compare-images-slider&gt;</code> element — it upgrades itself on connect, with no JavaScript instantiation.</em></p>
+</div><p><em>The same slider as a <code>div</code>, instantiated by hand — same markup, same behaviour.</em></p>
 <h2 id="vertical">Vertical<a class="heading-anchor" href="#vertical" tabindex="-1" aria-hidden="true"></a></h2>
 <p>Add the <code>vertical</code> attribute (or pass <code>{ vertical: true }</code>) to split top and
 bottom instead of left and right.</p>
-<pre><code class="hljs language-html"><span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;js-compare-images-slider compare-images-slider&quot;</span> <span class="hljs-attr">vertical</span>&gt;</span>
+<pre><code class="hljs language-html"><span class="hljs-tag">&lt;<span class="hljs-name">compare-images-slider</span> <span class="hljs-attr">vertical</span>&gt;</span>
   <span class="hljs-comment">&lt;!-- ...same inner markup... --&gt;</span>
-<span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span></code></pre>
-<div class="js-compare-images-slider compare-images-slider" vertical>
+<span class="hljs-tag">&lt;/<span class="hljs-name">compare-images-slider</span>&gt;</span></code></pre>
+<compare-images-slider vertical inertia>
   <img width="1680" height="1120" src="https://i.imgur.com/VWdIu81.jpeg" loading="lazy" alt="Tree, before edit">
   <div class="frame">
     <img width="1680" height="1120" src="https://i.imgur.com/C7zhEkz.jpeg" loading="lazy" alt="Tree, after edit">
@@ -125,7 +127,7 @@ bottom instead of left and right.</p>
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16"><path d="M3.72 3.72a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042L2.56 7h10.88l-2.22-2.22a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018l3.5 3.5a.75.75 0 0 1 0 1.06l-3.5 3.5a.749.749 0 0 1-1.275-.326.749.749 0 0 1 .215-.734l2.22-2.22H2.56l2.22 2.22a.749.749 0 0 1-.326 1.275.749.749 0 0 1-.734-.215l-3.5-3.5a.75.75 0 0 1 0-1.06Z"></path></svg>
     </span>
   </span>
-</div><p><em>Photo by <a href="https://unsplash.com/@valentinsalja?utm_content=creditCopyText&utm_medium=referral&utm_source=unsplash">Valentin Salja</a> on <a href="https://unsplash.com/photos/withered-tree-covered-in-snow-AqcD0Q1JLpE?utm_content=creditCopyText&utm_medium=referral&utm_source=unsplash">Unsplash</a>.</em></p>
+</compare-images-slider><p><em>Photo by <a href="https://unsplash.com/@valentinsalja?utm_content=creditCopyText&utm_medium=referral&utm_source=unsplash">Valentin Salja</a> on <a href="https://unsplash.com/photos/withered-tree-covered-in-snow-AqcD0Q1JLpE?utm_content=creditCopyText&utm_medium=referral&utm_source=unsplash">Unsplash</a>.</em></p>
 <h2 id="options">Options<a class="heading-anchor" href="#options" tabindex="-1" aria-hidden="true"></a></h2>
 <table>
 <thead>
@@ -197,9 +199,10 @@ bottom instead of left and right.</p>
 <td>Page Up/Down step (percent).</td>
 </tr>
 </tbody></table>
-<p>Each one is also an attribute in kebab-case - bare, or <code>data-</code> prefixed - read
-whether you write <code>&lt;compare-images-slider&gt;</code> or call the constructor yourself. An
-attribute beats the options object, and a boolean is turned off with <code>=&quot;false&quot;</code>.</p>
+<p>Each one is an attribute in kebab-case - bare, or <code>data-</code> prefixed - and the same
+name in camelCase on the options object, read whether you write
+<code>&lt;compare-images-slider&gt;</code> or call the constructor yourself. An attribute beats the
+options object, and a boolean is turned off with <code>=&quot;false&quot;</code>.</p>
 <div class="marked-github-alert marked-github-alert-note">
 <p class="marked-github-alert-title"><svg version="1.1" width="16" height="16" viewBox="0 0 16 16" class="octicon octicon-info marked-github-alert-icon" aria-hidden="true" data-component="Octicon"><path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8Zm8-6.5a6.5 6.5 0 1 0 0 13 6.5 6.5 0 0 0 0-13ZM6.5 7.75A.75.75 0 0 1 7.25 7h1a.75.75 0 0 1 .75.75v2.75h.25a.75.75 0 0 1 0 1.5h-2a.75.75 0 0 1 0-1.5h.25v-2h-.25a.75.75 0 0 1-.75-.75ZM8 6a1 1 0 1 1 0-2 1 1 0 0 1 0 2Z"></path></svg><span>Note</span></p>
 <p>Set the intrinsic dimensions of the images. This eliminates layout shifts and

@@ -6,6 +6,7 @@ A simple slider for comparing two images visually.
 
 ## Features
 
+- Custom element, no shadow DOM
 - Lightweight
 - Minimal DOM depth
 - No dependencies
@@ -14,7 +15,6 @@ A simple slider for comparing two images visually.
 - Inertia physics with capped, natural-feeling flicks
 - Bounce back
 - Keyboard accessible ([W3C APG Window Splitter](https://www.w3.org/WAI/ARIA/apg/patterns/windowsplitter/))
-- Custom element, no shadow DOM
 - Customizable via CSS
 
 ## Demo
@@ -39,6 +39,50 @@ or use the CDN:
 
 ## Usage
 
+The `<compare-images-slider>` tag upgrades itself the moment it connects — no
+JavaScript call, nothing to register past loading the bundle. It uses light DOM
+(no shadow root), so the images, frame and handle stay fully stylable, and every
+option is an attribute (bare, `data-*` or kebab-case):
+
+```html
+<compare-images-slider inertia initial-position="35">
+  <img src="img.jpg" alt="" />
+  <div class="frame">
+    <img src="img-alt.jpg" alt="" />
+  </div>
+  <span class="handle"></span>
+</compare-images-slider>
+```
+
+**⚠️ Note:** Don't be lazy and please set the intrinsic dimensions of the images. This eliminates layout shifts and will ensure the slider works as expected.
+
+Building with Sass rather than loading the CSS file:
+
+```scss
+@use "compare-images-slider/src/styles/index";
+```
+
+That is a plain load path into `node_modules`, not the package's `exports` map —
+Sass resolves the file, not the subpath. Bundlers and anything that reads
+`exports` get the same two stylesheets as `compare-images-slider/style.css` and
+`compare-images-slider/theme.css`.
+
+The package ships a
+[Custom Elements Manifest](https://github.com/webcomponents/custom-elements-manifest)
+at `dist/custom-elements.json`, pointed at by the `customElements` key — every
+attribute below and every `--compare-images-slider-*` custom property, described
+once in the JSDoc block on `CompareImagesSliderElement` and generated from it by
+[`cem analyze`](https://custom-elements-manifest.open-wc.org/analyzer/getting-started/).
+That is what buys editor autocomplete on the tag, and what the
+[docs page](https://stamat.github.io/compare-images-slider/) reads to turn the options
+table into knobs beside a live sample.
+
+## Without the custom element
+
+The same markup on a plain element works too — give it the `compare-images-slider`
+class for the styles, and instantiate the slider on it yourself. That is the path
+for markup whose tag name isn't yours to choose, or a slider built after load:
+
 ```html
 <div class="js-compare-images-slider compare-images-slider">
   <img src="img.jpg" alt="" />
@@ -48,8 +92,6 @@ or use the CDN:
   <span class="handle"></span>
 </div>
 ```
-
-**⚠️ Note:** Don't be lazy and please set the intrinsic dimensions of the images. This eliminates layout shifts and will ensure the slider works as expected.
 
 ```javascript
 import CompareImagesSlider from "compare-images-slider";
@@ -66,15 +108,6 @@ document.addEventListener("CompareImagesSliderLoaded", function () {
   const compareImagesSlider = new CompareImagesSlider(slider);
 });
 ```
-
-```scss
-@use "compare-images-slider/src/styles/index";
-```
-
-That is a plain load path into `node_modules`, not the package's `exports` map —
-Sass resolves the file, not the subpath. Bundlers and anything that reads
-`exports` get the same two stylesheets as `compare-images-slider/style.css` and
-`compare-images-slider/theme.css`.
 
 ## Optional theme
 
@@ -125,33 +158,6 @@ compare-images-slider {
 }
 ```
 
-## Custom element
-
-The same markup wrapped in a `<compare-images-slider>` tag upgrades itself — no
-JavaScript call needed. It uses light DOM (no shadow root), so the images, frame
-and handle stay fully stylable. Options are read from attributes (bare, `data-*`
-or kebab-case):
-
-```html
-<compare-images-slider inertia initial-position="35">
-  <img src="img.jpg" alt="" />
-  <div class="frame">
-    <img src="img-alt.jpg" alt="" />
-  </div>
-  <span class="handle"></span>
-</compare-images-slider>
-```
-
-The package ships a
-[Custom Elements Manifest](https://github.com/webcomponents/custom-elements-manifest)
-at `dist/custom-elements.json`, pointed at by the `customElements` key — every
-attribute below and every `--compare-images-slider-*` custom property, described
-once in the JSDoc block on `CompareImagesSliderElement` and generated from it by
-[`cem analyze`](https://custom-elements-manifest.open-wc.org/analyzer/getting-started/).
-That is what buys editor autocomplete on the tag, and what the
-[docs page](https://stamat.github.io/compare-images-slider/) reads to turn the options
-table into knobs beside a live sample.
-
 ## Accessibility
 
 The handle is a focusable `role="separator"` implementing the
@@ -163,6 +169,27 @@ handle is further from — read off the pointer stream rather than `dblclick`, w
 iOS Safari never fires because a double tap is the browser's own zoom gesture.
 
 ## Options
+
+Every option is an attribute — bare, `data-*` or kebab-case:
+
+- `vertical` - vertical slider
+- `inertia`, `bounce`, `drag-anywhere` - booleans
+- `friction`, `bounce-factor`, `max-flick-velocity`, `initial-position`, `step`, `page-step` - numbers
+
+```html
+<compare-images-slider vertical>
+  <img src="img.jpg" alt="" />
+  <div class="frame">
+    <img src="img-alt.jpg" alt="" />
+  </div>
+  <span class="handle"></span>
+</compare-images-slider>
+```
+
+The constructor reads them off the element too, so they work the same whether you
+write `<compare-images-slider>` or call `new CompareImagesSlider(el, options)`. A
+`data-*` beats the bare attribute, an attribute beats the options object, and a
+boolean is turned off with `drag-anywhere="false"` or `drag-anywhere="0"`.
 
 ```javascript
 // Default options
@@ -180,27 +207,6 @@ const options = {
 };
 
 new CompareImagesSlider(slider, options);
-```
-
-Available attribute options (bare, `data-*` or kebab-case):
-
-- `vertical` - vertical slider
-- `inertia`, `bounce`, `drag-anywhere` - booleans
-- `friction`, `bounce-factor`, `max-flick-velocity`, `initial-position`, `step`, `page-step` - numbers
-
-The constructor reads them off the element too, so they work the same whether you
-write `<compare-images-slider>` or call `new CompareImagesSlider(el, options)`. A
-`data-*` beats the bare attribute, an attribute beats the options object, and a
-boolean is turned off with `drag-anywhere="false"` or `drag-anywhere="0"`.
-
-```html
-<div class="js-compare-images-slider compare-images-slider" vertical>
-  <img src="img.jpg" alt="" />
-  <div class="frame">
-    <img src="img-alt.jpg" alt="" />
-  </div>
-  <span class="handle"></span>
-</div>
 ```
 
 ## Development
