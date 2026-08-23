@@ -13,6 +13,10 @@ compare-images-slider {
   user-select: none;
   -webkit-user-select: none;
   -moz-user-select: none;
+  /* iOS pops the save-image sheet on a long press, which lands mid-drag on a slow
+     one. `-webkit-user-select: none` above suppresses it on its own in most builds;
+     this states it, rather than resting on a side effect that has regressed before. */
+  -webkit-touch-callout: none;
 
   img {
     pointer-events: none;

@@ -73,6 +73,12 @@ error that is now thrown, output that moved.
 
 ### Fixed
 
+- **A long press no longer offers to save the image on iOS.** A slow drag could
+  trip the system callout — the Save Image sheet — over the two `img` elements.
+  The stylesheet asks for `-webkit-touch-callout: none` explicitly now instead of
+  relying on `-webkit-user-select: none` to suppress it as a side effect, which is
+  behaviour that has regressed in past WebKit builds.
+
 - **Double-tap to snap now works on iOS.** The snap to the nearest extreme was a
   `dblclick` listener, and iOS Safari never fires that event from a double tap —
   the gesture is the browser's own zoom, and always has been. It is detected from
