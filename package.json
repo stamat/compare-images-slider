@@ -54,6 +54,6 @@
     "code-preview-element": "^3.0.3",
     "eslint": "^10.7.0",
     "poops": "^3.0.0",
-    "poops-docs-theme": "^4.5.0"
+    "poops-docs-theme": "^4.6.0"
   }
 }
