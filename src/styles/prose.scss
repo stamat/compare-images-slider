@@ -42,3 +42,13 @@ code-preview[manifest] {
     aspect-ratio: 1 / ((1 - 2 * $frame-pad) * $sample-ratio + 2 * $frame-pad);
   }
 }
+
+// The admonition box carries no padding of its own so the title's tint can reach its own
+// border, and up to poops-docs-theme 4.5.0 the 1rem inset that pays for that was keyed to
+// `p` — leaving the code block in the `Canvas` note flush against the border, and its
+// bottom at the 1.75rem a code block takes in the open. Fixed in the theme after 4.5.0;
+// this shim is the same three rules and comes out with the next bump. The paragraph
+// padding is zeroed because the theme's rule is still there to add to the new margin.
+.marked-github-alert p { padding-inline: 0; }
+.marked-github-alert > :not(.marked-github-alert-title) { margin-inline: 1rem; }
+.marked-github-alert > :last-child { margin-bottom: 0.75rem; }
