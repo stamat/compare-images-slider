@@ -31,9 +31,30 @@ Write it for the person upgrading, not for the person who wrote the code. What
 they need is what changed for them: a renamed option, a different default, an
 error that is now thrown, output that moved.
 
-## [Unreleased]
+## [Unreleased] — nothing measures anything any more
+
+The reveal used to be a pixel width the script wrote onto the overlay image. That
+is why the overlay had to be an `img` at all, why there was a `resize` listener,
+and why a slider whose container changed size without the window changing with it
+kept a stale width and let the reveal edge drift off the handle. Nothing left the
+element either, so a caption tracking the handle or a position kept in the URL had
+to poll for it.
+
+The reveal is a `clip-path` now, the frame takes whatever the markup puts in it,
+and the slider reports itself. What makes this a major: `.frame` no longer carries
+an inline `width` or `height`, so page styling that read either one reads
+`--compare-images-slider-position` instead.
 
 ### Added
+
+- **A comparison against the other sliders, on the docs page.** Choosing between
+  these means reading six READMEs and believing them. This one is measured instead:
+  `gzip -9` over what each package ships, and every behaviour row — keyboard, ARIA,
+  gestures, events — read out of those bundles rather than quoted from their docs.
+  It is second lightest of the six, the only one implementing the W3C Window
+  Splitter pattern, and the only one with pointer capture, inertia and a double-tap
+  snap. The two places it is behind, adoption and shadow-root isolation, are named
+  underneath rather than left out.
 
 - **The slider says where it is: `input`, `change`, `start` and `end`.** Nothing left
   the element before this, so a caption tracking the handle, a position kept in the

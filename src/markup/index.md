@@ -351,6 +351,56 @@ because every rule in the theme sits behind `:has(.handle-knob)`.
 > }
 > ```
 
+## How it compares
+
+There are a dozen of these, several of them good. What follows is what each one
+weighs and what it does, measured rather than quoted: sizes are `gzip -9` over the
+files the package actually ships, and every behaviour row was read out of those
+shipped bundles rather than taken from a README. Taken on **23 August 2026**, against
+the versions named under the table.
+
+Listed: every comparable package on npm over a thousand downloads a week, plus
+[JuxtaposeJS](https://juxtapose.knightlab.com/) for the name it has — its npm mirror
+is a 2015 build, so it is measured from its own CDN instead.
+
+|                              | **this one** | [img-comparison-slider](https://github.com/sneas/img-comparison-slider) | [react-compare-slider](https://github.com/nerdyman/react-compare-slider) | [cocoen](https://github.com/koenoe/cocoen) | JuxtaposeJS | [image-compare-viewer](https://github.com/kylewetton/image-compare-viewer) |
+| ---------------------------- | ------------ | ------ | ------ | ------ | ------ | ------ |
+| Gzipped                      | **3.3 kB**   | 3.7 kB | 3.6 kB + React | 2.5 kB | 5.3 kB | 17.2 kB |
+| Runtime dependencies         | **none**     | none   | React  | none   | none   | five   |
+| Reveals                      | **any element** | any slotted element | any React node | any slotted element | images, from URLs | two images |
+| Pointer Events, with capture | **✔**        | —      | ✔      | —      | —      | —      |
+| Keyboard                     | **arrows, Page, Home/End, Enter** | arrows | arrows | — | arrows | — |
+| ARIA on the handle           | **`role="separator"`, `aria-valuenow`/`min`/`max`, `aria-orientation`, `aria-controls`** | — | `role="slider"`, `aria-valuenow`/`min`/`max`, `aria-orientation` | — | `role="slider"`, `aria-valuenow`/`min`/`max` | — |
+| Inertia, capped flick, bounce | **✔**       | —      | —      | —      | —      | —      |
+| Double-tap snap to an extreme | **✔**       | —      | —      | —      | —      | —      |
+| <kbd>Enter</kbd> collapses the pane | **✔**  | —      | —      | —      | —      | —      |
+| Vertical                     | **✔**        | ✔      | ✔      | ✔      | ✔      | ✔      |
+| Events                       | **`input`, `change`, `start`, `end`** | `slide` | `onPositionChange` | four lifecycle events | — | — |
+| Styling surface              | **light DOM** | shadow root | React props | shadow root | light DOM | light DOM |
+
+<small>compare-images-slider 3.0.0 · img-comparison-slider 8.0.7 · react-compare-slider 4.0.0 · cocoen 3.2.0 · JuxtaposeJS from its CDN · image-compare-viewer 1.6.2. A dash means the shipped bundle has none of it. Sizes are script plus stylesheet, or script alone where the CSS is inlined into a shadow root; the optional theme is not counted.</small>
+
+Two rows carry it. This is the only one of the six implementing the
+[W3C Window Splitter pattern](https://www.w3.org/WAI/ARIA/apg/patterns/windowsplitter/)
+— role, values, orientation, the pane it controls, the Enter key that collapses it —
+where `img-comparison-slider` is keyboard operable and ships no ARIA at all, handing
+a screen reader a focusable something with no name, role or value. The gestures are
+its own too: pointer capture, so a fast drag cannot fall out of the handle, inertia
+with a capped flick, and a double-tap snap that no other package here has. All at
+3.3 kB, second lightest of the six, with nothing installed alongside it.
+
+Where it loses: light DOM is a trade rather than a free win — the
+openness that lets you restyle the handle also lets a stray `img { max-width }` rule
+from the page reach in, where `cocoen` and `img-comparison-slider` sit sealed in a
+shadow root, so pick those if you ship into pages you do not control.
+
+React needs no wrapper here, and there will not be one. React 19 registers any
+unknown `on*` prop as a listener, so `oninput`, `onchange`, `onstart` and `onend`
+bind straight in JSX, and every option was an attribute already; React 18 wants a
+`ref` and `addEventListener` for the events, as it does for any web component.
+`react-compare-slider` is the React-only package of the six — this is the same
+element in React and out of it.
+
 <script src="{{ relativePathPrefix }}dist/compare-images-slider.min.js"></script>
 <script>
   const sliders = document.querySelectorAll('.js-compare-images-slider');

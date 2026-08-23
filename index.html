@@ -400,6 +400,155 @@ this page does:</p>
   <span class="hljs-attr">--compare-images-slider-handle-fg</span>: <span class="hljs-built_in">var</span>(--fg);
 }</code></pre>
 </div>
+<h2 id="how-it-compares">How it compares<a class="heading-anchor" href="#how-it-compares" tabindex="-1" aria-hidden="true"></a></h2>
+<p>There are a dozen of these, several of them good. What follows is what each one
+weighs and what it does, measured rather than quoted: sizes are <code>gzip -9</code> over the
+files the package actually ships, and every behaviour row was read out of those
+shipped bundles rather than taken from a README. Taken on <strong>23 August 2026</strong>, against
+the versions named under the table.</p>
+<p>Listed: every comparable package on npm over a thousand downloads a week, plus
+<a href="https://juxtapose.knightlab.com/">JuxtaposeJS</a> for the name it has — its npm mirror
+is a 2015 build, so it is measured from its own CDN instead.</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th><strong>this one</strong></th>
+<th><a href="https://github.com/sneas/img-comparison-slider">img-comparison-slider</a></th>
+<th><a href="https://github.com/nerdyman/react-compare-slider">react-compare-slider</a></th>
+<th><a href="https://github.com/koenoe/cocoen">cocoen</a></th>
+<th>JuxtaposeJS</th>
+<th><a href="https://github.com/kylewetton/image-compare-viewer">image-compare-viewer</a></th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Gzipped</td>
+<td><strong>3.3 kB</strong></td>
+<td>3.7 kB</td>
+<td>3.6 kB + React</td>
+<td>2.5 kB</td>
+<td>5.3 kB</td>
+<td>17.2 kB</td>
+</tr>
+<tr>
+<td>Runtime dependencies</td>
+<td><strong>none</strong></td>
+<td>none</td>
+<td>React</td>
+<td>none</td>
+<td>none</td>
+<td>five</td>
+</tr>
+<tr>
+<td>Reveals</td>
+<td><strong>any element</strong></td>
+<td>any slotted element</td>
+<td>any React node</td>
+<td>any slotted element</td>
+<td>images, from URLs</td>
+<td>two images</td>
+</tr>
+<tr>
+<td>Pointer Events, with capture</td>
+<td><strong>✔</strong></td>
+<td>—</td>
+<td>✔</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+</tr>
+<tr>
+<td>Keyboard</td>
+<td><strong>arrows, Page, Home/End, Enter</strong></td>
+<td>arrows</td>
+<td>arrows</td>
+<td>—</td>
+<td>arrows</td>
+<td>—</td>
+</tr>
+<tr>
+<td>ARIA on the handle</td>
+<td><strong><code>role=&quot;separator&quot;</code>, <code>aria-valuenow</code>/<code>min</code>/<code>max</code>, <code>aria-orientation</code>, <code>aria-controls</code></strong></td>
+<td>—</td>
+<td><code>role=&quot;slider&quot;</code>, <code>aria-valuenow</code>/<code>min</code>/<code>max</code>, <code>aria-orientation</code></td>
+<td>—</td>
+<td><code>role=&quot;slider&quot;</code>, <code>aria-valuenow</code>/<code>min</code>/<code>max</code></td>
+<td>—</td>
+</tr>
+<tr>
+<td>Inertia, capped flick, bounce</td>
+<td><strong>✔</strong></td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+</tr>
+<tr>
+<td>Double-tap snap to an extreme</td>
+<td><strong>✔</strong></td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+</tr>
+<tr>
+<td><kbd>Enter</kbd> collapses the pane</td>
+<td><strong>✔</strong></td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+</tr>
+<tr>
+<td>Vertical</td>
+<td><strong>✔</strong></td>
+<td>✔</td>
+<td>✔</td>
+<td>✔</td>
+<td>✔</td>
+<td>✔</td>
+</tr>
+<tr>
+<td>Events</td>
+<td><strong><code>input</code>, <code>change</code>, <code>start</code>, <code>end</code></strong></td>
+<td><code>slide</code></td>
+<td><code>onPositionChange</code></td>
+<td>four lifecycle events</td>
+<td>—</td>
+<td>—</td>
+</tr>
+<tr>
+<td>Styling surface</td>
+<td><strong>light DOM</strong></td>
+<td>shadow root</td>
+<td>React props</td>
+<td>shadow root</td>
+<td>light DOM</td>
+<td>light DOM</td>
+</tr>
+</tbody></table>
+<p><small>compare-images-slider 3.0.0 · img-comparison-slider 8.0.7 · react-compare-slider 4.0.0 · cocoen 3.2.0 · JuxtaposeJS from its CDN · image-compare-viewer 1.6.2. A dash means the shipped bundle has none of it. Sizes are script plus stylesheet, or script alone where the CSS is inlined into a shadow root; the optional theme is not counted.</small></p>
+<p>Two rows carry it. This is the only one of the six implementing the
+<a href="https://www.w3.org/WAI/ARIA/apg/patterns/windowsplitter/">W3C Window Splitter pattern</a>
+— role, values, orientation, the pane it controls, the Enter key that collapses it —
+where <code>img-comparison-slider</code> is keyboard operable and ships no ARIA at all, handing
+a screen reader a focusable something with no name, role or value. The gestures are
+its own too: pointer capture, so a fast drag cannot fall out of the handle, inertia
+with a capped flick, and a double-tap snap that no other package here has. All at
+3.3 kB, second lightest of the six, with nothing installed alongside it.</p>
+<p>Where it loses: light DOM is a trade rather than a free win — the
+openness that lets you restyle the handle also lets a stray <code>img { max-width }</code> rule
+from the page reach in, where <code>cocoen</code> and <code>img-comparison-slider</code> sit sealed in a
+shadow root, so pick those if you ship into pages you do not control.</p>
+<p>React needs no wrapper here, and there will not be one. React 19 registers any
+unknown <code>on*</code> prop as a listener, so <code>oninput</code>, <code>onchange</code>, <code>onstart</code> and <code>onend</code>
+bind straight in JSX, and every option was an attribute already; React 18 wants a
+<code>ref</code> and <code>addEventListener</code> for the events, as it does for any web component.
+<code>react-compare-slider</code> is the React-only package of the six — this is the same
+element in React and out of it.</p>
 <script src="./dist/compare-images-slider.min.js"></script>
 <script>
   const sliders = document.querySelectorAll('.js-compare-images-slider');
