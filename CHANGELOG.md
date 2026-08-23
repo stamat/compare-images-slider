@@ -31,7 +31,9 @@ Write it for the person upgrading, not for the person who wrote the code. What
 they need is what changed for them: a renamed option, a different default, an
 error that is now thrown, output that moved.
 
-## [Unreleased] — nothing measures anything any more
+## [Unreleased]
+
+## [3.0.0] - 2026-08-23 — nothing measures anything any more
 
 The reveal used to be a pixel width the script wrote onto the overlay image. That
 is why the overlay had to be an `img` at all, why there was a `resize` listener,
