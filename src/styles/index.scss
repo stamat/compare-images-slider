@@ -76,6 +76,11 @@ compare-images-slider {
     justify-content: center;
     text-align: center;
     border-radius: 21px;
+    /* Flex centres the line box, not the ink: the arrow sits on the math axis, below the
+       middle of ascent and descent, so it lands low. Half the padding is the nudge up, and
+       the amount is a knob - the glyph comes from whichever fallback font has U+2194. */
+    box-sizing: border-box;
+    padding-block-end: 0.08em;
   }
 
   .handle:focus-visible {
