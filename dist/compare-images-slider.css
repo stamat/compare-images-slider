@@ -23,13 +23,24 @@ compare-images-slider {
      this declaration - so before the script has run, and with no script at all, the
      reveal paints wherever `--compare-images-slider-initial-position` says. */
   --compare-images-slider-position: var(--compare-images-slider-initial-position);
+  /* Kills the browser's native image drag, which otherwise carries a ghost off the
+     slider mid-gesture. Images only: a `<video controls>` or an embedded map has its
+     own pointer handling to lose, and neither has a drag ghost to suppress. */
 }
 .compare-images-slider img,
 compare-images-slider img {
   pointer-events: none;
 }
-.compare-images-slider > img,
-compare-images-slider > img {
+.compare-images-slider,
+compare-images-slider {
+  /* The base layer is what gives the slider its size, and the frame's copy has to lay
+     out identically over it or the two halves do not line up. `picture` is addressed
+     through its `img`, the wrapper itself having no box worth sizing. Anything else -
+     a div, an iframe, an svg sprite - is left to fill the frame on its own terms. */
+}
+.compare-images-slider > :is(img, video, canvas), .compare-images-slider > picture > img,
+compare-images-slider > :is(img, video, canvas),
+compare-images-slider > picture > img {
   max-width: 100%;
   height: auto;
   display: block;
@@ -49,8 +60,9 @@ compare-images-slider .frame {
   -webkit-clip-path: inset(0 calc(100% - var(--compare-images-slider-position)) 0 0);
   clip-path: inset(0 calc(100% - var(--compare-images-slider-position)) 0 0);
 }
-.compare-images-slider .frame > img,
-compare-images-slider .frame > img {
+.compare-images-slider .frame > :is(img, video, canvas), .compare-images-slider .frame > picture > img,
+compare-images-slider .frame > :is(img, video, canvas),
+compare-images-slider .frame > picture > img {
   width: 100%;
   height: auto;
   display: block;

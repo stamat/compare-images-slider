@@ -62,6 +62,9 @@
       this.element = element;
       this.frame = this.element.querySelector(".frame");
       this.handle = this.element.querySelector(".handle");
+      if (!this.frame || !this.handle) {
+        throw new Error("CompareImagesSlider: the element needs a .frame child holding the revealed layer, and a .handle child");
+      }
       this.options = resolveOptions(this.element, options);
       if (this.options.vertical) {
         this.element.setAttribute("vertical", "");

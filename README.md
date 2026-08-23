@@ -64,6 +64,28 @@ written on every render, so page CSS can sit on the reveal edge without asking t
 script for anything. Where it _starts_, before the script has run, is
 `--compare-images-slider-initial-position`.
 
+## Not only images
+
+The name says images and images are the point, but nothing in the script reads the
+content: the frame covers the whole slider and is clipped back to the reveal
+position, so whatever is inside it is revealed. Two videos, a canvas over a
+screenshot, a styled `div` over a photo — all the same to it.
+
+```html
+<compare-images-slider>
+  <video src="graded.mp4" width="1280" height="720" autoplay muted loop playsinline></video>
+  <div class="frame">
+    <video src="ungraded.mp4" width="1280" height="720" autoplay muted loop playsinline></video>
+  </div>
+  <span class="handle"></span>
+</compare-images-slider>
+```
+
+The stylesheet sizes `img`, `video`, `canvas` and `picture > img` on both layers.
+Anything else is yours to size, and the rule is that the two layers have to lay out
+identically — the base layer is what gives the slider its height, and the frame is
+laid over it.
+
 Building with Sass rather than loading the CSS file:
 
 ```scss

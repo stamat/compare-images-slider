@@ -28,10 +28,11 @@ _A live `<compare-images-slider>`, upgraded on connect with no JavaScript instan
 
 ## Overview
 
-**Compare Images Slider** overlays two images and reveals one over the other as
-you drag a handle across them. It is lightweight, dependency-free, mobile
-friendly, and works as a `<compare-images-slider>` custom element or as a class
-you instantiate. Because it uses no shadow DOM, every part stays yours to style.
+**Compare Images Slider** overlays two images — or two videos, or anything else you
+put in the markup — and reveals one over the other as you drag a handle across
+them. It is lightweight, dependency-free, mobile friendly, and works as a
+`<compare-images-slider>` custom element or as a class you instantiate. Because it
+uses no shadow DOM, every part stays yours to style.
 
 ## Usage
 
@@ -49,6 +50,28 @@ load.
   <span class="handle"></span>
 </compare-images-slider>
 ```
+
+## Not only images
+
+The name says images and images are the point, but nothing in the script reads the
+content: the frame covers the whole slider and is clipped back to the reveal
+position, so whatever sits inside it is what gets revealed. Two videos, a canvas
+over a screenshot, a styled `div` over a photo — all the same to it.
+
+```html
+<compare-images-slider>
+  <video src="graded.mp4" width="1280" height="720" autoplay muted loop playsinline></video>
+  <div class="frame">
+    <video src="ungraded.mp4" width="1280" height="720" autoplay muted loop playsinline></video>
+  </div>
+  <span class="handle"></span>
+</compare-images-slider>
+```
+
+The stylesheet sizes `img`, `video`, `canvas` and `picture > img` on both layers.
+Anything else is yours to size, and the rule is that the two layers must lay out
+identically: the base layer is what gives the slider its height, and the frame is
+laid over it.
 
 ## Without the custom element
 

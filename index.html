@@ -66,10 +66,11 @@ class you instantiate, with no shadow DOM to fight.</p>
   </span>
 </compare-images-slider><p><em>A live <code>&lt;compare-images-slider&gt;</code>, upgraded on connect with no JavaScript instantiation. Photo by <a href="https://unsplash.com/@necone?utm_content=creditCopyText&utm_medium=referral&utm_source=unsplash">Nenad Radojčić</a> on <a href="https://unsplash.com/photos/gray-concrete-building-under-white-sky-during-daytime-JBm5eNo6B4E?utm_content=creditCopyText&utm_medium=referral&utm_source=unsplash">Unsplash</a>. Drag the handle, or focus it and use the arrow keys.</em></p>
 <h2 id="overview">Overview<a class="heading-anchor" href="#overview" tabindex="-1" aria-hidden="true"></a></h2>
-<p><strong>Compare Images Slider</strong> overlays two images and reveals one over the other as
-you drag a handle across them. It is lightweight, dependency-free, mobile
-friendly, and works as a <code>&lt;compare-images-slider&gt;</code> custom element or as a class
-you instantiate. Because it uses no shadow DOM, every part stays yours to style.</p>
+<p><strong>Compare Images Slider</strong> overlays two images — or two videos, or anything else you
+put in the markup — and reveals one over the other as you drag a handle across
+them. It is lightweight, dependency-free, mobile friendly, and works as a
+<code>&lt;compare-images-slider&gt;</code> custom element or as a class you instantiate. Because it
+uses no shadow DOM, every part stays yours to style.</p>
 <h2 id="usage">Usage<a class="heading-anchor" href="#usage" tabindex="-1" aria-hidden="true"></a></h2>
 <p>Drop in the markup and the tag upgrades itself on connect — no JavaScript call
 needed. Options are read from attributes (bare, <code>data-*</code>, or kebab-case). Set the
@@ -82,6 +83,22 @@ load.</p>
   <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
   <span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;handle&quot;</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span>
 <span class="hljs-tag">&lt;/<span class="hljs-name">compare-images-slider</span>&gt;</span></code></pre>
+<h2 id="not-only-images">Not only images<a class="heading-anchor" href="#not-only-images" tabindex="-1" aria-hidden="true"></a></h2>
+<p>The name says images and images are the point, but nothing in the script reads the
+content: the frame covers the whole slider and is clipped back to the reveal
+position, so whatever sits inside it is what gets revealed. Two videos, a canvas
+over a screenshot, a styled <code>div</code> over a photo — all the same to it.</p>
+<pre><code class="hljs language-html"><span class="hljs-tag">&lt;<span class="hljs-name">compare-images-slider</span>&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">video</span> <span class="hljs-attr">src</span>=<span class="hljs-string">&quot;graded.mp4&quot;</span> <span class="hljs-attr">width</span>=<span class="hljs-string">&quot;1280&quot;</span> <span class="hljs-attr">height</span>=<span class="hljs-string">&quot;720&quot;</span> <span class="hljs-attr">autoplay</span> <span class="hljs-attr">muted</span> <span class="hljs-attr">loop</span> <span class="hljs-attr">playsinline</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">video</span>&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;frame&quot;</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">video</span> <span class="hljs-attr">src</span>=<span class="hljs-string">&quot;ungraded.mp4&quot;</span> <span class="hljs-attr">width</span>=<span class="hljs-string">&quot;1280&quot;</span> <span class="hljs-attr">height</span>=<span class="hljs-string">&quot;720&quot;</span> <span class="hljs-attr">autoplay</span> <span class="hljs-attr">muted</span> <span class="hljs-attr">loop</span> <span class="hljs-attr">playsinline</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">video</span>&gt;</span>
+  <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;handle&quot;</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span>
+<span class="hljs-tag">&lt;/<span class="hljs-name">compare-images-slider</span>&gt;</span></code></pre>
+<p>The stylesheet sizes <code>img</code>, <code>video</code>, <code>canvas</code> and <code>picture &gt; img</code> on both layers.
+Anything else is yours to size, and the rule is that the two layers must lay out
+identically: the base layer is what gives the slider its height, and the frame is
+laid over it.</p>
 <h2 id="without-the-custom-element">Without the custom element<a class="heading-anchor" href="#without-the-custom-element" tabindex="-1" aria-hidden="true"></a></h2>
 <p>The same markup on a plain element works too — give it the <code>compare-images-slider</code>
 class for the styles, and instantiate the slider on it yourself. That is the path

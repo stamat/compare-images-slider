@@ -133,9 +133,11 @@ let sliderCount = 0;
 
 /**
  * @class CompareImagesSlider
- * @classdesc Compare two images by dragging a handle. Self-contained: pointer
- * physics, inertia, keyboard controls and ARIA are all handled here with no
- * runtime dependencies.
+ * @classdesc Reveal one layer over another by dragging a handle. The two layers are
+ * whatever the markup puts there - images, video, canvas, arbitrary elements - since
+ * the reveal is clipped by percentage and nothing here measures the content.
+ * Self-contained: pointer physics, inertia, keyboard controls and ARIA are all
+ * handled here with no runtime dependencies.
  * @param {HTMLElement} element - The slider root element.
  * @param {Object} [options]
  * @param {boolean} [options.inertia=false] - Continue moving after a flick.
@@ -156,6 +158,12 @@ export default class CompareImagesSlider {
     this.element = element;
     this.frame = this.element.querySelector('.frame');
     this.handle = this.element.querySelector('.handle');
+
+    // Both are the contract, and both are used before the constructor returns. Saying so
+    // beats the `null.setAttribute` that would land two calls deeper.
+    if (!this.frame || !this.handle) {
+      throw new Error('CompareImagesSlider: the element needs a .frame child holding the revealed layer, and a .handle child');
+    }
 
     this.options = resolveOptions(this.element, options);
 

@@ -35,6 +35,18 @@ error that is now thrown, output that moved.
 
 ### Added
 
+- **The frame reveals whatever is in it, not only an `img`.** The script used to
+  reach for `.frame > img` and stretch it to the slider's width, so an overlay that
+  was not an image was never revealed. Nothing reads the content now: two videos, a
+  canvas over a screenshot, a styled `div` over a photo all work, and the
+  stylesheet sizes `img`, `video`, `canvas` and `picture > img` on both layers.
+  Anything else is yours to size — the two layers have to lay out identically, the
+  base one being what gives the slider its height.
+
+- **A named error when the markup is missing a part.** A `.frame` or `.handle` that
+  is not there used to surface two calls later as `Cannot read properties of null`.
+  The constructor says which child is missing instead.
+
 - **<kbd>Enter</kbd> collapses the revealed pane, and puts it back.** The handle
   claimed the W3C APG Window Splitter pattern while missing the one key that
   pattern does not mark optional: Enter, which collapses the primary pane and

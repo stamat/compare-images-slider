@@ -23,11 +23,19 @@ compare-images-slider {
      reveal paints wherever `--compare-images-slider-initial-position` says. */
   --compare-images-slider-position: var(--compare-images-slider-initial-position);
 
+  /* Kills the browser's native image drag, which otherwise carries a ghost off the
+     slider mid-gesture. Images only: a `<video controls>` or an embedded map has its
+     own pointer handling to lose, and neither has a drag ghost to suppress. */
   img {
     pointer-events: none;
   }
 
-  & > img {
+  /* The base layer is what gives the slider its size, and the frame's copy has to lay
+     out identically over it or the two halves do not line up. `picture` is addressed
+     through its `img`, the wrapper itself having no box worth sizing. Anything else -
+     a div, an iframe, an svg sprite - is left to fill the frame on its own terms. */
+  & > :is(img, video, canvas),
+  & > picture > img {
     max-width: 100%;
     height: auto;
     display: block;
@@ -44,7 +52,8 @@ compare-images-slider {
     -webkit-clip-path: inset(0 calc(100% - var(--compare-images-slider-position)) 0 0);
     clip-path: inset(0 calc(100% - var(--compare-images-slider-position)) 0 0);
 
-    & > img {
+    & > :is(img, video, canvas),
+    & > picture > img {
       width: 100%;
       height: auto;
       display: block;
