@@ -249,8 +249,17 @@ export default class CompareImagesSlider {
     this.handle.setAttribute('aria-orientation', this.options.vertical ? 'horizontal' : 'vertical');
     this.handle.setAttribute('aria-valuemin', '0');
     this.handle.setAttribute('aria-valuemax', '100');
+    // The name is copied down from the element so a translated string can live in the
+    // markup the author already writes. `aria-labelledby` first, as ARIA itself resolves
+    // it - and it is the route that points at visible text, which is the one that gets
+    // translated along with the page.
     if (!this.handle.hasAttribute('aria-label') && !this.handle.hasAttribute('aria-labelledby')) {
-      this.handle.setAttribute('aria-label', this.element.getAttribute('aria-label') || 'Image comparison slider');
+      const labelledby = this.element.getAttribute('aria-labelledby');
+      if (labelledby) {
+        this.handle.setAttribute('aria-labelledby', labelledby);
+      } else {
+        this.handle.setAttribute('aria-label', this.element.getAttribute('aria-label') || 'Image comparison slider');
+      }
     }
   }
 

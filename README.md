@@ -237,6 +237,12 @@ Safari never fires because a double tap is the browser's own zoom gesture. The
 pattern's optional F6 is not implemented; there is one pane here, so there is
 nothing to cycle focus between.
 
+The accessible name is `Image comparison slider` unless you say otherwise, and that
+string is English. Override it with `aria-label` or `aria-labelledby` on the
+`.handle`, or on the element itself, from where either is copied down.
+`aria-labelledby` wins, as it does in ARIA, and it is the route that can point at
+visible text the page already translates.
+
 ## Options
 
 Every option is an attribute — bare, `data-*` or kebab-case:
