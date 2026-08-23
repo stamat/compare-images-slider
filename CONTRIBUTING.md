@@ -3,8 +3,8 @@
 Issues and pull requests are welcome. Taking part means keeping to the
 [Code of Conduct](CODE_OF_CONDUCT.md).
 
-This is one slider that reveals one image over another, and it intends to stay
-that size. It ships no shadow DOM, no dependencies and no build step for the
+This is one slider that reveals one layer over another — images, usually, though
+the frame takes whatever the markup puts in it — and it intends to stay that size. It ships no shadow DOM, no dependencies and no build step for the
 people installing it — those three are the point, not an accident of it being
 small. A carousel, a zoom, a lightbox, a filter pipeline or a React wrapper all
 belong in something else; so does anything that would make the markup ours to

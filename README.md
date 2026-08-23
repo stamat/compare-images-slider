@@ -1,6 +1,7 @@
 # ↔️ Compare Images Slider [![npm version](https://img.shields.io/npm/v/compare-images-slider)](https://www.npmjs.com/package/compare-images-slider) [![license mit](https://img.shields.io/badge/license-MIT-green)](https://github.com/stamat/compare-images-slider/blob/main/LICENSE)
 
-A simple slider for comparing two images visually.
+A dependency-free before/after comparison slider — two images, two videos, or
+whatever else you put in the markup.
 
 <img style="max-width: 100%" src="https://i.imgur.com/e9m4QaU.jpeg" alt="Compare Images Slider Screenshot">
 
@@ -66,6 +67,27 @@ written on every render, so page CSS can sit on the reveal edge without asking t
 script for anything. Where it _starts_, before the script has run, is
 `--compare-images-slider-initial-position`.
 
+Building with Sass rather than loading the CSS file:
+
+```scss
+@use "compare-images-slider/src/styles/index";
+```
+
+That is a plain load path into `node_modules`, not the package's `exports` map —
+Sass resolves the file, not the subpath. Bundlers and anything that reads
+`exports` get the same two stylesheets as `compare-images-slider/style.css` and
+`compare-images-slider/theme.css`.
+
+The package ships a
+[Custom Elements Manifest](https://github.com/webcomponents/custom-elements-manifest)
+at `dist/custom-elements.json`, pointed at by the `customElements` key — every
+attribute below, every event and every `--compare-images-slider-*` custom property,
+described once in the JSDoc block on `CompareImagesSliderElement` and generated from it by
+[`cem analyze`](https://custom-elements-manifest.open-wc.org/analyzer/getting-started/).
+That is what buys editor autocomplete on the tag, and what the
+[docs page](https://stamat.github.io/compare-images-slider/) reads to turn the options
+table into knobs beside a live sample.
+
 ## Not only images
 
 The name says images and images are the point, but nothing in the script reads the
@@ -87,27 +109,6 @@ The stylesheet sizes `img`, `video`, `canvas` and `picture > img` on both layers
 Anything else is yours to size, and the rule is that the two layers have to lay out
 identically — the base layer is what gives the slider its height, and the frame is
 laid over it.
-
-Building with Sass rather than loading the CSS file:
-
-```scss
-@use "compare-images-slider/src/styles/index";
-```
-
-That is a plain load path into `node_modules`, not the package's `exports` map —
-Sass resolves the file, not the subpath. Bundlers and anything that reads
-`exports` get the same two stylesheets as `compare-images-slider/style.css` and
-`compare-images-slider/theme.css`.
-
-The package ships a
-[Custom Elements Manifest](https://github.com/webcomponents/custom-elements-manifest)
-at `dist/custom-elements.json`, pointed at by the `customElements` key — every
-attribute below and every `--compare-images-slider-*` custom property, described
-once in the JSDoc block on `CompareImagesSliderElement` and generated from it by
-[`cem analyze`](https://custom-elements-manifest.open-wc.org/analyzer/getting-started/).
-That is what buys editor autocomplete on the tag, and what the
-[docs page](https://stamat.github.io/compare-images-slider/) reads to turn the options
-table into knobs beside a live sample.
 
 ## Without the custom element
 
