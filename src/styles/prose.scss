@@ -39,7 +39,7 @@ code-preview[manifest] {
   .code-preview-viewport {
     height: auto;
     max-height: none;
-    aspect-ratio: 1 / ((1 - 2 * $frame-pad) * $sample-ratio + 2 * $frame-pad);
+    aspect-ratio: math.div(1, (1 - 2 * $frame-pad) * $sample-ratio + 2 * $frame-pad);
   }
 }
 
