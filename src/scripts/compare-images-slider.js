@@ -135,6 +135,7 @@ export default class CompareImagesSlider {
     this.onPointerDown = this.onPointerDown.bind(this);
     this.onPointerMove = this.onPointerMove.bind(this);
     this.onPointerUp = this.onPointerUp.bind(this);
+    this.onPointerCancel = this.onPointerCancel.bind(this);
     this.onResize = () => requestAnimationFrame(this.setupSecondImage.bind(this));
     this.onKeyDown = this.onKeyDown.bind(this);
     this.onDoubleClick = this.onDoubleClick.bind(this);
@@ -211,7 +212,7 @@ export default class CompareImagesSlider {
     if (this.dragTarget.setPointerCapture) this.dragTarget.setPointerCapture(e.pointerId);
     this.dragTarget.addEventListener('pointermove', this.onPointerMove);
     this.dragTarget.addEventListener('pointerup', this.onPointerUp);
-    this.dragTarget.addEventListener('pointercancel', this.onPointerUp);
+    this.dragTarget.addEventListener('pointercancel', this.onPointerCancel);
     this.pushSample(this.positionFromEvent(e));
     this.setPosition(this.positionFromEvent(e));
     e.preventDefault();
@@ -226,19 +227,35 @@ export default class CompareImagesSlider {
 
   onPointerUp(e) {
     if (!this.dragging || e.pointerId !== this.pointerId) return;
-    this.dragging = false;
-    this.dragTarget.removeEventListener('pointermove', this.onPointerMove);
-    this.dragTarget.removeEventListener('pointerup', this.onPointerUp);
-    this.dragTarget.removeEventListener('pointercancel', this.onPointerUp);
-    if (this.dragTarget.releasePointerCapture) {
-      try { this.dragTarget.releasePointerCapture(e.pointerId); } catch { /* already released */ }
-    }
-    this.pointerId = null;
+    this.endDrag(e);
 
     if (this.options.inertia) {
       this.velocity = capVelocity(sampleVelocity(this.samples), this.options.maxFlickVelocity);
       if (Math.abs(this.velocity) > 0) this.startInertia();
     }
+  }
+
+  /**
+   * The system took the gesture away - a call arriving, the page scrolling out from
+   * under the finger. iOS Safari raises this far more readily than a desktop browser
+   * does. The samples describe a gesture the user never finished, so the handle stops
+   * where it stands rather than flying off on a flick nobody meant to throw.
+   */
+  onPointerCancel(e) {
+    if (!this.dragging || e.pointerId !== this.pointerId) return;
+    this.endDrag(e);
+  }
+
+  /** Tear down a drag, however it ended. */
+  endDrag(e) {
+    this.dragging = false;
+    this.dragTarget.removeEventListener('pointermove', this.onPointerMove);
+    this.dragTarget.removeEventListener('pointerup', this.onPointerUp);
+    this.dragTarget.removeEventListener('pointercancel', this.onPointerCancel);
+    if (this.dragTarget.releasePointerCapture) {
+      try { this.dragTarget.releasePointerCapture(e.pointerId); } catch { /* already released */ }
+    }
+    this.pointerId = null;
   }
 
   pushSample(pos) {
@@ -311,7 +328,7 @@ export default class CompareImagesSlider {
     this.dragTarget.removeEventListener('pointerdown', this.onPointerDown);
     this.dragTarget.removeEventListener('pointermove', this.onPointerMove);
     this.dragTarget.removeEventListener('pointerup', this.onPointerUp);
-    this.dragTarget.removeEventListener('pointercancel', this.onPointerUp);
+    this.dragTarget.removeEventListener('pointercancel', this.onPointerCancel);
     this.dragTarget.style.removeProperty('touch-action');
     this.handle.removeEventListener('keydown', this.onKeyDown);
     this.handle.removeEventListener('dblclick', this.onDoubleClick);

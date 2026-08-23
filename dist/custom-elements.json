@@ -196,6 +196,26 @@
             },
             {
               "kind": "method",
+              "name": "onPointerCancel",
+              "parameters": [
+                {
+                  "name": "e"
+                }
+              ],
+              "description": "The system took the gesture away - a call arriving, the page scrolling out from\nunder the finger. iOS Safari raises this far more readily than a desktop browser\ndoes. The samples describe a gesture the user never finished, so the handle stops\nwhere it stands rather than flying off on a flick nobody meant to throw."
+            },
+            {
+              "kind": "method",
+              "name": "endDrag",
+              "parameters": [
+                {
+                  "name": "e"
+                }
+              ],
+              "description": "Tear down a drag, however it ended."
+            },
+            {
+              "kind": "method",
               "name": "pushSample",
               "parameters": [
                 {

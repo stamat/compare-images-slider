@@ -73,6 +73,13 @@ error that is now thrown, output that moved.
 
 ### Fixed
 
+- **A cancelled drag no longer flies off on a flick.** `pointercancel` was wired
+  to the same handler as `pointerup`, so when the system took the gesture away —
+  a call arriving, the page scrolling out from under the finger — the half-drawn
+  velocity samples were thrown as if you had let go on purpose. iOS Safari raises
+  that event far more readily than a desktop browser does, so this mostly showed
+  up on a phone: the handle stops where it stands now.
+
 - **Attributes now work on a slider you construct yourself.** `only-handle`,
   `inertia`, `bounce`, `friction` and the rest were parsed only on the
   `<compare-images-slider>` element; on a `<div class="js-compare-images-slider">`
