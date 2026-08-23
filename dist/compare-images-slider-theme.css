@@ -28,6 +28,7 @@ compare-images-slider .handle-knob svg {
   width: 24px;
   height: 24px;
   fill: currentColor;
+  margin-top: 1px;
 }
 .compare-images-slider .handle:focus-visible .handle-knob,
 compare-images-slider .handle:focus-visible .handle-knob {

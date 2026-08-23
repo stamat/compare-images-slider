@@ -84,7 +84,7 @@
       window.addEventListener("resize", this.onResize);
       this.setupSecondImage();
       this.setupAccessibility();
-      this.dragTarget = this.options.onlyHandle ? this.handle : this.element;
+      this.dragTarget = this.options.dragAnywhere ? this.element : this.handle;
       this.dragTarget.style.setProperty("touch-action", "none");
       this.dragTarget.addEventListener("pointerdown", this.onPointerDown);
       this.handle.addEventListener("keydown", this.onKeyDown);
@@ -262,13 +262,13 @@
     friction: 0.9,
     bounceFactor: 0.1,
     maxFlickVelocity: 0.5,
-    onlyHandle: true,
+    dragAnywhere: false,
     vertical: false,
     initialPosition: 50,
     step: 5,
     pageStep: 25
   };
-  var BOOL_OPTIONS = ["inertia", "bounce", "vertical", "onlyHandle"];
+  var BOOL_OPTIONS = ["inertia", "bounce", "vertical", "dragAnywhere"];
   var NUMBER_OPTIONS = {
     friction: "friction",
     bounceFactor: "bounce-factor",

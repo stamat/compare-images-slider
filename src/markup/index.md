@@ -123,7 +123,7 @@ _Photo by [Valentin Salja](https://unsplash.com/@valentinsalja?utm_content=credi
 | `friction`         | number  | `0.9`   | Inertia decay per frame (0–1).            |
 | `bounceFactor`     | number  | `0.1`   | Energy kept on a bounce (0–1).            |
 | `maxFlickVelocity` | number  | `0.5`   | Cap on flick velocity (% per ms).         |
-| `onlyHandle`       | boolean | `true`  | Only the handle starts a drag.            |
+| `dragAnywhere`     | boolean | `false` | A press anywhere on the images drags.     |
 | `vertical`         | boolean | `false` | Split top/bottom instead of left/right.   |
 | `initialPosition`  | number  | `50`    | Starting position (0–100).                |
 | `step`             | number  | `5`     | Arrow-key step (percent).                 |
@@ -149,7 +149,7 @@ is running.
 <script src="{{ relativePathPrefix }}js/code-preview-hljs.min.js" defer></script>
 <script src="{{ relativePathPrefix }}js/code-preview-options.min.js" defer></script>
 
-<code-preview css="{{ relativePathPrefix }}dist/compare-images-slider.min.css" js="{{ relativePathPrefix }}dist/compare-images-slider.min.js" manifest="{{ relativePathPrefix }}dist/custom-elements.json" theme-attribute="data-theme" style="--code-preview-height: 500px">
+<code-preview css="{{ relativePathPrefix }}dist/compare-images-slider.min.css" js="{{ relativePathPrefix }}dist/compare-images-slider.min.js" manifest="{{ relativePathPrefix }}dist/custom-elements.json" theme-attribute="data-theme" style="--code-preview-height: 540px">
 
 ```html
 <compare-images-slider inertia initial-position="35">

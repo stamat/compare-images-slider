@@ -424,7 +424,7 @@
           "type": {
             "text": "object"
           },
-          "default": "{ inertia: false, bounce: false, friction: 0.9, bounceFactor: 0.1, maxFlickVelocity: 0.5, onlyHandle: true, vertical: false, initialPosition: 50, step: 5, pageStep: 25 }"
+          "default": "{ inertia: false, bounce: false, friction: 0.9, bounceFactor: 0.1, maxFlickVelocity: 0.5, dragAnywhere: false, vertical: false, initialPosition: 50, step: 5, pageStep: 25 }"
         },
         {
           "kind": "function",
@@ -544,9 +544,9 @@
               "type": {
                 "text": "boolean"
               },
-              "description": "Only the handle starts a drag. Off, a press anywhere on the images does.",
-              "name": "only-handle",
-              "default": "true"
+              "description": "A press anywhere on the images starts a drag, not only the handle.",
+              "name": "drag-anywhere",
+              "default": "false"
             },
             {
               "type": {

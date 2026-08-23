@@ -128,7 +128,7 @@ let sliderCount = 0;
  * @param {number} [options.friction=0.9] - Inertia decay per frame (0-1).
  * @param {number} [options.bounceFactor=0.1] - Energy kept on a bounce (0-1).
  * @param {number} [options.maxFlickVelocity=0.5] - Cap on flick velocity (%/ms).
- * @param {boolean} [options.onlyHandle=true] - Only the handle starts a drag.
+ * @param {boolean} [options.dragAnywhere=false] - A press anywhere on the images starts a drag, not only the handle.
  * @param {boolean} [options.vertical=false] - Vertical (top/bottom) layout.
  * @param {number} [options.initialPosition=50] - Starting position (0-100).
  * @param {number} [options.step=5] - Arrow-key step (percent).
@@ -179,7 +179,7 @@ export default class CompareImagesSlider {
     this.setupSecondImage();
     this.setupAccessibility();
 
-    this.dragTarget = this.options.onlyHandle ? this.handle : this.element;
+    this.dragTarget = this.options.dragAnywhere ? this.element : this.handle;
     // The stylesheet only sets `touch-action: none` on the handle; without this a touch
     // drag over the images is claimed by the browser's scroll gesture instead. Set
     // through `setProperty` because the manifest analyzer reads a plain style
@@ -387,7 +387,7 @@ export const DEFAULT_OPTIONS = {
   friction: 0.9,
   bounceFactor: 0.1,
   maxFlickVelocity: 0.5,
-  onlyHandle: true,
+  dragAnywhere: false,
   vertical: false,
   initialPosition: 50,
   step: 5,
@@ -395,7 +395,7 @@ export const DEFAULT_OPTIONS = {
 };
 
 // Boolean options settable via bare/`data-` attributes on the custom element.
-const BOOL_OPTIONS = ['inertia', 'bounce', 'vertical', 'onlyHandle'];
+const BOOL_OPTIONS = ['inertia', 'bounce', 'vertical', 'dragAnywhere'];
 // Numeric options and the attribute name they map to.
 const NUMBER_OPTIONS = {
   friction: 'friction',
@@ -456,7 +456,7 @@ const ElementBase = typeof HTMLElement !== 'undefined' ? HTMLElement : class {};
  * @attr {boolean} [inertia=false] - Keep gliding after a flick.
  * @attr {boolean} [bounce=false] - Bounce off the edges while under inertia. Does nothing without `inertia`.
  * @attr {boolean} [vertical=false] - Split top and bottom instead of left and right.
- * @attr {boolean} [only-handle=true] - Only the handle starts a drag. Off, a press anywhere on the images does.
+ * @attr {boolean} [drag-anywhere=false] - A press anywhere on the images starts a drag, not only the handle.
  * @attr {number} [friction=0.9] - Inertia decay per frame, 0-1. Applied frame-rate independently, so the feel holds across displays.
  * @attr {number} [bounce-factor=0.1] - Energy kept on a bounce, 0-1.
  * @attr {number} [max-flick-velocity=0.5] - Cap on flick velocity, percent per millisecond.

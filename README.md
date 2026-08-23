@@ -173,7 +173,7 @@ const options = {
   bounceFactor: 0.1, // the force of the bounce
   maxFlickVelocity: 0.5, // cap on flick velocity (% per ms), tames hard flicks
   vertical: false, // vertical slider
-  onlyHandle: true, // only the handle is draggable
+  dragAnywhere: false, // a press anywhere on the images drags, not only the handle
   initialPosition: 50, // starting position (0-100)
   step: 5, // arrow-key step (percent)
   pageStep: 25, // Page Up/Down step (percent)
@@ -185,13 +185,13 @@ new CompareImagesSlider(slider, options);
 Available attribute options (bare, `data-*` or kebab-case):
 
 - `vertical` - vertical slider
-- `inertia`, `bounce`, `only-handle` - booleans
+- `inertia`, `bounce`, `drag-anywhere` - booleans
 - `friction`, `bounce-factor`, `max-flick-velocity`, `initial-position`, `step`, `page-step` - numbers
 
 The constructor reads them off the element too, so they work the same whether you
 write `<compare-images-slider>` or call `new CompareImagesSlider(el, options)`. A
 `data-*` beats the bare attribute, an attribute beats the options object, and a
-boolean is turned off with `only-handle="false"` or `only-handle="0"`.
+boolean is turned off with `drag-anywhere="false"` or `drag-anywhere="0"`.
 
 ```html
 <div class="js-compare-images-slider compare-images-slider" vertical>

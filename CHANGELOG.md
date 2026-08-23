@@ -93,7 +93,7 @@ error that is now thrown, output that moved.
   that event far more readily than a desktop browser does, so this mostly showed
   up on a phone: the handle stops where it stands now.
 
-- **Attributes now work on a slider you construct yourself.** `only-handle`,
+- **Attributes now work on a slider you construct yourself.** `drag-anywhere`,
   `inertia`, `bounce`, `friction` and the rest were parsed only on the
   `<compare-images-slider>` element; on a `<div class="js-compare-images-slider">`
   passed to `new CompareImagesSlider(el)` every one of them was silently ignored
@@ -107,12 +107,24 @@ error that is now thrown, output that moved.
   resolved option, instead of leaving the layout on one axis and the script on
   the other.
 
-- **`only-handle="false"` survives a touch drag.** `touch-action: none` sat on
-  the handle alone, so with the whole slider as the drag target a touch on the
-  images was taken by the browser's scroll gesture instead. It is applied to
-  whichever element is actually dragged.
+- **`drag-anywhere` survives a touch drag.** `touch-action: none` sat on the
+  handle alone, so with the whole slider as the drag target a touch on the images
+  was taken by the browser's scroll gesture instead. It is applied to whichever
+  element is actually dragged.
 
 ### Changed
+
+- **`onlyHandle` is now `dragAnywhere`, and defaults to `false`.** It was the one
+  boolean here defaulting to `true`, so its off state could only be written as a
+  value — `only-handle="false"`. Anything that writes a boolean attribute by
+  presence, the options panel on the docs page included, could not express it at
+  all: a missing `only-handle` and a bare one both read as `true`, which made the
+  control inert. The sense is inverted instead of the default patched, so writing
+  the attribute turns dragging from the images on and removing it puts the drag
+  back on the handle alone. Upgrading: `onlyHandle: false` becomes
+  `dragAnywhere: true`, `only-handle="false"` becomes `drag-anywhere`, and the
+  handle-only default needs nothing written at all. `onlyHandle` is no longer
+  read.
 
 - **Poops 2.0 → 3.0 and poops-docs-theme 1.1 → 4.5,** which brings
   book-of-spells 1.4 → 2.5 with them. Docs-site build only — nothing in `dist/`

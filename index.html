@@ -167,10 +167,10 @@ bottom instead of left and right.</p>
 <td>Cap on flick velocity (% per ms).</td>
 </tr>
 <tr>
-<td><code>onlyHandle</code></td>
+<td><code>dragAnywhere</code></td>
 <td>boolean</td>
-<td><code>true</code></td>
-<td>Only the handle starts a drag.</td>
+<td><code>false</code></td>
+<td>A press anywhere on the images drags.</td>
 </tr>
 <tr>
 <td><code>vertical</code></td>
@@ -213,7 +213,7 @@ ships. Turning one rewrites the attribute in the code, so what you read is alway
 is running.</p>
 <link rel="stylesheet" href="./css/code-preview.min.css">
 <script src="./js/code-preview-hljs.min.js" defer></script>
-<script src="./js/code-preview-options.min.js" defer></script><code-preview css="./dist/compare-images-slider.min.css" js="./dist/compare-images-slider.min.js" manifest="./dist/custom-elements.json" theme-attribute="data-theme" style="--code-preview-height: 500px"><pre><code class="hljs language-html"><span class="hljs-tag">&lt;<span class="hljs-name">compare-images-slider</span> <span class="hljs-attr">inertia</span> <span class="hljs-attr">initial-position</span>=<span class="hljs-string">&quot;35&quot;</span>&gt;</span>
+<script src="./js/code-preview-options.min.js" defer></script><code-preview css="./dist/compare-images-slider.min.css" js="./dist/compare-images-slider.min.js" manifest="./dist/custom-elements.json" theme-attribute="data-theme" style="--code-preview-height: 540px"><pre><code class="hljs language-html"><span class="hljs-tag">&lt;<span class="hljs-name">compare-images-slider</span> <span class="hljs-attr">inertia</span> <span class="hljs-attr">initial-position</span>=<span class="hljs-string">&quot;35&quot;</span>&gt;</span>
   <span class="hljs-tag">&lt;<span class="hljs-name">img</span> <span class="hljs-attr">width</span>=<span class="hljs-string">&quot;1680&quot;</span> <span class="hljs-attr">height</span>=<span class="hljs-string">&quot;1120&quot;</span> <span class="hljs-attr">src</span>=<span class="hljs-string">&quot;https://i.imgur.com/Ju4pEb7.jpeg&quot;</span> <span class="hljs-attr">alt</span>=<span class="hljs-string">&quot;Building, before edit&quot;</span>&gt;</span>
   <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;frame&quot;</span>&gt;</span>
     <span class="hljs-tag">&lt;<span class="hljs-name">img</span> <span class="hljs-attr">width</span>=<span class="hljs-string">&quot;1680&quot;</span> <span class="hljs-attr">height</span>=<span class="hljs-string">&quot;1120&quot;</span> <span class="hljs-attr">src</span>=<span class="hljs-string">&quot;https://i.imgur.com/pvWyCKw.jpeg&quot;</span> <span class="hljs-attr">alt</span>=<span class="hljs-string">&quot;Building, after edit&quot;</span>&gt;</span>

@@ -67,14 +67,14 @@ test('keyboardStep implements the window splitter key map', () => {
 test('readOptionsFromElement parses booleans and numbers from attributes', () => {
   const attrs = {
     inertia: 'true',
-    'only-handle': 'false',
+    'drag-anywhere': 'true',
     friction: '0.8',
     'initial-position': '30'
   };
   const el = { dataset: {}, getAttribute: (n) => (n in attrs ? attrs[n] : null) };
   assert.deepEqual(readOptionsFromElement(el), {
     inertia: true,
-    onlyHandle: false,
+    dragAnywhere: true,
     friction: 0.8,
     initialPosition: 30
   });
@@ -89,10 +89,10 @@ test('readOptionsFromElement prefers data-* over bare attributes', () => {
 });
 
 test('an attribute beats the options object, and "false" turns a boolean off', () => {
-  const attrs = { 'only-handle': 'false', vertical: '' };
+  const attrs = { 'drag-anywhere': 'false', vertical: '' };
   const el = { dataset: {}, getAttribute: (n) => (n in attrs ? attrs[n] : null) };
-  const options = resolveOptions(el, { onlyHandle: true, vertical: false, step: 10 });
-  assert.equal(options.onlyHandle, false, 'the attribute must override the passed option');
+  const options = resolveOptions(el, { dragAnywhere: true, vertical: false, step: 10 });
+  assert.equal(options.dragAnywhere, false, 'the attribute must override the passed option');
   assert.equal(options.vertical, true, 'a bare attribute reads as true');
   assert.equal(options.step, 10, 'an option with no attribute survives');
   assert.equal(options.friction, 0.9, 'the rest falls back to the defaults');
