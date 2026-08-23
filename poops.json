@@ -48,8 +48,8 @@
         "url": "https://stamat.github.io/compare-images-slider",
         "repo": "https://github.com/stamat/compare-images-slider",
         "branch": "main",
-        "links": [
-          { "title": "npm", "url": "https://www.npmjs.com/package/compare-images-slider" }
+        "iconLinks": [
+          { "title": "npm", "url": "https://www.npmjs.com/package/compare-images-slider", "icon": "npm" }
         ],
         "theme": "light"
       }
