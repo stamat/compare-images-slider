@@ -61,7 +61,6 @@
     constructor(element, options) {
       this.element = element;
       this.frame = this.element.querySelector(".frame");
-      this.second = this.frame.querySelector(":scope > img");
       this.handle = this.element.querySelector(".handle");
       this.options = resolveOptions(this.element, options);
       if (this.options.vertical) {
@@ -84,10 +83,7 @@
       this.onPointerMove = this.onPointerMove.bind(this);
       this.onPointerUp = this.onPointerUp.bind(this);
       this.onPointerCancel = this.onPointerCancel.bind(this);
-      this.onResize = () => requestAnimationFrame(this.setupSecondImage.bind(this));
       this.onKeyDown = this.onKeyDown.bind(this);
-      window.addEventListener("resize", this.onResize);
-      this.setupSecondImage();
       this.setupAccessibility();
       this.dragTarget = this.options.dragAnywhere ? this.element : this.handle;
       this.dragTarget.style.setProperty("touch-action", "none");
@@ -133,9 +129,6 @@
     snapToExtreme() {
       this.stopInertia();
       this.setPosition(nearestExtreme(this.position));
-    }
-    setupSecondImage() {
-      this.second.style.width = this.element.offsetWidth + "px";
     }
     /** Convert a client coordinate to a 0-100 position along the slider axis. */
     positionFromEvent(e) {
@@ -248,21 +241,14 @@
       this.render();
     }
     render() {
-      const value = this.position + "%";
-      if (this.options.vertical) {
-        this.frame.style.height = value;
-        this.handle.style.top = value;
-      } else {
-        this.frame.style.width = value;
-        this.handle.style.left = value;
-      }
+      this.element.style.setProperty("--compare-images-slider-position", this.position + "%");
       const rounded = Math.round(this.position);
       this.handle.setAttribute("aria-valuenow", String(rounded));
       this.handle.setAttribute("aria-valuetext", rounded + "%");
     }
     destroy() {
       this.stopInertia();
-      window.removeEventListener("resize", this.onResize);
+      this.element.style.removeProperty("--compare-images-slider-position");
       this.dragTarget.removeEventListener("pointerdown", this.onPointerDown);
       this.dragTarget.removeEventListener("pointermove", this.onPointerMove);
       this.dragTarget.removeEventListener("pointerup", this.onPointerUp);

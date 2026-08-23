@@ -251,10 +251,6 @@
             },
             {
               "kind": "method",
-              "name": "setupSecondImage"
-            },
-            {
-              "kind": "method",
               "name": "positionFromEvent",
               "parameters": [
                 {
@@ -356,10 +352,6 @@
             },
             {
               "kind": "field",
-              "name": "second"
-            },
-            {
-              "kind": "field",
               "name": "handle"
             },
             {
@@ -440,10 +432,6 @@
             },
             {
               "kind": "field",
-              "name": "onResize"
-            },
-            {
-              "kind": "field",
               "name": "dragTarget"
             }
           ]
@@ -511,6 +499,13 @@
               "description": "Where the reveal edge sits before the script has run. Declared on `:root`, so it is the pre-upgrade paint and not the live position.",
               "name": "--compare-images-slider-initial-position",
               "default": "50%"
+            },
+            {
+              "type": {
+                "text": "<length-percentage>"
+              },
+              "description": "The live reveal position, written inline by the script on every render. Read it to hang your own styling off the reveal; setting it is overwritten on the next move. Defaults to `--compare-images-slider-initial-position`.",
+              "name": "--compare-images-slider-position"
             },
             {
               "type": {

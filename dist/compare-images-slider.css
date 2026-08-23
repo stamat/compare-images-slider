@@ -19,6 +19,10 @@ compare-images-slider {
      one. `-webkit-user-select: none` above suppresses it on its own in most builds;
      this states it, rather than resting on a side effect that has regressed before. */
   -webkit-touch-callout: none;
+  /* The live reveal position. The script writes it inline on every render, which beats
+     this declaration - so before the script has run, and with no script at all, the
+     reveal paints wherever `--compare-images-slider-initial-position` says. */
+  --compare-images-slider-position: var(--compare-images-slider-initial-position);
 }
 .compare-images-slider img,
 compare-images-slider img {
@@ -30,28 +34,31 @@ compare-images-slider > img {
   height: auto;
   display: block;
 }
+.compare-images-slider,
+compare-images-slider {
+  /* The frame covers the whole slider and is clipped back to the reveal position, rather
+     than being sized to it. That is what keeps the overlay laying out at the same size as
+     the image underneath with no script measuring anything - sizing the frame instead
+     would need every child resized to the slider's width, on load and on every resize. */
+}
 .compare-images-slider .frame,
 compare-images-slider .frame {
   position: absolute;
-  top: 0;
-  left: 0;
-  height: 100%;
-  width: var(--compare-images-slider-initial-position);
-  overflow: hidden;
+  inset: 0;
   z-index: 2;
+  -webkit-clip-path: inset(0 calc(100% - var(--compare-images-slider-position)) 0 0);
+  clip-path: inset(0 calc(100% - var(--compare-images-slider-position)) 0 0);
 }
 .compare-images-slider .frame > img,
 compare-images-slider .frame > img {
+  width: 100%;
   height: auto;
   display: block;
-  /* The script sets this image's width to the slider's full width; a page-level
-     `img { max-width: 100% }` would clamp it to the frame and break the reveal. */
-  max-width: none;
 }
 .compare-images-slider .handle,
 compare-images-slider .handle {
   position: absolute;
-  left: var(--compare-images-slider-initial-position);
+  left: var(--compare-images-slider-position);
   top: 0;
   bottom: 0;
   width: 2px;
@@ -97,14 +104,14 @@ compare-images-slider .handle:focus-visible:after {
 .compare-images-slider[data-vertical] .frame, .compare-images-slider[vertical] .frame,
 compare-images-slider[data-vertical] .frame,
 compare-images-slider[vertical] .frame {
-  width: 100%;
-  height: var(--compare-images-slider-initial-position);
+  -webkit-clip-path: inset(0 0 calc(100% - var(--compare-images-slider-position)) 0);
+  clip-path: inset(0 0 calc(100% - var(--compare-images-slider-position)) 0);
 }
 .compare-images-slider[data-vertical] .handle, .compare-images-slider[vertical] .handle,
 compare-images-slider[data-vertical] .handle,
 compare-images-slider[vertical] .handle {
   left: 0;
-  top: var(--compare-images-slider-initial-position);
+  top: var(--compare-images-slider-position);
   width: 100%;
   height: 2px;
   margin-top: -1px;

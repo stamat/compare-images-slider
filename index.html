@@ -208,8 +208,9 @@ name in camelCase on the options object, read whether you write
 options object, and a boolean is turned off with <code>=&quot;false&quot;</code>.</p>
 <div class="marked-github-alert marked-github-alert-note">
 <p class="marked-github-alert-title"><svg version="1.1" width="16" height="16" viewBox="0 0 16 16" class="octicon octicon-info marked-github-alert-icon" aria-hidden="true" data-component="Octicon"><path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8Zm8-6.5a6.5 6.5 0 1 0 0 13 6.5 6.5 0 0 0 0-13ZM6.5 7.75A.75.75 0 0 1 7.25 7h1a.75.75 0 0 1 .75.75v2.75h.25a.75.75 0 0 1 0 1.5h-2a.75.75 0 0 1 0-1.5h.25v-2h-.25a.75.75 0 0 1-.75-.75ZM8 6a1 1 0 1 1 0-2 1 1 0 0 1 0 2Z"></path></svg><span>Note</span></p>
-<p>Set the intrinsic dimensions of the images. This eliminates layout shifts and
-ensures the slider measures correctly on load.</p>
+<p>Set the intrinsic dimensions of the images. Nothing in the slider measures them
+— the reveal is clipped by percentage — but without them the page reflows as
+they load, which moves the slider out from under the pointer mid-drag.</p>
 </div>
 <h3 id="try-them">Try them<a class="heading-anchor" href="#try-them" tabindex="-1" aria-hidden="true"></a></h3>
 <p>The block below is the sample and the thing it documents at once: the frame above
@@ -297,10 +298,18 @@ vertical divider and Up/Down on a horizontal one; both pairs work on both
 orientations here, so a keyboard user who guesses wrong is not stuck.</li>
 </ul>
 <h2 id="styling">Styling<a class="heading-anchor" href="#styling" tabindex="-1" aria-hidden="true"></a></h2>
-<p>There is no shadow DOM, so the element and its children are styled directly. The
-reveal position is exposed as a CSS custom property:</p>
+<p>There is no shadow DOM, so the element and its children are styled directly. Where
+the reveal starts is a CSS custom property, so the edge is in the right place in
+the first painted frame rather than after the script has run:</p>
 <pre><code class="hljs language-css">compare-images-slider {
   <span class="hljs-attr">--compare-images-slider-initial-position</span>: <span class="hljs-number">35%</span>;
+}</code></pre>
+<p>Where it is <em>now</em> is a second property, <code>--compare-images-slider-position</code>, written
+on the element on every render — the same value the frame is clipped to and the
+handle sits at. Read it to hang your own styling off the reveal; setting it is
+overwritten by the next move.</p>
+<pre><code class="hljs language-css">compare-images-slider <span class="hljs-selector-class">.caption</span> {
+  <span class="hljs-attribute">left</span>: <span class="hljs-built_in">var</span>(--compare-images-slider-position);
 }</code></pre>
 <h3 id="optional-theme">Optional theme<a class="heading-anchor" href="#optional-theme" tabindex="-1" aria-hidden="true"></a></h3>
 <p><code>compare-images-slider.css</code> is the slider working — the frame, the handle, the reveal.

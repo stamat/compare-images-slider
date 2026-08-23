@@ -56,6 +56,20 @@ error that is now thrown, output that moved.
 
 ### Changed
 
+- **The reveal is a `clip-path`, and the slider no longer measures anything.** The
+  frame used to be sized to the reveal position, which meant the image inside it
+  had to be stretched back to the slider's full width in pixels by the script — on
+  load, and again on every window resize. A slider whose container changed size
+  without the window changing with it kept the stale width and the reveal edge
+  drifted off the handle. The frame now covers the whole slider and is clipped back
+  to the position instead, so every value in the reveal is a percentage the browser
+  keeps correct on its own. The `resize` listener is gone.
+
+  Two things follow for anyone styling this. The live position is readable as
+  `--compare-images-slider-position` on the element, written on every render, so
+  page CSS can hang off the reveal. And `.frame` no longer carries an inline
+  `width` or `height`: styling that read either one has to read that property now.
+
 - **The accessibility docs say which keys are the pattern's and which are ours.**
   Page Up/Down and the double-click snap are this library's additions, F6 is
   deliberately not implemented, and `aria-orientation` reports the orientation of

@@ -143,8 +143,9 @@ name in camelCase on the options object, read whether you write
 options object, and a boolean is turned off with `="false"`.
 
 > [!NOTE]
-> Set the intrinsic dimensions of the images. This eliminates layout shifts and
-> ensures the slider measures correctly on load.
+> Set the intrinsic dimensions of the images. Nothing in the slider measures them
+> — the reveal is clipped by percentage — but without them the page reflows as
+> they load, which moves the slider out from under the pointer mid-drag.
 
 ### Try them
 
@@ -216,12 +217,24 @@ Two details worth knowing before reading the DOM and calling either a bug:
 
 ## Styling
 
-There is no shadow DOM, so the element and its children are styled directly. The
-reveal position is exposed as a CSS custom property:
+There is no shadow DOM, so the element and its children are styled directly. Where
+the reveal starts is a CSS custom property, so the edge is in the right place in
+the first painted frame rather than after the script has run:
 
 ```css
 compare-images-slider {
   --compare-images-slider-initial-position: 35%;
+}
+```
+
+Where it is _now_ is a second property, `--compare-images-slider-position`, written
+on the element on every render — the same value the frame is clipped to and the
+handle sits at. Read it to hang your own styling off the reveal; setting it is
+overwritten by the next move.
+
+```css
+compare-images-slider .caption {
+  left: var(--compare-images-slider-position);
 }
 ```
 

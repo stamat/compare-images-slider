@@ -155,7 +155,6 @@ export default class CompareImagesSlider {
   constructor(element, options) {
     this.element = element;
     this.frame = this.element.querySelector('.frame');
-    this.second = this.frame.querySelector(':scope > img');
     this.handle = this.element.querySelector('.handle');
 
     this.options = resolveOptions(this.element, options);
@@ -188,11 +187,8 @@ export default class CompareImagesSlider {
     this.onPointerMove = this.onPointerMove.bind(this);
     this.onPointerUp = this.onPointerUp.bind(this);
     this.onPointerCancel = this.onPointerCancel.bind(this);
-    this.onResize = () => requestAnimationFrame(this.setupSecondImage.bind(this));
     this.onKeyDown = this.onKeyDown.bind(this);
 
-    window.addEventListener('resize', this.onResize);
-    this.setupSecondImage();
     this.setupAccessibility();
 
     this.dragTarget = this.options.dragAnywhere ? this.element : this.handle;
@@ -249,10 +245,6 @@ export default class CompareImagesSlider {
   snapToExtreme() {
     this.stopInertia();
     this.setPosition(nearestExtreme(this.position));
-  }
-
-  setupSecondImage() {
-    this.second.style.width = this.element.offsetWidth + 'px';
   }
 
   /** Convert a client coordinate to a 0-100 position along the slider axis. */
@@ -382,14 +374,10 @@ export default class CompareImagesSlider {
   }
 
   render() {
-    const value = this.position + '%';
-    if (this.options.vertical) {
-      this.frame.style.height = value;
-      this.handle.style.top = value;
-    } else {
-      this.frame.style.width = value;
-      this.handle.style.left = value;
-    }
+    // One property for both axes and both parts: the stylesheet decides which edge of the
+    // frame is clipped back and which way the handle travels, so nothing here knows about
+    // orientation, and nothing has to be recomputed when the slider is resized.
+    this.element.style.setProperty('--compare-images-slider-position', this.position + '%');
     const rounded = Math.round(this.position);
     this.handle.setAttribute('aria-valuenow', String(rounded));
     this.handle.setAttribute('aria-valuetext', rounded + '%');
@@ -397,7 +385,7 @@ export default class CompareImagesSlider {
 
   destroy() {
     this.stopInertia();
-    window.removeEventListener('resize', this.onResize);
+    this.element.style.removeProperty('--compare-images-slider-position');
     this.dragTarget.removeEventListener('pointerdown', this.onPointerDown);
     this.dragTarget.removeEventListener('pointermove', this.onPointerMove);
     this.dragTarget.removeEventListener('pointerup', this.onPointerUp);
@@ -491,6 +479,7 @@ const ElementBase = typeof HTMLElement !== 'undefined' ? HTMLElement : class {};
  * @attr {number} [page-step=25] - Page Up/Down step, in percent.
  *
  * @cssprop {<length-percentage>} [--compare-images-slider-initial-position=50%] - Where the reveal edge sits before the script has run. Declared on `:root`, so it is the pre-upgrade paint and not the live position.
+ * @cssprop {<length-percentage>} [--compare-images-slider-position] - The live reveal position, written inline by the script on every render. Read it to hang your own styling off the reveal; setting it is overwritten on the next move. Defaults to `--compare-images-slider-initial-position`.
  * @cssprop {<color>} [--compare-images-slider-handle-bg=#fff] - Handle fill.
  * @cssprop {<color>} [--compare-images-slider-handle-fg=#000] - Handle foreground — the knob's arrows.
  * @cssprop {<length>} [--compare-images-slider-handle-size=42px] - Handle diameter.

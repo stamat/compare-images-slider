@@ -54,7 +54,15 @@ option is an attribute (bare, `data-*` or kebab-case):
 </compare-images-slider>
 ```
 
-**⚠️ Note:** Don't be lazy and please set the intrinsic dimensions of the images. This eliminates layout shifts and will ensure the slider works as expected.
+**⚠️ Note:** Don't be lazy and please set the intrinsic dimensions of the images.
+Nothing in the slider measures them — the reveal is clipped by percentage — but
+without them the page reflows as they load, which moves the slider out from under
+the pointer mid-drag.
+
+The live reveal position is on the element as `--compare-images-slider-position`,
+written on every render, so page CSS can sit on the reveal edge without asking the
+script for anything. Where it _starts_, before the script has run, is
+`--compare-images-slider-initial-position`.
 
 Building with Sass rather than loading the CSS file:
 
