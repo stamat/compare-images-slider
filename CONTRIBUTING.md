@@ -70,12 +70,18 @@ Commit messages are freeform, write something that says what changed.
 
 Maintainer flow, recorded here so the automation isn't a mystery:
 
-`script/publish [version]` writes the version into `package.json`, runs
-`script/build`, commits both, tags `v<version>` and pushes the tag. Pushing the
-tag triggers [publish.yml](.github/workflows/publish.yml), which publishes to
-npm via trusted publishing — OIDC, no token stored anywhere.
+`script/publish [version]` refuses to start quietly on a dirty tree — it prints
+what is uncommitted and asks, because everything left lying around would ride
+along in the release commits. Then it writes the version into `package.json`
+and commits it, runs `script/build` and commits the output, tags `v<version>`
+and pushes both the branch and the tag. A step with nothing to commit is
+skipped rather than failing the run, and any command that exits non-zero stops
+the release there.
 
-**Known trap:** `script/publish` also runs `npm publish` itself, from your
-machine, at the end of the same run. That is a second route to the same release
-racing the first, and the loser fails on a version that is already there. Until
-that line comes out, expect one of the two to report an error on every release.
+Pushing the tag triggers [publish.yml](.github/workflows/publish.yml), which
+publishes to npm via trusted publishing — OIDC, no token stored anywhere. That
+workflow is the only thing that publishes; `script/publish` never runs `npm
+publish` from your machine.
+
+Last, it offers to cut a GitHub release with `gh`, taking notes you type or
+generating them from the commits.
