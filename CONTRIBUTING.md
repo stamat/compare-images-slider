@@ -72,16 +72,25 @@ Maintainer flow, recorded here so the automation isn't a mystery:
 
 `script/publish [version]` refuses to start quietly on a dirty tree — it prints
 what is uncommitted and asks, because everything left lying around would ride
-along in the release commits. Then it writes the version into `package.json`
-and commits it, runs `script/build` and commits the output, tags `v<version>`
-and pushes both the branch and the tag. A step with nothing to commit is
-skipped rather than failing the run, and any command that exits non-zero stops
-the release there.
+along in the release commits. Then it writes the version into `package.json`,
+calls `script/changelog` to cut the entry, and commits both; runs
+`script/build` and commits the output; tags `v<version>` and pushes the branch
+and the tag. A step with nothing to commit is skipped rather than failing the
+run, and any command that exits non-zero stops the release there.
+
+`script/changelog <version>` is the piece that rolls `## [Unreleased]` over
+into `## [<version>] - <date>`, leaving a fresh empty `[Unreleased]` behind. It
+runs inside the bump commit on purpose, so the tag contains the released
+entry and no CI step has to push back to `main`. A `## [Unreleased]` sitting in
+a code fence — the format example near the top of the file — is skipped, so
+documenting the format doesn't break cutting it. The entry is also written to
+the temp dir, and that file becomes the GitHub release body below.
 
 Pushing the tag triggers [publish.yml](.github/workflows/publish.yml), which
 publishes to npm via trusted publishing — OIDC, no token stored anywhere. That
 workflow is the only thing that publishes; `script/publish` never runs `npm
 publish` from your machine.
 
-Last, it offers to cut a GitHub release with `gh`, taking notes you type or
-generating them from the commits.
+Last, it offers to create a GitHub release with `gh`, using the changelog
+entry as the body with the generated commit notes under it. If there is no
+entry to cut, it falls back to asking you for notes.

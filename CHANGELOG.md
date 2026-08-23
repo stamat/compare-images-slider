@@ -33,6 +33,8 @@ error that is now thrown, output that moved.
 
 ## [Unreleased]
 
+## [2.0.0] - 2026-08-23
+
 ### Added
 
 - **An optional theme, `dist/compare-images-slider-theme.css`.** The handle the
