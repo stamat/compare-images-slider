@@ -85,6 +85,24 @@ export function nearestExtreme(position) {
 }
 
 /**
+ * The event a move has just earned by arriving at an extreme, if it arrived at one.
+ *
+ * Edge-triggered: sitting at an extreme is not arriving at it. A held arrow key, an
+ * inertia glide clamped at the edge for several frames, a second Home press - each
+ * keeps the handle at 0 without reaching it again, and none of them fire.
+ *
+ * @param {number} previous - Position before the move.
+ * @param {number} next - Position after it.
+ * @returns {'start'|'end'|null}
+ */
+export function edgeEvent(previous, next) {
+  if (next === previous) return null;
+  if (next === 0) return 'start';
+  if (next === 100) return 'end';
+  return null;
+}
+
+/**
  * Next position for the splitter's Enter key: collapse the primary pane if it is
  * open, restore it to where it was before the collapse if it is not.
  * @param {number} position - Current position (0-100).
@@ -178,6 +196,9 @@ export default class CompareImagesSlider {
     }
 
     this.position = clamp(this.options.initialPosition, 0, 100);
+    // Where the last `change` left it. Seeded with the starting position, so an element
+    // born at an extreme has not arrived anywhere and reports nothing.
+    this.committedPosition = this.position;
 
     // Drag state.
     this.dragging = false;
@@ -240,6 +261,7 @@ export default class CompareImagesSlider {
       const target = collapseToggle(this.position, this.restorePosition);
       if (this.position !== 0) this.restorePosition = this.position;
       this.setPosition(target);
+      this.commit();
       return;
     }
     const next = keyboardStep(this.position, e.key, this.options.step, this.options.pageStep);
@@ -247,12 +269,14 @@ export default class CompareImagesSlider {
     e.preventDefault();
     this.stopInertia();
     this.setPosition(next);
+    this.commit();
   }
 
   /** Double-click or double-tap snaps to the nearest extreme (0 or 100). */
   snapToExtreme() {
     this.stopInertia();
     this.setPosition(nearestExtreme(this.position));
+    this.commit();
   }
 
   /** Convert a client coordinate to a 0-100 position along the slider axis. */
@@ -303,8 +327,11 @@ export default class CompareImagesSlider {
 
     if (this.options.inertia) {
       this.velocity = capVelocity(sampleVelocity(this.samples), this.options.maxFlickVelocity);
-      if (Math.abs(this.velocity) > 0) this.startInertia();
+      // A flick is one gesture that outlives the finger, so `change` waits for the glide
+      // to settle rather than reporting the position the finger happened to leave.
+      if (Math.abs(this.velocity) > 0) return this.startInertia();
     }
+    this.commit();
   }
 
   /**
@@ -317,6 +344,7 @@ export default class CompareImagesSlider {
     if (!this.dragging || e.pointerId !== this.pointerId) return;
     this.lastTapAt = 0;
     this.endDrag(e);
+    this.commit();
   }
 
   /** Tear down a drag, however it ended. */
@@ -361,6 +389,7 @@ export default class CompareImagesSlider {
 
       if (Math.abs(this.velocity) < 0.0005) {
         this.inertiaId = null;
+        this.commit();
         return;
       }
       this.inertiaId = requestAnimationFrame(step);
@@ -375,10 +404,34 @@ export default class CompareImagesSlider {
     }
   }
 
-  /** Set the position (0-100), clamped, and re-render. */
+  /** Set the position (0-100), clamped, re-render and report the move. */
   setPosition(pct) {
+    const previous = this.position;
     this.position = clamp(pct, 0, 100);
     this.render();
+    if (this.position === previous) return;
+    this.emit('input');
+    const edge = edgeEvent(previous, this.position);
+    if (edge) this.emit(edge);
+  }
+
+  /**
+   * Report a settled position as `change`, the way a range input does - once a gesture
+   * is over rather than throughout it. Silent when the gesture put the handle back where
+   * it found it, so a press that goes nowhere is not a change.
+   */
+  commit() {
+    if (this.position === this.committedPosition) return;
+    this.committedPosition = this.position;
+    this.emit('change');
+  }
+
+  /** @param {string} type - Event name; the position rides along as `detail.position`. */
+  emit(type) {
+    this.element.dispatchEvent(new CustomEvent(type, {
+      bubbles: true,
+      detail: { position: this.position }
+    }));
   }
 
   render() {
@@ -485,6 +538,11 @@ const ElementBase = typeof HTMLElement !== 'undefined' ? HTMLElement : class {};
  * @attr {number} [initial-position=50] - Starting position, 0-100. Paint it with `--compare-images-slider-initial-position` too, or the frame is at 50% until the script runs.
  * @attr {number} [step=5] - Arrow-key step, in percent.
  * @attr {number} [page-step=25] - Page Up/Down step, in percent.
+ *
+ * @fires {CustomEvent<{ position: number }>} input - Every move as it happens - drag, key, inertia frame - like an `<input type="range">`. Silent when a move lands where the handle already was.
+ * @fires {CustomEvent<{ position: number }>} change - The position has settled: a press released, a flick come to rest, a key pressed. Silent when the gesture ended where it started.
+ * @fires {CustomEvent<{ position: number }>} start - The handle has just reached 0, the fully collapsed end. Fires on arrival, not while it sits there.
+ * @fires {CustomEvent<{ position: number }>} end - The handle has just reached 100, the fully revealed end. Fires on arrival, not while it sits there.
  *
  * @cssprop {<length-percentage>} [--compare-images-slider-initial-position=50%] - Where the reveal edge sits before the script has run. Declared on `:root`, so it is the pre-upgrade paint and not the live position.
  * @cssprop {<length-percentage>} [--compare-images-slider-position] - The live reveal position, written inline by the script on every render. Read it to hang your own styling off the reveal; setting it is overwritten on the next move. Defaults to `--compare-images-slider-initial-position`.

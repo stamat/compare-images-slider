@@ -35,6 +35,16 @@ error that is now thrown, output that moved.
 
 ### Added
 
+- **The slider says where it is: `input`, `change`, `start` and `end`.** Nothing left
+  the element before this, so a caption tracking the handle, a position kept in the
+  URL, or anything else outside the slider had to poll for it. All four bubble and
+  carry `detail.position`, 0 to 100 unrounded. `input` and `change` split the way
+  they do on a range input — every move against the settled one — so work too
+  expensive to do sixty times a second has somewhere to sit. `start` and `end` fire
+  when the handle reaches an extreme, on arrival rather than for every frame it
+  spends there. A gesture ending where it began fires neither of the first two, and
+  building the element fires nothing.
+
 - **The frame reveals whatever is in it, not only an `img`.** The script used to
   reach for `.frame > img` and stretch it to the slider's width, so an overlay that
   was not an image was never revealed. Nothing reads the content now: two videos, a

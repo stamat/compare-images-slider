@@ -32,6 +32,12 @@
   function nearestExtreme(position) {
     return position < 50 ? 100 : 0;
   }
+  function edgeEvent(previous, next) {
+    if (next === previous) return null;
+    if (next === 0) return "start";
+    if (next === 100) return "end";
+    return null;
+  }
   function collapseToggle(position, restoreTo) {
     if (position !== 0) return 0;
     return restoreTo > 0 ? clamp(restoreTo, 0, 100) : 50;
@@ -73,6 +79,7 @@
         this.element.removeAttribute("data-vertical");
       }
       this.position = clamp(this.options.initialPosition, 0, 100);
+      this.committedPosition = this.position;
       this.dragging = false;
       this.pointerId = null;
       this.samples = [];
@@ -120,6 +127,7 @@
         const target = collapseToggle(this.position, this.restorePosition);
         if (this.position !== 0) this.restorePosition = this.position;
         this.setPosition(target);
+        this.commit();
         return;
       }
       const next = keyboardStep(this.position, e.key, this.options.step, this.options.pageStep);
@@ -127,11 +135,13 @@
       e.preventDefault();
       this.stopInertia();
       this.setPosition(next);
+      this.commit();
     }
     /** Double-click or double-tap snaps to the nearest extreme (0 or 100). */
     snapToExtreme() {
       this.stopInertia();
       this.setPosition(nearestExtreme(this.position));
+      this.commit();
     }
     /** Convert a client coordinate to a 0-100 position along the slider axis. */
     positionFromEvent(e) {
@@ -175,8 +185,9 @@
       this.lastTapAt = movedBy > TAP_SLOP ? 0 : now;
       if (this.options.inertia) {
         this.velocity = capVelocity(sampleVelocity(this.samples), this.options.maxFlickVelocity);
-        if (Math.abs(this.velocity) > 0) this.startInertia();
+        if (Math.abs(this.velocity) > 0) return this.startInertia();
       }
+      this.commit();
     }
     /**
      * The system took the gesture away - a call arriving, the page scrolling out from
@@ -188,6 +199,7 @@
       if (!this.dragging || e.pointerId !== this.pointerId) return;
       this.lastTapAt = 0;
       this.endDrag(e);
+      this.commit();
     }
     /** Tear down a drag, however it ended. */
     endDrag(e) {
@@ -226,6 +238,7 @@
         this.setPosition(next);
         if (Math.abs(this.velocity) < 5e-4) {
           this.inertiaId = null;
+          this.commit();
           return;
         }
         this.inertiaId = requestAnimationFrame(step);
@@ -238,10 +251,32 @@
         this.inertiaId = null;
       }
     }
-    /** Set the position (0-100), clamped, and re-render. */
+    /** Set the position (0-100), clamped, re-render and report the move. */
     setPosition(pct) {
+      const previous = this.position;
       this.position = clamp(pct, 0, 100);
       this.render();
+      if (this.position === previous) return;
+      this.emit("input");
+      const edge = edgeEvent(previous, this.position);
+      if (edge) this.emit(edge);
+    }
+    /**
+     * Report a settled position as `change`, the way a range input does - once a gesture
+     * is over rather than throughout it. Silent when the gesture put the handle back where
+     * it found it, so a press that goes nowhere is not a change.
+     */
+    commit() {
+      if (this.position === this.committedPosition) return;
+      this.committedPosition = this.position;
+      this.emit("change");
+    }
+    /** @param {string} type - Event name; the position rides along as `detail.position`. */
+    emit(type) {
+      this.element.dispatchEvent(new CustomEvent(type, {
+        bubbles: true,
+        detail: { position: this.position }
+      }));
     }
     render() {
       this.element.style.setProperty("--compare-images-slider-position", this.position + "%");

@@ -256,6 +256,48 @@ neither loaded in the frame.</p>
 short time window instead of a single frame and capped, so a fast flick carries
 naturally without slamming to an extreme. Friction is applied frame-rate
 independently, so the feel is consistent across displays.</p>
+<h2 id="events">Events<a class="heading-anchor" href="#events" tabindex="-1" aria-hidden="true"></a></h2>
+<p>Four events on the element, each bubbling, each carrying the position it happened at
+as <code>detail.position</code> — a number from 0 to 100, unrounded.</p>
+<table>
+<thead>
+<tr>
+<th>Event</th>
+<th>Fires</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>input</code></td>
+<td>Every move as it happens: a drag, a key, a frame of inertia. What <code>&lt;input type=&quot;range&quot;&gt;</code> calls it</td>
+</tr>
+<tr>
+<td><code>change</code></td>
+<td>Once the position settles: a press released, a flick come to rest, a key pressed</td>
+</tr>
+<tr>
+<td><code>start</code></td>
+<td>The handle has just reached 0 — the pane fully collapsed</td>
+</tr>
+<tr>
+<td><code>end</code></td>
+<td>The handle has just reached 100 — the pane fully revealed</td>
+</tr>
+</tbody></table>
+<pre><code class="hljs language-javascript">slider.<span class="hljs-title function_">addEventListener</span>(<span class="hljs-string">&quot;input&quot;</span>, <span class="hljs-function">(<span class="hljs-params">e</span>) =&gt;</span> {
+  label.<span class="hljs-property">textContent</span> = <span class="hljs-title class_">Math</span>.<span class="hljs-title function_">round</span>(e.<span class="hljs-property">detail</span>.<span class="hljs-property">position</span>) + <span class="hljs-string">&quot;%&quot;</span>;
+});
+
+slider.<span class="hljs-title function_">addEventListener</span>(<span class="hljs-string">&quot;change&quot;</span>, <span class="hljs-function">(<span class="hljs-params">e</span>) =&gt;</span> {
+  history.<span class="hljs-title function_">replaceState</span>(<span class="hljs-literal">null</span>, <span class="hljs-string">&quot;&quot;</span>, <span class="hljs-string">&quot;#&quot;</span> + <span class="hljs-title class_">Math</span>.<span class="hljs-title function_">round</span>(e.<span class="hljs-property">detail</span>.<span class="hljs-property">position</span>));
+});</code></pre>
+<p><code>input</code> and <code>change</code> split the same way they do on a range input: the first is for
+anything that should track the handle, the second for anything you would rather not
+do sixty times a second. A gesture that ends where it started fires neither — a
+press that goes nowhere is not a change.</p>
+<p><code>start</code> and <code>end</code> fire on arrival, not while the handle sits there. A held arrow key
+at 0, a second <kbd>Home</kbd>, an inertia glide clamped against the edge for several
+frames — one <code>start</code> between them. They mark the moment to swap a caption, not a
+state to poll.</p>
 <h2 id="accessibility">Accessibility<a class="heading-anchor" href="#accessibility" tabindex="-1" aria-hidden="true"></a></h2>
 <p>The handle follows the W3C APG
 <a href="https://www.w3.org/WAI/ARIA/apg/patterns/windowsplitter/">Window Splitter pattern</a>:

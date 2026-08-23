@@ -11,7 +11,9 @@ A simple slider for comparing two images visually.
 - Minimal DOM depth
 - No dependencies
 - Mobile friendly
+- Reveals anything — images, video, canvas, your own markup
 - Vertical slider
+- `input`, `change`, `start` and `end` events
 - Inertia physics with capped, natural-feeling flicks
 - Bounce back
 - Keyboard accessible ([W3C APG Window Splitter](https://www.w3.org/WAI/ARIA/apg/patterns/windowsplitter/))
@@ -187,6 +189,36 @@ compare-images-slider {
   --compare-images-slider-handle-fg: var(--your-fg);
 }
 ```
+
+## Events
+
+Four events on the element, each bubbling, each carrying the position it happened
+at as `detail.position` — a number from 0 to 100, unrounded:
+
+| Event | Fires |
+| --- | --- |
+| `input` | Every move as it happens: a drag, a key, a frame of inertia. What `<input type="range">` calls it |
+| `change` | Once the position settles: a press released, a flick come to rest, a key pressed |
+| `start` | The handle has just reached 0 — the pane fully collapsed |
+| `end` | The handle has just reached 100 — the pane fully revealed |
+
+```javascript
+slider.addEventListener("input", (e) => {
+  label.textContent = Math.round(e.detail.position) + "%";
+});
+
+slider.addEventListener("change", (e) => {
+  history.replaceState(null, "", "#" + Math.round(e.detail.position));
+});
+```
+
+`input` and `change` split the same way they do on a range input: the first is for
+anything that should track the handle, the second for anything you would rather not
+do sixty times a second. A gesture that ends where it started fires neither.
+
+`start` and `end` fire on arrival, not while the handle sits there — a held arrow
+key at 0, or an inertia glide clamped against the edge for several frames, fires
+`start` once. They are the moment to swap a caption, not a state to poll.
 
 ## Accessibility
 

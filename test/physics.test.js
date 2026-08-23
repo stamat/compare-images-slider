@@ -1,3 +1,11 @@
+// The decisions the slider makes, each pulled out as a pure function so it can be tested
+// without a browser: velocity and its cap, the key map, the double tap, the collapse
+// toggle, which extreme an arrival earns an event for, and how options resolve.
+//
+// Not covered here, deliberately: anything needing layout or a real event stream - the
+// reveal geometry, pointer capture, the ARIA the handle carries, the events actually
+// leaving the element. Those are checked in a browser, since a DOM stub asserting them
+// would only be testing the stub.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import {
@@ -7,6 +15,7 @@ import {
   keyboardStep,
   isDoubleTap,
   nearestExtreme,
+  edgeEvent,
   collapseToggle,
   readOptionsFromElement,
   resolveOptions,
@@ -128,4 +137,13 @@ test('a snap sends the handle to the edge it is further from, so it toggles', ()
   assert.equal(nearestExtreme(80), 0);
   assert.equal(nearestExtreme(100), 0, 'snapping again comes back');
   assert.equal(nearestExtreme(50), 0, 'dead centre goes to the start');
+});
+
+test('reaching an extreme is an event, sitting at one is not', () => {
+  assert.equal(edgeEvent(40, 0), 'start');
+  assert.equal(edgeEvent(40, 100), 'end');
+  assert.equal(edgeEvent(0, 0), null, 'a held key at 0 has not arrived again');
+  assert.equal(edgeEvent(100, 100), null, 'nor has an inertia glide clamped at 100');
+  assert.equal(edgeEvent(0, 100), 'end', 'crossing from one extreme to the other counts');
+  assert.equal(edgeEvent(40, 41), null, 'an ordinary move earns nothing');
 });

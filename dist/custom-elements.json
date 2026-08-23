@@ -161,6 +161,32 @@
         },
         {
           "kind": "function",
+          "name": "edgeEvent",
+          "parameters": [
+            {
+              "name": "previous",
+              "description": "Position before the move.",
+              "type": {
+                "text": "number"
+              }
+            },
+            {
+              "name": "next",
+              "description": "Position after it.",
+              "type": {
+                "text": "number"
+              }
+            }
+          ],
+          "description": "The event a move has just earned by arriving at an extreme, if it arrived at one.\n\nEdge-triggered: sitting at an extreme is not arriving at it. A held arrow key, an\ninertia glide clamped at the edge for several frames, a second Home press - each\nkeeps the handle at 0 without reaching it again, and none of them fire.",
+          "return": {
+            "type": {
+              "text": "'start'|'end'|null"
+            }
+          }
+        },
+        {
+          "kind": "function",
           "name": "collapseToggle",
           "parameters": [
             {
@@ -331,7 +357,25 @@
                   "name": "pct"
                 }
               ],
-              "description": "Set the position (0-100), clamped, and re-render."
+              "description": "Set the position (0-100), clamped, re-render and report the move."
+            },
+            {
+              "kind": "method",
+              "name": "commit",
+              "description": "Report a settled position as `change`, the way a range input does - once a gesture\nis over rather than throughout it. Silent when the gesture put the handle back where\nit found it, so a press that goes nowhere is not a change."
+            },
+            {
+              "kind": "method",
+              "name": "emit",
+              "parameters": [
+                {
+                  "name": "type",
+                  "description": "Event name; the position rides along as `detail.position`.",
+                  "type": {
+                    "text": "string"
+                  }
+                }
+              ]
             },
             {
               "kind": "method",
@@ -361,6 +405,10 @@
             {
               "kind": "field",
               "name": "position"
+            },
+            {
+              "kind": "field",
+              "name": "committedPosition"
             },
             {
               "kind": "field",
@@ -540,6 +588,36 @@
               "default": "28px"
             }
           ],
+          "events": [
+            {
+              "type": {
+                "text": "CustomEvent<{ position: number }>"
+              },
+              "description": "Every move as it happens - drag, key, inertia frame - like an `<input type=\"range\">`. Silent when a move lands where the handle already was.",
+              "name": "input"
+            },
+            {
+              "type": {
+                "text": "CustomEvent<{ position: number }>"
+              },
+              "description": "The position has settled: a press released, a flick come to rest, a key pressed. Silent when the gesture ended where it started.",
+              "name": "change"
+            },
+            {
+              "type": {
+                "text": "CustomEvent<{ position: number }>"
+              },
+              "description": "The handle has just reached 0, the fully collapsed end. Fires on arrival, not while it sits there.",
+              "name": "start"
+            },
+            {
+              "type": {
+                "text": "CustomEvent<{ position: number }>"
+              },
+              "description": "The handle has just reached 100, the fully revealed end. Fires on arrival, not while it sits there.",
+              "name": "end"
+            }
+          ],
           "attributes": [
             {
               "type": {
@@ -668,6 +746,14 @@
           "name": "nearestExtreme",
           "declaration": {
             "name": "nearestExtreme",
+            "module": "src/scripts/compare-images-slider.js"
+          }
+        },
+        {
+          "kind": "js",
+          "name": "edgeEvent",
+          "declaration": {
+            "name": "edgeEvent",
             "module": "src/scripts/compare-images-slider.js"
           }
         },

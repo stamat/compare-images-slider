@@ -207,6 +207,38 @@ short time window instead of a single frame and capped, so a fast flick carries
 naturally without slamming to an extreme. Friction is applied frame-rate
 independently, so the feel is consistent across displays.
 
+## Events
+
+Four events on the element, each bubbling, each carrying the position it happened at
+as `detail.position` — a number from 0 to 100, unrounded.
+
+| Event    | Fires                                                                                                             |
+| -------- | ----------------------------------------------------------------------------------------------------------------- |
+| `input`  | Every move as it happens: a drag, a key, a frame of inertia. What `<input type="range">` calls it |
+| `change` | Once the position settles: a press released, a flick come to rest, a key pressed |
+| `start`  | The handle has just reached 0 — the pane fully collapsed |
+| `end`    | The handle has just reached 100 — the pane fully revealed |
+
+```javascript
+slider.addEventListener("input", (e) => {
+  label.textContent = Math.round(e.detail.position) + "%";
+});
+
+slider.addEventListener("change", (e) => {
+  history.replaceState(null, "", "#" + Math.round(e.detail.position));
+});
+```
+
+`input` and `change` split the same way they do on a range input: the first is for
+anything that should track the handle, the second for anything you would rather not
+do sixty times a second. A gesture that ends where it started fires neither — a
+press that goes nowhere is not a change.
+
+`start` and `end` fire on arrival, not while the handle sits there. A held arrow key
+at 0, a second <kbd>Home</kbd>, an inertia glide clamped against the edge for several
+frames — one `start` between them. They mark the moment to swap a caption, not a
+state to poll.
+
 ## Accessibility
 
 The handle follows the W3C APG
