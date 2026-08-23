@@ -5,7 +5,9 @@ import {
   sampleVelocity,
   capVelocity,
   keyboardStep,
-  readOptionsFromElement
+  readOptionsFromElement,
+  resolveOptions,
+  DEFAULT_OPTIONS
 } from '../src/scripts/compare-images-slider.js';
 
 test('clamp keeps values inside the range', () => {
@@ -82,4 +84,20 @@ test('readOptionsFromElement prefers data-* over bare attributes', () => {
     getAttribute: () => '10'
   };
   assert.equal(readOptionsFromElement(el).initialPosition, 70);
+});
+
+test('an attribute beats the options object, and "false" turns a boolean off', () => {
+  const attrs = { 'only-handle': 'false', vertical: '' };
+  const el = { dataset: {}, getAttribute: (n) => (n in attrs ? attrs[n] : null) };
+  const options = resolveOptions(el, { onlyHandle: true, vertical: false, step: 10 });
+  assert.equal(options.onlyHandle, false, 'the attribute must override the passed option');
+  assert.equal(options.vertical, true, 'a bare attribute reads as true');
+  assert.equal(options.step, 10, 'an option with no attribute survives');
+  assert.equal(options.friction, 0.9, 'the rest falls back to the defaults');
+});
+
+test('resolveOptions leaves the defaults object untouched', () => {
+  const el = { dataset: {}, getAttribute: () => null };
+  resolveOptions(el, { inertia: true });
+  assert.equal(DEFAULT_OPTIONS.inertia, false);
 });

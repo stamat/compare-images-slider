@@ -50,22 +50,12 @@
       this.frame = this.element.querySelector(".frame");
       this.second = this.frame.querySelector(":scope > img");
       this.handle = this.element.querySelector(".handle");
-      this.options = Object.assign({
-        inertia: false,
-        bounce: false,
-        friction: 0.9,
-        bounceFactor: 0.1,
-        maxFlickVelocity: 0.5,
-        onlyHandle: true,
-        vertical: false,
-        initialPosition: 50,
-        step: 5,
-        pageStep: 25
-      }, options || {});
-      this.checkAndApplyAttribute("vertical");
-      this.checkAndApplyNumberAttribute("initialPosition", "initial-position");
-      if (this.options.vertical && !(this.element.dataset.vertical || this.element.hasAttribute("vertical"))) {
+      this.options = resolveOptions(this.element, options);
+      if (this.options.vertical) {
         this.element.setAttribute("vertical", "");
+      } else {
+        this.element.removeAttribute("vertical");
+        this.element.removeAttribute("data-vertical");
       }
       this.position = clamp(this.options.initialPosition, 0, 100);
       this.dragging = false;
@@ -84,6 +74,7 @@
       this.setupSecondImage();
       this.setupAccessibility();
       this.dragTarget = this.options.onlyHandle ? this.handle : this.element;
+      this.dragTarget.style.setProperty("touch-action", "none");
       this.dragTarget.addEventListener("pointerdown", this.onPointerDown);
       this.handle.addEventListener("keydown", this.onKeyDown);
       this.handle.addEventListener("dblclick", this.onDoubleClick);
@@ -117,16 +108,6 @@
     onDoubleClick() {
       this.stopInertia();
       this.setPosition(this.position < 50 ? 100 : 0);
-    }
-    checkAndApplyAttribute(attribute) {
-      if (this.element.dataset[attribute] || this.element.hasAttribute(attribute)) this.options[attribute] = true;
-    }
-    /** Read a numeric option from a `data-*` or bare attribute if present. */
-    checkAndApplyNumberAttribute(optionKey, attribute) {
-      const raw = this.element.dataset[optionKey] != null ? this.element.dataset[optionKey] : this.element.getAttribute(attribute);
-      if (raw == null || raw === "") return;
-      const num = parseFloat(raw);
-      if (!Number.isNaN(num)) this.options[optionKey] = num;
     }
     setupSecondImage() {
       this.second.style.width = this.element.offsetWidth + "px";
@@ -236,9 +217,22 @@
       this.dragTarget.removeEventListener("pointermove", this.onPointerMove);
       this.dragTarget.removeEventListener("pointerup", this.onPointerUp);
       this.dragTarget.removeEventListener("pointercancel", this.onPointerUp);
+      this.dragTarget.style.removeProperty("touch-action");
       this.handle.removeEventListener("keydown", this.onKeyDown);
       this.handle.removeEventListener("dblclick", this.onDoubleClick);
     }
+  };
+  var DEFAULT_OPTIONS = {
+    inertia: false,
+    bounce: false,
+    friction: 0.9,
+    bounceFactor: 0.1,
+    maxFlickVelocity: 0.5,
+    onlyHandle: true,
+    vertical: false,
+    initialPosition: 50,
+    step: 5,
+    pageStep: 25
   };
   var BOOL_OPTIONS = ["inertia", "bounce", "vertical", "onlyHandle"];
   var NUMBER_OPTIONS = {
@@ -265,12 +259,15 @@
     }
     return options;
   }
+  function resolveOptions(el, options) {
+    return Object.assign({}, DEFAULT_OPTIONS, options || {}, readOptionsFromElement(el));
+  }
   var ElementBase = typeof HTMLElement !== "undefined" ? HTMLElement : class {
   };
   var CompareImagesSliderElement = class extends ElementBase {
     connectedCallback() {
       if (this.slider || !this.querySelector(".frame") || !this.querySelector(".handle")) return;
-      this.slider = new CompareImagesSlider(this, readOptionsFromElement(this));
+      this.slider = new CompareImagesSlider(this);
     }
     disconnectedCallback() {
       if (this.slider) {

@@ -132,6 +132,11 @@ Available attribute options (bare, `data-*` or kebab-case):
 - `inertia`, `bounce`, `only-handle` - booleans
 - `friction`, `bounce-factor`, `max-flick-velocity`, `initial-position`, `step`, `page-step` - numbers
 
+The constructor reads them off the element too, so they work the same whether you
+write `<compare-images-slider>` or call `new CompareImagesSlider(el, options)`. A
+`data-*` beats the bare attribute, an attribute beats the options object, and a
+boolean is turned off with `only-handle="false"` or `only-handle="0"`.
+
 ```html
 <div class="js-compare-images-slider compare-images-slider" vertical>
   <img src="img.jpg" alt="" />

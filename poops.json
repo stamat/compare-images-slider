@@ -50,8 +50,7 @@
         "branch": "main",
         "iconLinks": [
           { "title": "npm", "url": "https://www.npmjs.com/package/compare-images-slider", "icon": "npm" }
-        ],
-        "theme": "light"
+        ]
       }
     }
   },

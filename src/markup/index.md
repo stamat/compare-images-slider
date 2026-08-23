@@ -129,6 +129,10 @@ _Photo by [Valentin Salja](https://unsplash.com/@valentinsalja?utm_content=credi
 | `step`             | number  | `5`     | Arrow-key step (percent).                 |
 | `pageStep`         | number  | `25`    | Page Up/Down step (percent).              |
 
+Each one is also an attribute in kebab-case - bare, or `data-` prefixed - read
+whether you write `<compare-images-slider>` or call the constructor yourself. An
+attribute beats the options object, and a boolean is turned off with `="false"`.
+
 > [!NOTE]
 > Set the intrinsic dimensions of the images. This eliminates layout shifts and
 > ensures the slider measures correctly on load.

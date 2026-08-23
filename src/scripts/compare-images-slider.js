@@ -99,6 +99,8 @@ let sliderCount = 0;
  * @param {number} [options.initialPosition=50] - Starting position (0-100).
  * @param {number} [options.step=5] - Arrow-key step (percent).
  * @param {number} [options.pageStep=25] - PageUp/PageDown step (percent).
+ *
+ * Attributes on `element` override anything passed here - see `readOptionsFromElement`.
  */
 export default class CompareImagesSlider {
   constructor(element, options) {
@@ -107,23 +109,16 @@ export default class CompareImagesSlider {
     this.second = this.frame.querySelector(':scope > img');
     this.handle = this.element.querySelector('.handle');
 
-    this.options = Object.assign({
-      inertia: false,
-      bounce: false,
-      friction: 0.9,
-      bounceFactor: 0.1,
-      maxFlickVelocity: 0.5,
-      onlyHandle: true,
-      vertical: false,
-      initialPosition: 50,
-      step: 5,
-      pageStep: 25
-    }, options || {});
+    this.options = resolveOptions(this.element, options);
 
-    this.checkAndApplyAttribute('vertical');
-    this.checkAndApplyNumberAttribute('initialPosition', 'initial-position');
-    if (this.options.vertical && !(this.element.dataset.vertical || this.element.hasAttribute('vertical'))) {
+    // The stylesheet keys the vertical layout off `[vertical]`/`[data-vertical]`, so an
+    // attribute left disagreeing with the resolved option would style one axis while
+    // the script drives the other.
+    if (this.options.vertical) {
       this.element.setAttribute('vertical', '');
+    } else {
+      this.element.removeAttribute('vertical');
+      this.element.removeAttribute('data-vertical');
     }
 
     this.position = clamp(this.options.initialPosition, 0, 100);
@@ -149,6 +144,11 @@ export default class CompareImagesSlider {
     this.setupAccessibility();
 
     this.dragTarget = this.options.onlyHandle ? this.handle : this.element;
+    // The stylesheet only sets `touch-action: none` on the handle; without this a touch
+    // drag over the images is claimed by the browser's scroll gesture instead. Set
+    // through `setProperty` because the manifest analyzer reads a plain style
+    // assignment in the constructor as a class field.
+    this.dragTarget.style.setProperty('touch-action', 'none');
     this.dragTarget.addEventListener('pointerdown', this.onPointerDown);
     this.handle.addEventListener('keydown', this.onKeyDown);
     this.handle.addEventListener('dblclick', this.onDoubleClick);
@@ -188,20 +188,6 @@ export default class CompareImagesSlider {
   onDoubleClick() {
     this.stopInertia();
     this.setPosition(this.position < 50 ? 100 : 0);
-  }
-
-  checkAndApplyAttribute(attribute) {
-    if (this.element.dataset[attribute] || this.element.hasAttribute(attribute)) this.options[attribute] = true;
-  }
-
-  /** Read a numeric option from a `data-*` or bare attribute if present. */
-  checkAndApplyNumberAttribute(optionKey, attribute) {
-    const raw = this.element.dataset[optionKey] != null
-      ? this.element.dataset[optionKey]
-      : this.element.getAttribute(attribute);
-    if (raw == null || raw === '') return;
-    const num = parseFloat(raw);
-    if (!Number.isNaN(num)) this.options[optionKey] = num;
   }
 
   setupSecondImage() {
@@ -326,10 +312,24 @@ export default class CompareImagesSlider {
     this.dragTarget.removeEventListener('pointermove', this.onPointerMove);
     this.dragTarget.removeEventListener('pointerup', this.onPointerUp);
     this.dragTarget.removeEventListener('pointercancel', this.onPointerUp);
+    this.dragTarget.style.removeProperty('touch-action');
     this.handle.removeEventListener('keydown', this.onKeyDown);
     this.handle.removeEventListener('dblclick', this.onDoubleClick);
   }
 }
+
+export const DEFAULT_OPTIONS = {
+  inertia: false,
+  bounce: false,
+  friction: 0.9,
+  bounceFactor: 0.1,
+  maxFlickVelocity: 0.5,
+  onlyHandle: true,
+  vertical: false,
+  initialPosition: 50,
+  step: 5,
+  pageStep: 25
+};
 
 // Boolean options settable via bare/`data-` attributes on the custom element.
 const BOOL_OPTIONS = ['inertia', 'bounce', 'vertical', 'onlyHandle'];
@@ -365,6 +365,18 @@ export function readOptionsFromElement(el) {
   return options;
 }
 
+/**
+ * Merge the three option sources into one. Attributes are applied last, so markup
+ * wins over the options object - which is what `vertical` did back when it was the
+ * only attribute the constructor honoured.
+ * @param {HTMLElement} el
+ * @param {Object} [options]
+ * @returns {Object}
+ */
+export function resolveOptions(el, options) {
+  return Object.assign({}, DEFAULT_OPTIONS, options || {}, readOptionsFromElement(el));
+}
+
 // Fall back to a plain base when HTMLElement is absent (e.g. Node under test),
 // so the module stays importable outside the browser.
 const ElementBase = typeof HTMLElement !== 'undefined' ? HTMLElement : class {};
@@ -374,8 +386,9 @@ const ElementBase = typeof HTMLElement !== 'undefined' ? HTMLElement : class {};
  * the images, frame and handle stay fully stylable by the page author.
  *
  * Every attribute below is also readable as `data-*` or passed to the
- * `CompareImagesSlider` constructor in its camelCase form — `readOptionsFromElement`
- * is what reconciles the three, and `data-*` wins where both are written.
+ * `CompareImagesSlider` constructor in its camelCase form. The constructor reads the
+ * element's attributes itself, so markup wins over the options object, `data-*` wins
+ * over the bare attribute, and a boolean is turned off with `="false"` or `="0"`.
  *
  * @attr {boolean} [inertia=false] - Keep gliding after a flick.
  * @attr {boolean} [bounce=false] - Bounce off the edges while under inertia. Does nothing without `inertia`.
@@ -398,7 +411,7 @@ export class CompareImagesSliderElement extends ElementBase {
   connectedCallback() {
     // Wait until the required light-DOM children have been parsed.
     if (this.slider || !this.querySelector('.frame') || !this.querySelector('.handle')) return;
-    this.slider = new CompareImagesSlider(this, readOptionsFromElement(this));
+    this.slider = new CompareImagesSlider(this);
   }
 
   disconnectedCallback() {

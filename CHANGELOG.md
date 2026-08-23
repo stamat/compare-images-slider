@@ -52,6 +52,27 @@ error that is now thrown, output that moved.
   `script/bootstrap`, `script/test` and `script/lint`, so the commands those
   files name are commands that exist.
 
+### Fixed
+
+- **Attributes now work on a slider you construct yourself.** `only-handle`,
+  `inertia`, `bounce`, `friction` and the rest were parsed only on the
+  `<compare-images-slider>` element; on a `<div class="js-compare-images-slider">`
+  passed to `new CompareImagesSlider(el)` every one of them was silently ignored
+  except `vertical` and `initial-position`. The constructor reads the element's
+  attributes itself now, so both ways of instantiating honour the same markup.
+
+- **A boolean attribute can be turned off.** `vertical="false"` set vertical
+  *on* — the old reader could only ever set `true` — so the only way to override
+  a boolean was to not write it. `="false"` and `="0"` now mean false everywhere,
+  and the `vertical` attribute the stylesheet keys off is kept in step with the
+  resolved option, instead of leaving the layout on one axis and the script on
+  the other.
+
+- **`only-handle="false"` survives a touch drag.** `touch-action: none` sat on
+  the handle alone, so with the whole slider as the drag target a touch on the
+  images was taken by the browser's scroll gesture instead. It is applied to
+  whichever element is actually dragged.
+
 ### Changed
 
 - **Poops 2.0 → 3.0 and poops-docs-theme 1.1 → 4.5,** which brings

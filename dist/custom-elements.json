@@ -155,28 +155,6 @@
             },
             {
               "kind": "method",
-              "name": "checkAndApplyAttribute",
-              "parameters": [
-                {
-                  "name": "attribute"
-                }
-              ]
-            },
-            {
-              "kind": "method",
-              "name": "checkAndApplyNumberAttribute",
-              "parameters": [
-                {
-                  "name": "optionKey"
-                },
-                {
-                  "name": "attribute"
-                }
-              ],
-              "description": "Read a numeric option from a `data-*` or bare attribute if present."
-            },
-            {
-              "kind": "method",
               "name": "setupSecondImage"
             },
             {
@@ -335,6 +313,14 @@
           ]
         },
         {
+          "kind": "variable",
+          "name": "DEFAULT_OPTIONS",
+          "type": {
+            "text": "object"
+          },
+          "default": "{ inertia: false, bounce: false, friction: 0.9, bounceFactor: 0.1, maxFlickVelocity: 0.5, onlyHandle: true, vertical: false, initialPosition: 50, step: 5, pageStep: 25 }"
+        },
+        {
           "kind": "function",
           "name": "readOptionsFromElement",
           "parameters": [
@@ -353,8 +339,33 @@
           }
         },
         {
+          "kind": "function",
+          "name": "resolveOptions",
+          "parameters": [
+            {
+              "name": "el",
+              "type": {
+                "text": "HTMLElement"
+              }
+            },
+            {
+              "name": "options",
+              "optional": true,
+              "type": {
+                "text": "Object"
+              }
+            }
+          ],
+          "description": "Merge the three option sources into one. Attributes are applied last, so markup\nwins over the options object - which is what `vertical` did back when it was the\nonly attribute the constructor honoured.",
+          "return": {
+            "type": {
+              "text": "Object"
+            }
+          }
+        },
+        {
           "kind": "class",
-          "description": "`<compare-images-slider>` custom element. Uses light DOM (no shadow root) so\nthe images, frame and handle stay fully stylable by the page author.\n\nEvery attribute below is also readable as `data-*` or passed to the\n`CompareImagesSlider` constructor in its camelCase form — `readOptionsFromElement`\nis what reconciles the three, and `data-*` wins where both are written.",
+          "description": "`<compare-images-slider>` custom element. Uses light DOM (no shadow root) so\nthe images, frame and handle stay fully stylable by the page author.\n\nEvery attribute below is also readable as `data-*` or passed to the\n`CompareImagesSlider` constructor in its camelCase form. The constructor reads the\nelement's attributes itself, so markup wins over the options object, `data-*` wins\nover the bare attribute, and a boolean is turned off with `=\"false\"` or `=\"0\"`.",
           "name": "CompareImagesSliderElement",
           "cssProperties": [
             {
@@ -531,9 +542,25 @@
         },
         {
           "kind": "js",
+          "name": "DEFAULT_OPTIONS",
+          "declaration": {
+            "name": "DEFAULT_OPTIONS",
+            "module": "src/scripts/compare-images-slider.js"
+          }
+        },
+        {
+          "kind": "js",
           "name": "readOptionsFromElement",
           "declaration": {
             "name": "readOptionsFromElement",
+            "module": "src/scripts/compare-images-slider.js"
+          }
+        },
+        {
+          "kind": "js",
+          "name": "resolveOptions",
+          "declaration": {
+            "name": "resolveOptions",
             "module": "src/scripts/compare-images-slider.js"
           }
         },
