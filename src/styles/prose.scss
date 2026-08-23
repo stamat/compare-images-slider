@@ -1,6 +1,7 @@
 // Landing page bundle: the poops-docs-theme prose layout styles plus the slider and its
 // optional theme, so the page needs a single stylesheet (the prose layout has no head
 // block to link a second one from).
+@use "sass:math";
 @use "poops-docs-theme/scss/prose-only";
 @use "./index";
 @use "./theme";
@@ -17,5 +18,27 @@ compare-images-slider {
   // the reveal edge shows a corner seam.
   img {
     border-radius: var(--radius);
+  }
+}
+
+// The frame pads the sample by this fraction of its own width on every side, which is
+// where the handle knob's overhanging half lands at either extreme - without it the knob
+// is cut in two against the frame edge. A percentage, not pixels: percentage padding
+// resolves against the containing block's width on all four sides, so the padded sample
+// keeps a fixed ratio and the frame can still be sized by `aspect-ratio` alone.
+$frame-pad: 0.06;
+// The sample is one 1680x1120 image pair, and nothing else is in the frame with it.
+$sample-ratio: math.div(1120, 1680);
+
+// Pinned to `--code-preview-height` the frame was either a pixel short and scrolled
+// inside or left a band of dead space, and the element's own `max-height: 70vh` clipped
+// it again on a short window. `[manifest]` is not a filter, it is weight: the element's
+// own stylesheet is linked after this one, so an equal-specificity selector loses to it.
+code-preview[manifest] {
+  &:not(:defined)::before,
+  .code-preview-viewport {
+    height: auto;
+    max-height: none;
+    aspect-ratio: 1 / ((1 - 2 * $frame-pad) * $sample-ratio + 2 * $frame-pad);
   }
 }

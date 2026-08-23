@@ -149,7 +149,10 @@ is running.
 <script src="{{ relativePathPrefix }}js/code-preview-hljs.min.js" defer></script>
 <script src="{{ relativePathPrefix }}js/code-preview-options.min.js" defer></script>
 
-<code-preview css="{{ relativePathPrefix }}dist/compare-images-slider.min.css" js="{{ relativePathPrefix }}dist/compare-images-slider.min.js" manifest="{{ relativePathPrefix }}dist/custom-elements.json" theme-attribute="data-theme" style="--code-preview-height: 540px">
+<!-- The frame's padding is where the handle knob's overhanging half lands at either
+extreme; `$frame-pad` in `src/styles/prose.scss` is the same 6%, and the frame's height
+is derived from it. Change one and change the other, or the sample scrolls inside. -->
+<code-preview css="{{ relativePathPrefix }}dist/compare-images-slider.min.css" js="{{ relativePathPrefix }}dist/compare-images-slider.min.js" manifest="{{ relativePathPrefix }}dist/custom-elements.json" theme-attribute="data-theme" head="&lt;style&gt;body{margin:0;padding:6%}&lt;/style&gt;">
 
 ```html
 <compare-images-slider inertia initial-position="35">
