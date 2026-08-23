@@ -242,36 +242,60 @@ independently, so the feel is consistent across displays.</p>
 <p>The handle follows the W3C APG
 <a href="https://www.w3.org/WAI/ARIA/apg/patterns/windowsplitter/">Window Splitter pattern</a>:
 it is a focusable <code>role=&quot;separator&quot;</code> exposing <code>aria-valuenow</code>, <code>aria-valuemin</code>,
-<code>aria-valuemax</code>, and <code>aria-orientation</code>, wired to the revealed pane via
-<code>aria-controls</code>. Once focused it is fully keyboard operable:</p>
+<code>aria-valuemax</code>, and <code>aria-orientation</code>, carrying an accessible name, and wired to
+the revealed pane — the pattern&#39;s primary pane — via <code>aria-controls</code>. Once focused
+it is fully keyboard operable. Which keys the pattern asks for and which are this
+library&#39;s own:</p>
 <table>
 <thead>
 <tr>
 <th>Key</th>
 <th>Action</th>
+<th>From the pattern?</th>
 </tr>
 </thead>
 <tbody><tr>
 <td><kbd>Left</kbd> / <kbd>Up</kbd></td>
-<td>Move by one step</td>
+<td>Move back by one <code>step</code></td>
+<td>Yes</td>
 </tr>
 <tr>
 <td><kbd>Right</kbd> / <kbd>Down</kbd></td>
-<td>Move by one step the other way</td>
+<td>Move forward by one <code>step</code></td>
+<td>Yes</td>
 </tr>
 <tr>
-<td><kbd>Page Up</kbd> / <kbd>Page Down</kbd></td>
-<td>Move by a larger step</td>
+<td><kbd>Enter</kbd></td>
+<td>Collapse the revealed pane, or put it back</td>
+<td>Yes</td>
 </tr>
 <tr>
 <td><kbd>Home</kbd> / <kbd>End</kbd></td>
 <td>Jump to either extreme</td>
+<td>Yes, optional</td>
 </tr>
 <tr>
-<td>Double-click</td>
-<td>Snap to the nearest extreme</td>
+<td><kbd>Page Up</kbd> / <kbd>Page Down</kbd></td>
+<td>Move by one <code>pageStep</code></td>
+<td>No, ours</td>
+</tr>
+<tr>
+<td>Double-click or double-tap</td>
+<td>Snap to the extreme the handle is further from</td>
+<td>No, ours</td>
 </tr>
 </tbody></table>
+<p>The pattern&#39;s other optional key, <kbd>F6</kbd>, cycles focus between window panes.
+There is one pane here and nothing to cycle to, so it is not implemented.</p>
+<p>Two details worth knowing before reading the DOM and calling either a bug:</p>
+<ul>
+<li><code>aria-orientation</code> describes the divider, not the layout. A left/right slider has
+a divider running top to bottom, so it reports <code>vertical</code>; a <code>vertical</code> slider
+reports <code>horizontal</code>.</li>
+<li>The arrow keys are a superset of the pattern&#39;s. It asks for Left/Right on a
+vertical divider and Up/Down on a horizontal one; both pairs work on both
+orientations here, so a keyboard user who guesses wrong is not stuck.</li>
+</ul>
 <h2 id="styling">Styling<a class="heading-anchor" href="#styling" tabindex="-1" aria-hidden="true"></a></h2>
 <p>There is no shadow DOM, so the element and its children are styled directly. The
 reveal position is exposed as a CSS custom property:</p>

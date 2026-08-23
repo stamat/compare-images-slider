@@ -200,16 +200,31 @@ independently, so the feel is consistent across displays.
 The handle follows the W3C APG
 [Window Splitter pattern](https://www.w3.org/WAI/ARIA/apg/patterns/windowsplitter/):
 it is a focusable `role="separator"` exposing `aria-valuenow`, `aria-valuemin`,
-`aria-valuemax`, and `aria-orientation`, wired to the revealed pane via
-`aria-controls`. Once focused it is fully keyboard operable:
+`aria-valuemax`, and `aria-orientation`, carrying an accessible name, and wired to
+the revealed pane — the pattern's primary pane — via `aria-controls`. Once focused
+it is fully keyboard operable. Which keys the pattern asks for and which are this
+library's own:
 
-| Key                                       | Action                         |
-| ----------------------------------------- | ------------------------------ |
-| <kbd>Left</kbd> / <kbd>Up</kbd>           | Move by one step               |
-| <kbd>Right</kbd> / <kbd>Down</kbd>        | Move by one step the other way |
-| <kbd>Page Up</kbd> / <kbd>Page Down</kbd> | Move by a larger step          |
-| <kbd>Home</kbd> / <kbd>End</kbd>          | Jump to either extreme         |
-| Double-click                              | Snap to the nearest extreme    |
+| Key                                       | Action                                            | From the pattern? |
+| ----------------------------------------- | ------------------------------------------------- | ----------------- |
+| <kbd>Left</kbd> / <kbd>Up</kbd>           | Move back by one `step`                           | Yes               |
+| <kbd>Right</kbd> / <kbd>Down</kbd>        | Move forward by one `step`                        | Yes               |
+| <kbd>Enter</kbd>                          | Collapse the revealed pane, or put it back        | Yes               |
+| <kbd>Home</kbd> / <kbd>End</kbd>          | Jump to either extreme                            | Yes, optional     |
+| <kbd>Page Up</kbd> / <kbd>Page Down</kbd> | Move by one `pageStep`                            | No, ours          |
+| Double-click or double-tap                | Snap to the extreme the handle is further from    | No, ours          |
+
+The pattern's other optional key, <kbd>F6</kbd>, cycles focus between window panes.
+There is one pane here and nothing to cycle to, so it is not implemented.
+
+Two details worth knowing before reading the DOM and calling either a bug:
+
+- `aria-orientation` describes the divider, not the layout. A left/right slider has
+  a divider running top to bottom, so it reports `vertical`; a `vertical` slider
+  reports `horizontal`.
+- The arrow keys are a superset of the pattern's. It asks for Left/Right on a
+  vertical divider and Up/Down on a horizontal one; both pairs work on both
+  orientations here, so a keyboard user who guesses wrong is not stuck.
 
 ## Styling
 

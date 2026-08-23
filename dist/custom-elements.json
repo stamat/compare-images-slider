@@ -161,6 +161,32 @@
         },
         {
           "kind": "function",
+          "name": "collapseToggle",
+          "parameters": [
+            {
+              "name": "position",
+              "description": "Current position (0-100).",
+              "type": {
+                "text": "number"
+              }
+            },
+            {
+              "name": "restoreTo",
+              "description": "Position recorded when the pane was last collapsed.",
+              "type": {
+                "text": "number"
+              }
+            }
+          ],
+          "description": "Next position for the splitter's Enter key: collapse the primary pane if it is\nopen, restore it to where it was before the collapse if it is not.",
+          "return": {
+            "type": {
+              "text": "number"
+            }
+          }
+        },
+        {
+          "kind": "function",
           "name": "keyboardStep",
           "parameters": [
             {
@@ -207,7 +233,7 @@
             {
               "kind": "method",
               "name": "setupAccessibility",
-              "description": "Wire up the W3C APG Window Splitter pattern on the handle:\na focusable role=\"separator\" reporting its position via ARIA."
+              "description": "Wire up the W3C APG Window Splitter pattern on the handle: a focusable\nrole=\"separator\" reporting its position via ARIA. The pattern's keys live in\n`onKeyDown` - arrows and Page Up/Down to move, Home/End to the extremes, Enter\nto collapse and restore the pane named by `aria-controls`."
             },
             {
               "kind": "method",
@@ -407,6 +433,10 @@
                 "text": "number"
               },
               "default": "0"
+            },
+            {
+              "kind": "field",
+              "name": "restorePosition"
             },
             {
               "kind": "field",
@@ -643,6 +673,14 @@
           "name": "nearestExtreme",
           "declaration": {
             "name": "nearestExtreme",
+            "module": "src/scripts/compare-images-slider.js"
+          }
+        },
+        {
+          "kind": "js",
+          "name": "collapseToggle",
+          "declaration": {
+            "name": "collapseToggle",
             "module": "src/scripts/compare-images-slider.js"
           }
         },

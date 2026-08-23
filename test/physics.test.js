@@ -7,6 +7,7 @@ import {
   keyboardStep,
   isDoubleTap,
   nearestExtreme,
+  collapseToggle,
   readOptionsFromElement,
   resolveOptions,
   DEFAULT_OPTIONS
@@ -48,6 +49,13 @@ test('capVelocity tames even the smoothed flick to the configured ceiling', () =
   const samples = [{ t: 0, pos: 0 }, { t: 16, pos: 100 }];
   const capped = capVelocity(sampleVelocity(samples), 0.5);
   assert.equal(capped, 0.5);
+});
+
+test('Enter collapses the primary pane and puts it back where it was', () => {
+  assert.equal(collapseToggle(65, 65), 0, 'an open pane collapses');
+  assert.equal(collapseToggle(0, 65), 65, 'a collapsed pane returns to its old position');
+  assert.equal(collapseToggle(0, 0), 50, 'a pane collapsed before Enter was ever pressed opens halfway');
+  assert.equal(collapseToggle(0, 140), 100, 'a restore position out of range is clamped');
 });
 
 test('keyboardStep implements the window splitter key map', () => {

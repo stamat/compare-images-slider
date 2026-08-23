@@ -35,6 +35,14 @@ error that is now thrown, output that moved.
 
 ### Added
 
+- **<kbd>Enter</kbd> collapses the revealed pane, and puts it back.** The handle
+  claimed the W3C APG Window Splitter pattern while missing the one key that
+  pattern does not mark optional: Enter, which collapses the primary pane and
+  restores it to its previous position on a second press. Every other requirement
+  was already there, so the claim was true but for this. Pressing Enter on a pane
+  already dragged to 0, with nothing recorded to restore, opens it halfway rather
+  than doing nothing.
+
 - **`llms.txt`, `llms-full.txt`, `sitemap.xml` and `robots.txt`.** poops generates
   all four from the compiled pages and none of them were switched on, so a crawler
   or a model arriving at the site had nothing but the page to work from.
@@ -47,6 +55,12 @@ error that is now thrown, output that moved.
   `og:image:alt` describes it for anyone who cannot see it.
 
 ### Changed
+
+- **The accessibility docs say which keys are the pattern's and which are ours.**
+  Page Up/Down and the double-click snap are this library's additions, F6 is
+  deliberately not implemented, and `aria-orientation` reports the orientation of
+  the divider rather than of the layout — a left/right slider is `vertical`. All
+  four read as bugs against the pattern until stated, and none of them were.
 
 - **The page names what it is.** `<title>` was the bare brand, and the tagline
   under the `h1` — which is also the meta description, the `og:description` and

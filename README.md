@@ -161,12 +161,18 @@ compare-images-slider {
 ## Accessibility
 
 The handle is a focusable `role="separator"` implementing the
-[W3C APG Window Splitter pattern](https://www.w3.org/WAI/ARIA/apg/patterns/windowsplitter/)
-with `aria-valuenow`/`min`/`max`, `aria-orientation` and `aria-controls`. Once
-focused: arrow keys move by `step`, Page Up/Down by `pageStep`, and Home/End jump
-to the extremes. Double-click or double-tap the slider to snap to the extreme the
-handle is further from — read off the pointer stream rather than `dblclick`, which
-iOS Safari never fires because a double tap is the browser's own zoom gesture.
+[W3C APG Window Splitter pattern](https://www.w3.org/WAI/ARIA/apg/patterns/windowsplitter/):
+`aria-valuenow`/`min`/`max`, `aria-orientation`, an accessible name, and
+`aria-controls` naming the revealed pane. Once focused, arrow keys move by `step`,
+Home and End jump to the extremes, and Enter collapses the revealed pane — press
+it again and the pane returns to where it was.
+
+Page Up/Down by `pageStep` is this library's own addition, and so is the snap:
+double-click or double-tap the slider to send the handle to the extreme it is
+further from — read off the pointer stream rather than `dblclick`, which iOS
+Safari never fires because a double tap is the browser's own zoom gesture. The
+pattern's optional F6 is not implemented; there is one pane here, so there is
+nothing to cycle focus between.
 
 ## Options
 

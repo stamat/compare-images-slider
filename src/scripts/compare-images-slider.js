@@ -85,6 +85,21 @@ export function nearestExtreme(position) {
 }
 
 /**
+ * Next position for the splitter's Enter key: collapse the primary pane if it is
+ * open, restore it to where it was before the collapse if it is not.
+ * @param {number} position - Current position (0-100).
+ * @param {number} restoreTo - Position recorded when the pane was last collapsed.
+ * @returns {number}
+ */
+export function collapseToggle(position, restoreTo) {
+  if (position !== 0) return 0;
+  // A pane dragged to 0 before Enter was ever pressed has no recorded position to
+  // restore, and restoring to 0 would leave Enter looking broken. Half open is the
+  // only answer that is not another collapse.
+  return restoreTo > 0 ? clamp(restoreTo, 0, 100) : 50;
+}
+
+/**
  * Compute the next position for a discrete keyboard action.
  * @param {number} current - Current position (0-100).
  * @param {string} key - KeyboardEvent.key value.
@@ -166,6 +181,7 @@ export default class CompareImagesSlider {
     this.lastFrameTime = 0;
     this.pressPosition = 0;
     this.lastTapAt = 0;
+    this.restorePosition = this.position;
 
     // Bound handlers so they can be removed on destroy.
     this.onPointerDown = this.onPointerDown.bind(this);
@@ -192,8 +208,10 @@ export default class CompareImagesSlider {
   }
 
   /**
-   * Wire up the W3C APG Window Splitter pattern on the handle:
-   * a focusable role="separator" reporting its position via ARIA.
+   * Wire up the W3C APG Window Splitter pattern on the handle: a focusable
+   * role="separator" reporting its position via ARIA. The pattern's keys live in
+   * `onKeyDown` - arrows and Page Up/Down to move, Home/End to the extremes, Enter
+   * to collapse and restore the pane named by `aria-controls`.
    * @see https://www.w3.org/WAI/ARIA/apg/patterns/windowsplitter/
    */
   setupAccessibility() {
@@ -212,6 +230,14 @@ export default class CompareImagesSlider {
   }
 
   onKeyDown(e) {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      this.stopInertia();
+      const target = collapseToggle(this.position, this.restorePosition);
+      if (this.position !== 0) this.restorePosition = this.position;
+      this.setPosition(target);
+      return;
+    }
     const next = keyboardStep(this.position, e.key, this.options.step, this.options.pageStep);
     if (next === null) return;
     e.preventDefault();

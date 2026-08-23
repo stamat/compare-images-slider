@@ -32,6 +32,10 @@
   function nearestExtreme(position) {
     return position < 50 ? 100 : 0;
   }
+  function collapseToggle(position, restoreTo) {
+    if (position !== 0) return 0;
+    return restoreTo > 0 ? clamp(restoreTo, 0, 100) : 50;
+  }
   function keyboardStep(current, key, step, pageStep) {
     switch (key) {
       case "ArrowRight":
@@ -75,6 +79,7 @@
       this.lastFrameTime = 0;
       this.pressPosition = 0;
       this.lastTapAt = 0;
+      this.restorePosition = this.position;
       this.onPointerDown = this.onPointerDown.bind(this);
       this.onPointerMove = this.onPointerMove.bind(this);
       this.onPointerUp = this.onPointerUp.bind(this);
@@ -91,8 +96,10 @@
       this.render();
     }
     /**
-     * Wire up the W3C APG Window Splitter pattern on the handle:
-     * a focusable role="separator" reporting its position via ARIA.
+     * Wire up the W3C APG Window Splitter pattern on the handle: a focusable
+     * role="separator" reporting its position via ARIA. The pattern's keys live in
+     * `onKeyDown` - arrows and Page Up/Down to move, Home/End to the extremes, Enter
+     * to collapse and restore the pane named by `aria-controls`.
      * @see https://www.w3.org/WAI/ARIA/apg/patterns/windowsplitter/
      */
     setupAccessibility() {
@@ -108,6 +115,14 @@
       }
     }
     onKeyDown(e) {
+      if (e.key === "Enter") {
+        e.preventDefault();
+        this.stopInertia();
+        const target = collapseToggle(this.position, this.restorePosition);
+        if (this.position !== 0) this.restorePosition = this.position;
+        this.setPosition(target);
+        return;
+      }
       const next = keyboardStep(this.position, e.key, this.options.step, this.options.pageStep);
       if (next === null) return;
       e.preventDefault();
