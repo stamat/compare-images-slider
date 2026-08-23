@@ -133,6 +133,36 @@ _Photo by [Valentin Salja](https://unsplash.com/@valentinsalja?utm_content=credi
 > Set the intrinsic dimensions of the images. This eliminates layout shifts and
 > ensures the slider measures correctly on load.
 
+### Try them
+
+The block below is the sample and the thing it documents at once: the frame above
+renders the markup under it, and **Options** is that table again as knobs, built from
+the [manifest](https://github.com/webcomponents/custom-elements-manifest) this package
+ships. Turning one rewrites the attribute in the code, so what you read is always what
+is running.
+
+<link rel="stylesheet" href="{{ relativePathPrefix }}css/code-preview.min.css">
+<script src="{{ relativePathPrefix }}js/code-preview-hljs.min.js" defer></script>
+<script src="{{ relativePathPrefix }}js/code-preview-options.min.js" defer></script>
+
+<code-preview css="{{ relativePathPrefix }}dist/compare-images-slider.min.css" js="{{ relativePathPrefix }}dist/compare-images-slider.min.js" manifest="{{ relativePathPrefix }}dist/custom-elements.json" theme-attribute="data-theme" style="--code-preview-height: 500px">
+
+```html
+<compare-images-slider inertia initial-position="35">
+  <img width="1680" height="1120" src="https://i.imgur.com/Ju4pEb7.jpeg" alt="Building, before edit">
+  <div class="frame">
+    <img width="1680" height="1120" src="https://i.imgur.com/pvWyCKw.jpeg" alt="Building, after edit">
+  </div>
+  <span class="handle"></span>
+</compare-images-slider>
+```
+
+</code-preview>
+
+The frame loads only `compare-images-slider.min.css`, so the handle there is the
+library's own `↔` glyph rather than the svg knob this page draws over it — that knob is
+markup and CSS from the demo, not something the package ships.
+
 ## Flick physics
 
 Quick flicks used to shoot straight to the edges. Velocity is now sampled over a

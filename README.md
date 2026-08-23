@@ -94,8 +94,9 @@ at `dist/custom-elements.json`, pointed at by the `customElements` key — every
 attribute and custom property above, described once in the JSDoc block on
 `CompareImagesSliderElement` and generated from it by
 [`cem analyze`](https://custom-elements-manifest.open-wc.org/analyzer/getting-started/).
-That is what buys editor autocomplete on the tag, and a tool a description of
-this element it did not have to be told by hand.
+That is what buys editor autocomplete on the tag, and what the
+[docs page](https://stamat.github.io/compare-images-slider/) reads to turn the options
+table into knobs beside a live sample.
 
 ## Accessibility
 

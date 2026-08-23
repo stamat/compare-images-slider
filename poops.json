@@ -55,6 +55,19 @@
       }
     }
   },
+  "copy": [
+    {
+      "in": [
+        "node_modules/code-preview-element/dist/code-preview-hljs.min.js",
+        "node_modules/code-preview-element/dist/code-preview-options.min.js"
+      ],
+      "out": "js"
+    },
+    {
+      "in": "node_modules/code-preview-element/dist/code-preview.min.css",
+      "out": "css"
+    }
+  ],
   "exec": {
     "scripts": "npx cem analyze --globs src/scripts/compare-images-slider.js --outdir dist"
   },
