@@ -59,7 +59,8 @@
         "branch": "main",
         "iconLinks": [
           { "title": "npm", "url": "https://www.npmjs.com/package/compare-images-slider", "icon": "npm" }
-        ]
+        ],
+        "footer": "<a href=\"https://stamat.github.io/compare-images-slider/\" target=\"_blank\" rel=\"noopener\">compare-images-slider</a> \u2014 MIT licensed. Built with <span aria-hidden=\"true\">\ud83d\udca9</span> <a href=\"https://github.com/stamat/poops\" target=\"_blank\" rel=\"noopener\">Poops</a>, <a href=\"https://github.com/stamat/poops-docs-theme\" target=\"_blank\" rel=\"noopener\">poops-docs-theme</a> and <a href=\"https://github.com/stamat/code-preview-element\" target=\"_blank\" rel=\"noopener\">code-preview-element</a>."
       }
     }
   },
