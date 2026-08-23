@@ -91,8 +91,8 @@ or kebab-case):
 The package ships a
 [Custom Elements Manifest](https://github.com/webcomponents/custom-elements-manifest)
 at `dist/custom-elements.json`, pointed at by the `customElements` key — every
-attribute and custom property above, described once in the JSDoc block on
-`CompareImagesSliderElement` and generated from it by
+attribute below and every `--compare-images-slider-*` custom property, described
+once in the JSDoc block on `CompareImagesSliderElement` and generated from it by
 [`cem analyze`](https://custom-elements-manifest.open-wc.org/analyzer/getting-started/).
 That is what buys editor autocomplete on the tag, and what the
 [docs page](https://stamat.github.io/compare-images-slider/) reads to turn the options
@@ -145,11 +145,15 @@ Available attribute options (bare, `data-*` or kebab-case):
 ## Development
 
 ```bash
-npm install
-npm test   # unit tests (node:test)
-npm run lint
-npm run build
+script/bootstrap   # install
+script/server      # docs site on :4040, rebuilding as you edit
+script/test        # unit tests (node:test)
+script/lint
+script/build
 ```
+
+[CONTRIBUTING.md](CONTRIBUTING.md) covers the layout, what is generated, and
+what this project refuses to become.
 
 ---
 

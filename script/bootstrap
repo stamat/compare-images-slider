@@ -1,0 +1,7 @@
+#!/bin/bash
+#
+# Install everything needed to work on this project, from a fresh clone.
+
+set -euo pipefail
+
+npm install

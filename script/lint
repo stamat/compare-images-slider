@@ -1,0 +1,7 @@
+#!/bin/bash
+#
+# Run the linters in check mode.
+
+set -euo pipefail
+
+npm run lint
