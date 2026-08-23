@@ -157,8 +157,10 @@ table into knobs beside a live sample.
 The handle is a focusable `role="separator"` implementing the
 [W3C APG Window Splitter pattern](https://www.w3.org/WAI/ARIA/apg/patterns/windowsplitter/)
 with `aria-valuenow`/`min`/`max`, `aria-orientation` and `aria-controls`. Once
-focused: arrow keys move by `step`, Page Up/Down by `pageStep`, Home/End jump to
-the extremes, and double-click snaps to the nearest extreme.
+focused: arrow keys move by `step`, Page Up/Down by `pageStep`, and Home/End jump
+to the extremes. Double-click or double-tap the slider to snap to the extreme the
+handle is further from — read off the pointer stream rather than `dblclick`, which
+iOS Safari never fires because a double tap is the browser's own zoom gesture.
 
 ## Options
 

@@ -5,6 +5,8 @@ import {
   sampleVelocity,
   capVelocity,
   keyboardStep,
+  isDoubleTap,
+  nearestExtreme,
   readOptionsFromElement,
   resolveOptions,
   DEFAULT_OPTIONS
@@ -100,4 +102,22 @@ test('resolveOptions leaves the defaults object untouched', () => {
   const el = { dataset: {}, getAttribute: () => null };
   resolveOptions(el, { inertia: true });
   assert.equal(DEFAULT_OPTIONS.inertia, false);
+});
+
+test('two quick presses in the same spot are a double tap, a slow pair is not', () => {
+  assert.equal(isDoubleTap(300, 100, 0), true, '200ms apart, unmoved');
+  assert.equal(isDoubleTap(700, 100, 0), false, '600ms apart is two separate taps');
+  assert.equal(isDoubleTap(300, 0, 0), false, 'there was no first tap to pair with');
+});
+
+test('a press that dragged is never half of a double tap', () => {
+  assert.equal(isDoubleTap(300, 100, 5), false, 'the handle travelled 5%');
+  assert.equal(isDoubleTap(300, 100, 1), true, 'a wobble inside the slop still taps');
+});
+
+test('a snap sends the handle to the edge it is further from, so it toggles', () => {
+  assert.equal(nearestExtreme(20), 100);
+  assert.equal(nearestExtreme(80), 0);
+  assert.equal(nearestExtreme(100), 0, 'snapping again comes back');
+  assert.equal(nearestExtreme(50), 0, 'dead centre goes to the start');
 });

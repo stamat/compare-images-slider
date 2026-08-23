@@ -23,6 +23,15 @@
     if (velocity < -max) return -max;
     return velocity;
   }
+  var DOUBLE_TAP_MS = 400;
+  var TAP_SLOP = 1;
+  function isDoubleTap(now, lastTapAt, movedBy, windowMs = DOUBLE_TAP_MS, slop = TAP_SLOP) {
+    if (movedBy > slop) return false;
+    return lastTapAt > 0 && now - lastTapAt < windowMs;
+  }
+  function nearestExtreme(position) {
+    return position < 50 ? 100 : 0;
+  }
   function keyboardStep(current, key, step, pageStep) {
     switch (key) {
       case "ArrowRight":
@@ -64,13 +73,14 @@
       this.velocity = 0;
       this.inertiaId = null;
       this.lastFrameTime = 0;
+      this.pressPosition = 0;
+      this.lastTapAt = 0;
       this.onPointerDown = this.onPointerDown.bind(this);
       this.onPointerMove = this.onPointerMove.bind(this);
       this.onPointerUp = this.onPointerUp.bind(this);
       this.onPointerCancel = this.onPointerCancel.bind(this);
       this.onResize = () => requestAnimationFrame(this.setupSecondImage.bind(this));
       this.onKeyDown = this.onKeyDown.bind(this);
-      this.onDoubleClick = this.onDoubleClick.bind(this);
       window.addEventListener("resize", this.onResize);
       this.setupSecondImage();
       this.setupAccessibility();
@@ -78,7 +88,6 @@
       this.dragTarget.style.setProperty("touch-action", "none");
       this.dragTarget.addEventListener("pointerdown", this.onPointerDown);
       this.handle.addEventListener("keydown", this.onKeyDown);
-      this.handle.addEventListener("dblclick", this.onDoubleClick);
       this.render();
     }
     /**
@@ -105,10 +114,10 @@
       this.stopInertia();
       this.setPosition(next);
     }
-    /** Double-click the handle to snap to the nearest extreme (0 or 100). */
-    onDoubleClick() {
+    /** Double-click or double-tap snaps to the nearest extreme (0 or 100). */
+    snapToExtreme() {
       this.stopInertia();
-      this.setPosition(this.position < 50 ? 100 : 0);
+      this.setPosition(nearestExtreme(this.position));
     }
     setupSecondImage() {
       this.second.style.width = this.element.offsetWidth + "px";
@@ -130,8 +139,10 @@
       this.dragTarget.addEventListener("pointermove", this.onPointerMove);
       this.dragTarget.addEventListener("pointerup", this.onPointerUp);
       this.dragTarget.addEventListener("pointercancel", this.onPointerCancel);
-      this.pushSample(this.positionFromEvent(e));
-      this.setPosition(this.positionFromEvent(e));
+      const pos = this.positionFromEvent(e);
+      this.pressPosition = pos;
+      this.pushSample(pos);
+      this.setPosition(pos);
       e.preventDefault();
     }
     onPointerMove(e) {
@@ -143,6 +154,14 @@
     onPointerUp(e) {
       if (!this.dragging || e.pointerId !== this.pointerId) return;
       this.endDrag(e);
+      const now = performance.now();
+      const movedBy = Math.abs(this.position - this.pressPosition);
+      if (isDoubleTap(now, this.lastTapAt, movedBy)) {
+        this.lastTapAt = 0;
+        this.snapToExtreme();
+        return;
+      }
+      this.lastTapAt = movedBy > TAP_SLOP ? 0 : now;
       if (this.options.inertia) {
         this.velocity = capVelocity(sampleVelocity(this.samples), this.options.maxFlickVelocity);
         if (Math.abs(this.velocity) > 0) this.startInertia();
@@ -156,6 +175,7 @@
      */
     onPointerCancel(e) {
       if (!this.dragging || e.pointerId !== this.pointerId) return;
+      this.lastTapAt = 0;
       this.endDrag(e);
     }
     /** Tear down a drag, however it ended. */
@@ -234,7 +254,6 @@
       this.dragTarget.removeEventListener("pointercancel", this.onPointerCancel);
       this.dragTarget.style.removeProperty("touch-action");
       this.handle.removeEventListener("keydown", this.onKeyDown);
-      this.handle.removeEventListener("dblclick", this.onDoubleClick);
     }
   };
   var DEFAULT_OPTIONS = {

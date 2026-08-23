@@ -91,6 +91,76 @@
         },
         {
           "kind": "function",
+          "name": "isDoubleTap",
+          "parameters": [
+            {
+              "name": "now",
+              "description": "Timestamp of the press that just ended.",
+              "type": {
+                "text": "number"
+              }
+            },
+            {
+              "name": "lastTapAt",
+              "description": "Timestamp of the previous tap, 0 if there was none.",
+              "type": {
+                "text": "number"
+              }
+            },
+            {
+              "name": "movedBy",
+              "description": "How far the press travelled, in percent.",
+              "type": {
+                "text": "number"
+              }
+            },
+            {
+              "name": "windowMs",
+              "default": "DOUBLE_TAP_MS",
+              "description": "Longest gap still counting as one gesture.",
+              "optional": true,
+              "type": {
+                "text": "number"
+              }
+            },
+            {
+              "name": "slop",
+              "default": "TAP_SLOP",
+              "description": "Travel over which a press is a drag, not a tap.",
+              "optional": true,
+              "type": {
+                "text": "number"
+              }
+            }
+          ],
+          "description": "Decide whether a press that has just ended completes a double tap.\n\niOS Safari never fires `dblclick` from a double tap - the gesture is the browser's\nown zoom - so the snap is detected from the pointer stream for every pointer type\nrather than kept in two places that would disagree per platform.",
+          "return": {
+            "type": {
+              "text": "boolean"
+            }
+          }
+        },
+        {
+          "kind": "function",
+          "name": "nearestExtreme",
+          "parameters": [
+            {
+              "name": "position",
+              "description": "Current position (0-100).",
+              "type": {
+                "text": "number"
+              }
+            }
+          ],
+          "description": "The extreme a snap sends the handle to - whichever edge it is further from, so a\nrepeated snap toggles rather than sitting still.",
+          "return": {
+            "type": {
+              "text": "number"
+            }
+          }
+        },
+        {
+          "kind": "function",
           "name": "keyboardStep",
           "parameters": [
             {
@@ -150,8 +220,8 @@
             },
             {
               "kind": "method",
-              "name": "onDoubleClick",
-              "description": "Double-click the handle to snap to the nearest extreme (0 or 100)."
+              "name": "snapToExtreme",
+              "description": "Double-click or double-tap snaps to the nearest extreme (0 or 100)."
             },
             {
               "kind": "method",
@@ -317,6 +387,22 @@
             {
               "kind": "field",
               "name": "lastFrameTime",
+              "type": {
+                "text": "number"
+              },
+              "default": "0"
+            },
+            {
+              "kind": "field",
+              "name": "pressPosition",
+              "type": {
+                "text": "number"
+              },
+              "default": "0"
+            },
+            {
+              "kind": "field",
+              "name": "lastTapAt",
               "type": {
                 "text": "number"
               },
@@ -541,6 +627,22 @@
           "name": "capVelocity",
           "declaration": {
             "name": "capVelocity",
+            "module": "src/scripts/compare-images-slider.js"
+          }
+        },
+        {
+          "kind": "js",
+          "name": "isDoubleTap",
+          "declaration": {
+            "name": "isDoubleTap",
+            "module": "src/scripts/compare-images-slider.js"
+          }
+        },
+        {
+          "kind": "js",
+          "name": "nearestExtreme",
+          "declaration": {
+            "name": "nearestExtreme",
             "module": "src/scripts/compare-images-slider.js"
           }
         },

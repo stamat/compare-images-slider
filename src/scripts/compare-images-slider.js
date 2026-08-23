@@ -50,6 +50,40 @@ export function capVelocity(velocity, max) {
   return velocity;
 }
 
+// Longest gap between two presses still read as one double tap.
+const DOUBLE_TAP_MS = 400;
+// Travel, in percent, over which a press is a drag rather than a tap.
+const TAP_SLOP = 1;
+
+/**
+ * Decide whether a press that has just ended completes a double tap.
+ *
+ * iOS Safari never fires `dblclick` from a double tap - the gesture is the browser's
+ * own zoom - so the snap is detected from the pointer stream for every pointer type
+ * rather than kept in two places that would disagree per platform.
+ *
+ * @param {number} now - Timestamp of the press that just ended.
+ * @param {number} lastTapAt - Timestamp of the previous tap, 0 if there was none.
+ * @param {number} movedBy - How far the press travelled, in percent.
+ * @param {number} [windowMs=DOUBLE_TAP_MS] - Longest gap still counting as one gesture.
+ * @param {number} [slop=TAP_SLOP] - Travel over which a press is a drag, not a tap.
+ * @returns {boolean}
+ */
+export function isDoubleTap(now, lastTapAt, movedBy, windowMs = DOUBLE_TAP_MS, slop = TAP_SLOP) {
+  if (movedBy > slop) return false;
+  return lastTapAt > 0 && now - lastTapAt < windowMs;
+}
+
+/**
+ * The extreme a snap sends the handle to - whichever edge it is further from, so a
+ * repeated snap toggles rather than sitting still.
+ * @param {number} position - Current position (0-100).
+ * @returns {number}
+ */
+export function nearestExtreme(position) {
+  return position < 50 ? 100 : 0;
+}
+
 /**
  * Compute the next position for a discrete keyboard action.
  * @param {number} current - Current position (0-100).
@@ -130,6 +164,8 @@ export default class CompareImagesSlider {
     this.velocity = 0;
     this.inertiaId = null;
     this.lastFrameTime = 0;
+    this.pressPosition = 0;
+    this.lastTapAt = 0;
 
     // Bound handlers so they can be removed on destroy.
     this.onPointerDown = this.onPointerDown.bind(this);
@@ -138,7 +174,6 @@ export default class CompareImagesSlider {
     this.onPointerCancel = this.onPointerCancel.bind(this);
     this.onResize = () => requestAnimationFrame(this.setupSecondImage.bind(this));
     this.onKeyDown = this.onKeyDown.bind(this);
-    this.onDoubleClick = this.onDoubleClick.bind(this);
 
     window.addEventListener('resize', this.onResize);
     this.setupSecondImage();
@@ -152,7 +187,6 @@ export default class CompareImagesSlider {
     this.dragTarget.style.setProperty('touch-action', 'none');
     this.dragTarget.addEventListener('pointerdown', this.onPointerDown);
     this.handle.addEventListener('keydown', this.onKeyDown);
-    this.handle.addEventListener('dblclick', this.onDoubleClick);
 
     this.render();
   }
@@ -185,10 +219,10 @@ export default class CompareImagesSlider {
     this.setPosition(next);
   }
 
-  /** Double-click the handle to snap to the nearest extreme (0 or 100). */
-  onDoubleClick() {
+  /** Double-click or double-tap snaps to the nearest extreme (0 or 100). */
+  snapToExtreme() {
     this.stopInertia();
-    this.setPosition(this.position < 50 ? 100 : 0);
+    this.setPosition(nearestExtreme(this.position));
   }
 
   setupSecondImage() {
@@ -213,8 +247,10 @@ export default class CompareImagesSlider {
     this.dragTarget.addEventListener('pointermove', this.onPointerMove);
     this.dragTarget.addEventListener('pointerup', this.onPointerUp);
     this.dragTarget.addEventListener('pointercancel', this.onPointerCancel);
-    this.pushSample(this.positionFromEvent(e));
-    this.setPosition(this.positionFromEvent(e));
+    const pos = this.positionFromEvent(e);
+    this.pressPosition = pos;
+    this.pushSample(pos);
+    this.setPosition(pos);
     e.preventDefault();
   }
 
@@ -228,6 +264,16 @@ export default class CompareImagesSlider {
   onPointerUp(e) {
     if (!this.dragging || e.pointerId !== this.pointerId) return;
     this.endDrag(e);
+
+    const now = performance.now();
+    const movedBy = Math.abs(this.position - this.pressPosition);
+    if (isDoubleTap(now, this.lastTapAt, movedBy)) {
+      this.lastTapAt = 0;
+      this.snapToExtreme();
+      return;
+    }
+    // A press that dragged is not the opening half of a double tap either.
+    this.lastTapAt = movedBy > TAP_SLOP ? 0 : now;
 
     if (this.options.inertia) {
       this.velocity = capVelocity(sampleVelocity(this.samples), this.options.maxFlickVelocity);
@@ -243,6 +289,7 @@ export default class CompareImagesSlider {
    */
   onPointerCancel(e) {
     if (!this.dragging || e.pointerId !== this.pointerId) return;
+    this.lastTapAt = 0;
     this.endDrag(e);
   }
 
@@ -331,7 +378,6 @@ export default class CompareImagesSlider {
     this.dragTarget.removeEventListener('pointercancel', this.onPointerCancel);
     this.dragTarget.style.removeProperty('touch-action');
     this.handle.removeEventListener('keydown', this.onKeyDown);
-    this.handle.removeEventListener('dblclick', this.onDoubleClick);
   }
 }
 

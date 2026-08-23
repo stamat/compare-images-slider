@@ -73,6 +73,13 @@ error that is now thrown, output that moved.
 
 ### Fixed
 
+- **Double-tap to snap now works on iOS.** The snap to the nearest extreme was a
+  `dblclick` listener, and iOS Safari never fires that event from a double tap —
+  the gesture is the browser's own zoom, and always has been. It is detected from
+  the pointer stream instead, for every pointer type rather than one code path per
+  platform: two presses within 400ms that each travelled under 1% of the slider.
+  A double-click with a mouse behaves as before.
+
 - **A cancelled drag no longer flies off on a flick.** `pointercancel` was wired
   to the same handler as `pointerup`, so when the system took the gesture away —
   a call arriving, the page scrolling out from under the finger — the half-drawn
