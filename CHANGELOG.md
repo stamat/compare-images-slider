@@ -31,7 +31,9 @@ Write it for the person upgrading, not for the person who wrote the code. What
 they need is what changed for them: a renamed option, a different default, an
 error that is now thrown, output that moved.
 
-## [Unreleased] — a translated name on the element now reaches the handle
+## [Unreleased]
+
+## [3.0.1] - 2026-08-23 — a translated name on the element now reaches the handle
 
 The accessible name was copied down from `aria-label` on the element, but
 `aria-labelledby` was not. Pointing the element at a visible, translated heading —
