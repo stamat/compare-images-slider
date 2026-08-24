@@ -21,6 +21,12 @@ compare-images-slider {
   }
 }
 
+// A paragraph that is nothing but small print - a photo credit, what a sample is showing.
+// The theme sizes and mutes the element itself, and carries this line too on main; it comes
+// out with the release after 5.1.0. Set on the paragraph rather than the inline `small`,
+// whose own line boxes cannot come out shorter than the strut the block builds for them.
+.prose p:has(> small:only-child) { line-height: 1.2; }
+
 // The frame pads the sample by this fraction of its own width on every side, which is
 // where the handle knob's overhanging half lands at either extreme - without it the knob
 // is cut in two against the frame edge. A percentage, not pixels: percentage padding
@@ -42,17 +48,3 @@ code-preview[manifest] {
     aspect-ratio: math.div(1, (1 - 2 * $frame-pad) * $sample-ratio + 2 * $frame-pad);
   }
 }
-
-// Up to poops-docs-theme 4.5.0 the admonition box ran `padding: 0` so the title's tint
-// could reach its own border, and the 1rem inset that paid for that was keyed to `p` -
-// leaving the code block in the `Canvas` note flush against the border. Fixed after 4.5.0
-// by padding the box and bleeding the title back out over it; this shim is those rules,
-// and it comes out with the next theme bump. `!important` on the two that fight 4.5.0's
-// own `!important`, and the paragraph padding is zeroed because its rule is still there.
-.marked-github-alert { padding: 0 1rem 1rem !important; }
-.marked-github-alert p { padding-inline: 0; }
-.marked-github-alert-title { margin: 0 -1rem 0.75rem !important; }
-// Two selectors because 4.5.0's own `p:last-child` counts a pseudo-class as a class and
-// outranks the child form; this one ties it and wins on source order.
-.marked-github-alert > :last-child,
-.marked-github-alert p:last-child { margin-bottom: 0; }

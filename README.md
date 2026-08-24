@@ -127,17 +127,17 @@ for markup whose tag name isn't yours to choose, or a slider built after load:
 ```
 
 ```javascript
-import CompareImagesSlider from "compare-images-slider";
+import CompareImagesSlider from 'compare-images-slider';
 
-const slider = document.querySelector(".js-compare-images-slider");
+const slider = document.querySelector('.js-compare-images-slider');
 const compareImagesSlider = new CompareImagesSlider(slider);
 ```
 
 If you are loading the script asynchronously, you can listen for the `CompareImagesSliderLoaded` event to initialize the slider:
 
 ```javascript
-document.addEventListener("CompareImagesSliderLoaded", function () {
-  const slider = document.querySelector(".js-compare-images-slider");
+document.addEventListener('CompareImagesSliderLoaded', function () {
+  const slider = document.querySelector('.js-compare-images-slider');
   const compareImagesSlider = new CompareImagesSlider(slider);
 });
 ```
@@ -204,12 +204,12 @@ at as `detail.position` — a number from 0 to 100, unrounded:
 | `end` | The handle has just reached 100 — the pane fully revealed |
 
 ```javascript
-slider.addEventListener("input", (e) => {
-  label.textContent = Math.round(e.detail.position) + "%";
+slider.addEventListener('input', (e) => {
+  label.textContent = Math.round(e.detail.position) + '%';
 });
 
-slider.addEventListener("change", (e) => {
-  history.replaceState(null, "", "#" + Math.round(e.detail.position));
+slider.addEventListener('change', (e) => {
+  history.replaceState(null, '', '#' + Math.round(e.detail.position));
 });
 ```
 
