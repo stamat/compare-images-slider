@@ -10,7 +10,7 @@ put in the markup.
 - Custom element, no shadow DOM
 - Lightweight
 - Minimal DOM depth
-- One dependency: [book-of-spells](https://github.com/stamat/book-of-spells), for the pointer gesture and two sums
+- One dependency, and it is the sibling spellbook: [book-of-spells](https://github.com/stamat/book-of-spells), for the pointer gesture and two sums
 - Mobile friendly
 - Reveals anything — images, video, canvas, your own markup
 - Vertical slider
@@ -39,6 +39,28 @@ or use the CDN:
   href="https://unpkg.com/compare-images-slider/dist/compare-images-slider.min.css"
 />
 ```
+
+## The one dependency
+
+[book-of-spells](https://github.com/stamat/book-of-spells) is not a third party — it is
+the sibling spellbook, where behaviour that ended up in more than one of these packages
+lives once instead of being written out again per repository. Three of its spells are
+used here, and the gesture is the one
+[book-of-elementals](https://github.com/stamat/book-of-elementals) reaches for as well —
+the other two ride inside it:
+
+| Taken from it | What it does here | Shared with |
+| --- | --- | --- |
+| [`drag()`](https://stamat.github.io/book-of-spells/module-dom.html#.drag), `src/dom.mjs` | The pointer half of a gesture: the capture, a `pointercancel` told apart from a release, the moves heard on the document, and the client coordinate turned into a percentage of the track | [`<splitter-elemental>`](https://stamat.github.io/book-of-elementals/elementals/splitter.html) and [`<rearrangeable-elemental>`](https://stamat.github.io/book-of-elementals/elementals/rearrangeable.html) |
+| [`sampleVelocity()`](https://stamat.github.io/book-of-spells/global.html#sampleVelocity), `src/helpers.mjs` | Measures a flick over a time window rather than off the last two events, so one large jump between them cannot slam the handle into an edge | `drag()`'s own inertia, which samples a flick with this same function |
+| [`clamp()`](https://stamat.github.io/book-of-spells/global.html#clamp), `src/helpers.mjs` | Holds the position to 0–100 and the flick to `maxFlickVelocity` | `drag()`, the same way |
+
+`sampleVelocity` and `clamp` were written out here as well until they were not — one
+flick measured twice in two repositories, and neither copy knew when the other was
+fixed. What did not move is the physics: `drag()` has inertia of its own and it caps a
+flick in **pixels** per millisecond, so the same flick would carry further on a narrow
+slider than on a wide one, where `maxFlickVelocity` is per cent per millisecond and
+reads the same at every size.
 
 ## Usage
 
@@ -242,6 +264,12 @@ string is English. Override it with `aria-label` or `aria-labelledby` on the
 `.handle`, or on the element itself, from where either is copied down.
 `aria-labelledby` wins, as it does in ARIA, and it is the route that can point at
 visible text the page already translates.
+
+The same pattern, spent on resizing rather than revealing — two panes dividing one
+width, with a seam between them — is
+[`<splitter-elemental>`](https://stamat.github.io/book-of-elementals/elementals/splitter.html)
+in book-of-elementals. Same `drag()` underneath, same keys; what differs is that this
+one clips one layer over another and that one hands width from one pane to the other.
 
 ## Options
 

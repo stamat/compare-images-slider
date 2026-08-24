@@ -368,6 +368,11 @@ reports <code>horizontal</code>.</li>
 vertical divider and Up/Down on a horizontal one; both pairs work on both
 orientations here, so a keyboard user who guesses wrong is not stuck.</li>
 </ul>
+<p>The pattern spent on resizing rather than revealing — two panes dividing one width, with
+a seam handing space from one to the other — is
+<a href="https://stamat.github.io/book-of-elementals/elementals/splitter.html"><code>&lt;splitter-elemental&gt;</code></a>
+in book-of-elementals: same roles, same keys, the same <code>drag()</code> underneath, and it is the
+one to reach for when what moves is layout rather than a clip.</p>
 <h2 id="styling">Styling<a class="heading-anchor" href="#styling" tabindex="-1" aria-hidden="true"></a></h2>
 <p>There is no shadow DOM, so the element and its children are styled directly. Where
 the reveal starts is a CSS custom property, so the edge is in the right place in
@@ -412,12 +417,51 @@ this page does:</p>
   <span class="hljs-attr">--compare-images-slider-handle-fg</span>: <span class="hljs-built_in">var</span>(--fg);
 }</code></pre>
 </div>
+<h2 id="one-dependency">One dependency<a class="heading-anchor" href="#one-dependency" tabindex="-1" aria-hidden="true"></a></h2>
+<p><a href="https://github.com/stamat/book-of-spells">book-of-spells</a> is the one thing installed
+alongside this element, and it is not a third party: it is the sibling spellbook, where
+behaviour that turned out to belong to more than one package lives once rather than
+being written out again in each. The pointer half of this slider used to be written out
+here — the capture, the move and up and cancel listeners, the pointer-id matching, the
+sum turning a client coordinate into a percentage — and so did two functions that
+already existed there. Three spells are taken now, and the gesture among them is the one
+the elements in <a href="https://github.com/stamat/book-of-elementals">book-of-elementals</a> start
+their own drags with; the other two ride inside it:</p>
+<table>
+<thead>
+<tr>
+<th>Taken from it</th>
+<th>What it does here</th>
+<th>Shared with</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><a href="https://stamat.github.io/book-of-spells/module-dom.html#.drag"><code>drag()</code></a>, <code>src/dom.mjs</code></td>
+<td>The pointer half of the gesture: the capture, a <code>pointercancel</code> told apart from a release, the moves heard on the document, and the coordinate turned into a percentage of the track</td>
+<td><a href="https://stamat.github.io/book-of-elementals/elementals/splitter.html"><code>&lt;splitter-elemental&gt;</code></a> and <a href="https://stamat.github.io/book-of-elementals/elementals/rearrangeable.html"><code>&lt;rearrangeable-elemental&gt;</code></a></td>
+</tr>
+<tr>
+<td><a href="https://stamat.github.io/book-of-spells/global.html#sampleVelocity"><code>sampleVelocity()</code></a>, <code>src/helpers.mjs</code></td>
+<td>Measures a flick over a time window rather than off the last two events, which is what stops one large jump between them slamming the handle into an edge</td>
+<td><code>drag()</code>&#39;s own inertia, which samples a flick with this same function</td>
+</tr>
+<tr>
+<td><a href="https://stamat.github.io/book-of-spells/global.html#clamp"><code>clamp()</code></a>, <code>src/helpers.mjs</code></td>
+<td>Holds the position to 0–100 and the flick to <code>maxFlickVelocity</code></td>
+<td><code>drag()</code>, the same way</td>
+</tr>
+</tbody></table>
+<p>What stayed here is the physics above. <code>drag()</code> has inertia of its own and it is the
+wrong one for this: it caps a flick in <strong>pixels</strong> per millisecond, so the same flick
+would carry further on a narrow slider than on a wide one, where <code>maxFlickVelocity</code> is
+per cent per millisecond and reads the same at every size.</p>
 <h2 id="how-it-compares">How it compares<a class="heading-anchor" href="#how-it-compares" tabindex="-1" aria-hidden="true"></a></h2>
 <p>There are a dozen of these, several of them good. What follows is what each one
 weighs and what it does, measured rather than quoted: sizes are <code>gzip -9</code> over the
 files the package actually ships, and every behaviour row was read out of those
 shipped bundles rather than taken from a README. Taken on <strong>23 August 2026</strong>, against
-the versions named under the table.</p>
+the versions named under the table — bar this package&#39;s own column, re-measured a day
+later, when the gesture moved into book-of-spells and the bundle grew by it.</p>
 <p>Listed: every comparable package on npm over a thousand downloads a week, plus
 <a href="https://juxtapose.knightlab.com/">JuxtaposeJS</a> for the name it has — its npm mirror
 is a 2015 build, so it is measured from its own CDN instead.</p>
@@ -435,7 +479,7 @@ is a 2015 build, so it is measured from its own CDN instead.</p>
 </thead>
 <tbody><tr>
 <td>Gzipped</td>
-<td><strong>3.3 kB</strong></td>
+<td><strong>4.9 kB</strong></td>
 <td>3.7 kB</td>
 <td>3.6 kB + React</td>
 <td>2.5 kB</td>
@@ -444,7 +488,7 @@ is a 2015 build, so it is measured from its own CDN instead.</p>
 </tr>
 <tr>
 <td>Runtime dependencies</td>
-<td><strong>none</strong></td>
+<td><strong>one, the sibling spellbook</strong></td>
 <td>none</td>
 <td>React</td>
 <td>none</td>
@@ -542,15 +586,18 @@ is a 2015 build, so it is measured from its own CDN instead.</p>
 <td>light DOM</td>
 </tr>
 </tbody></table>
-<p><small>compare-images-slider 3.0.0 · img-comparison-slider 8.0.7 · react-compare-slider 4.0.0 · cocoen 3.2.0 · JuxtaposeJS from its CDN · image-compare-viewer 1.6.2. A dash means the shipped bundle has none of it. Sizes are script plus stylesheet, or script alone where the CSS is inlined into a shadow root; the optional theme is not counted.</small></p>
+<p><small>compare-images-slider from <code>main</code> with the book-of-spells change in it, re-measured 24 August 2026 · img-comparison-slider 8.0.7 · react-compare-slider 4.0.0 · cocoen 3.2.0 · JuxtaposeJS from its CDN · image-compare-viewer 1.6.2. A dash means the shipped bundle has none of it. Sizes are script plus stylesheet, or script alone where the CSS is inlined into a shadow root; the optional theme is not counted.</small></p>
 <p>Two rows carry it. This is the only one of the six implementing the
 <a href="https://www.w3.org/WAI/ARIA/apg/patterns/windowsplitter/">W3C Window Splitter pattern</a>
 — role, values, orientation, the pane it controls, the Enter key that collapses it —
 where <code>img-comparison-slider</code> is keyboard operable and ships no ARIA at all, handing
 a screen reader a focusable something with no name, role or value. The gestures are
 its own too: pointer capture, so a fast drag cannot fall out of the handle, inertia
-with a capped flick, and a double-tap snap that no other package here has. All at
-3.3 kB, second lightest of the six, with nothing installed alongside it.</p>
+with a capped flick, and a double-tap snap that no other package here has. What it
+costs is the size row: 4.9 kB with the gesture bundled in, where the same element was
+3.3 kB before it shared one, which puts three of the six below it — cocoen at 2.5 kB,
+react-compare-slider at 3.6 kB before React is counted, img-comparison-slider at
+3.7 kB.</p>
 <p>Where it loses: light DOM is a trade rather than a free win — the
 openness that lets you restyle the handle also lets a stray <code>img { max-width }</code> rule
 from the page reach in, where <code>cocoen</code> and <code>img-comparison-slider</code> sit sealed in a
