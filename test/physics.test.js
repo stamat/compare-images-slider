@@ -1,12 +1,11 @@
 // The decisions the slider makes, each pulled out as a pure function so it can be tested
 // without a browser: the key map, the double tap, the collapse toggle, which extreme an
-// arrival earns an event for, how options resolve, and the flick this element turns those
-// into.
+// arrival earns an event for, and how options resolve.
 //
-// `clamp` and `sampleVelocity` are book-of-spells' now, and the guarantees they used to be
-// held to here are held to there - the range and its NaN, the window that smooths a flick
-// spike, and the too-short gesture that reads zero. What stays below is the composition
-// this element does with them, which is nobody else's.
+// The flick is book-of-spells' now, whole - sampled, capped in per cent of the track and
+// glided by `drag()` - and the guarantees it used to be held to here are held to there: the
+// window that smooths a flick spike, the too-short gesture that reads zero, the cap that reads
+// the same at every width, the friction applied per millisecond rather than per frame.
 //
 // Not covered here, deliberately: anything needing layout or a real event stream - the
 // reveal geometry, pointer capture, the ARIA the handle carries, the events actually
@@ -14,7 +13,6 @@
 // would only be testing the stub.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { clamp, sampleVelocity } from 'book-of-spells/src/helpers.mjs';
 import {
   keyboardStep,
   isDoubleTap,
@@ -25,32 +23,6 @@ import {
   resolveOptions,
   DEFAULT_OPTIONS
 } from '../src/scripts/compare-images-slider.js';
-
-test('a flick is smoothed over the window and then held to the ceiling, in per cent per millisecond', () => {
-  // The composition `onDragEnd` does: sample the gesture, then cap what it carries. A slow
-  // build-up and one large last-frame jump is the classic spike, and the whole point of
-  // measuring over the window is that the spike is not what the flick carries.
-  const samples = [
-    { t: 0, pos: 10 },
-    { t: 16, pos: 20 },
-    { t: 32, pos: 35 },
-    { t: 48, pos: 90 }
-  ];
-  const singleFrame = (90 - 35) / (48 - 32); // ~3.44 %/ms
-  const windowed = sampleVelocity(samples, 80).pos;
-  assert.ok(windowed < singleFrame, 'windowed velocity must be lower than the spike');
-  // Over the full 48ms window: (90-10)/48
-  assert.ok(Math.abs(windowed - 80 / 48) < 1e-9);
-
-  // And the ceiling is per cent per millisecond, which is what keeps the same flick reading
-  // the same on a narrow slider and a wide one.
-  const ceiling = DEFAULT_OPTIONS.maxFlickVelocity;
-  assert.equal(clamp(windowed, -ceiling, ceiling), ceiling);
-  assert.equal(clamp(-windowed, -ceiling, ceiling), -ceiling);
-
-  // A gesture with one sample in it is not a speed, and must not reach the ceiling as a NaN.
-  assert.equal(sampleVelocity([{ t: 0, pos: 10 }]).pos, 0);
-});
 
 test('Enter collapses the primary pane and puts it back where it was', () => {
   assert.equal(collapseToggle(65, 65), 0, 'an open pane collapses');

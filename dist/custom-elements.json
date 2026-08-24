@@ -219,7 +219,7 @@
                   "name": "e"
                 }
               ],
-              "description": "Take hold of the slider.\n\nThe gesture is `drag()` from book-of-spells, started from this `pointerdown` rather than\nhanded the element to own: started that way it writes no attributes and no inline\n`touch-action` into an element this class already set one on, and the `preventDefault`\nbelow stays this class's to do. What it owns is the pointer - the capture, the\n`pointercancel` path, and the moves heard on the document.\n\nThe physics stays here. `drag()` has inertia of its own and it is the wrong one for this:\nit caps a flick in pixels per millisecond, so the same flick would carry further on a\nnarrow slider than on a wide one, where `maxFlickVelocity` is per cent per millisecond and\nreads the same at every size."
+              "description": "Take hold of the slider.\n\nThe gesture is `drag()` from book-of-spells, started from this `pointerdown` rather than\nhanded the element to own: started that way it writes no attributes and no inline\n`touch-action` into an element this class already set one on, and the `preventDefault`\nbelow stays this class's to do. What `drag()` owns is the pointer - the capture, the\n`pointercancel` path, the moves heard on the document - and the glide after it: the flick\nsampled over a window and capped in per cent of the track, the friction, the walls of\n`within`.\n\nWhat it is told differs from the options in two places. Its glide is two-dimensional\nunless told the axis, and the velocity across a track can outlive the one along it by most\nof a second - so it is told, and the glide is over when the handle is. And it is always\ntold to bounce: without bounce its glide carries on past the wall of `within` with\nthe percentage pinned to the edge, decaying out of sight for up to a second, whereas a\nbounce that keeps nothing is the stop at the wall this element means by `bounce: false`."
             },
             {
               "kind": "method",
@@ -238,7 +238,8 @@
                 {
                   "name": "detail"
                 }
-              ]
+              ],
+              "description": "Every move `drag()` reports, under the pointer and through the glide alike."
             },
             {
               "kind": "method",
@@ -251,35 +252,28 @@
             },
             {
               "kind": "method",
+              "name": "onGlideEnd",
+              "description": "The glide has settled - decayed, or stopped at the wall - and this is where `change` reports it."
+            },
+            {
+              "kind": "method",
               "name": "onDragCancel",
               "parameters": [
                 {
                   "name": "e"
                 }
               ],
-              "description": "The system took the gesture away - a call arriving, the page scrolling out from\nunder the finger. iOS Safari raises this far more readily than a desktop browser\ndoes. The samples describe a gesture the user never finished, so the handle stops\nwhere it stands rather than flying off on a flick nobody meant to throw."
+              "description": "The system took the gesture away - a call arriving, the page scrolling out from\nunder the finger. iOS Safari raises this far more readily than a desktop browser\ndoes. `drag()` drops the flick it was carrying and starts no glide, so the handle stops\nwhere it stands rather than flying off on a flick nobody meant to throw."
             },
             {
               "kind": "method",
               "name": "endDrag",
-              "description": "Tear down a drag, however it ended."
+              "description": "Tear down a gesture, however it ended - under the pointer, through the glide, or cut short."
             },
             {
               "kind": "method",
-              "name": "pushSample",
-              "parameters": [
-                {
-                  "name": "pos"
-                }
-              ]
-            },
-            {
-              "kind": "method",
-              "name": "startInertia"
-            },
-            {
-              "kind": "method",
-              "name": "stopInertia"
+              "name": "stopGlide",
+              "description": "A key pressed mid-glide takes over from it; one pressed mid-drag leaves the pointer its gesture."
             },
             {
               "kind": "method",
@@ -352,35 +346,11 @@
             },
             {
               "kind": "field",
-              "name": "samples",
+              "name": "gliding",
               "type": {
-                "text": "array"
+                "text": "boolean"
               },
-              "default": "[]"
-            },
-            {
-              "kind": "field",
-              "name": "velocity",
-              "type": {
-                "text": "number"
-              },
-              "default": "0"
-            },
-            {
-              "kind": "field",
-              "name": "inertiaId",
-              "type": {
-                "text": "null"
-              },
-              "default": "null"
-            },
-            {
-              "kind": "field",
-              "name": "lastFrameTime",
-              "type": {
-                "text": "number"
-              },
-              "default": "0"
+              "default": "false"
             },
             {
               "kind": "field",

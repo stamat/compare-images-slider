@@ -370,21 +370,18 @@ alongside this element, and it is not a third party: it is the sibling spellbook
 behaviour that turned out to belong to more than one package lives once rather than
 being written out again in each. The pointer half of this slider used to be written out
 here — the capture, the move and up and cancel listeners, the pointer-id matching, the
-sum turning a client coordinate into a percentage — and so did two functions that
-already existed there. Three spells are taken now, and the gesture among them is the one
-the elements in [book-of-elementals](https://github.com/stamat/book-of-elementals) start
-their own drags with; the other two ride inside it:
+sum turning a client coordinate into a percentage, the flick and the glide after it —
+all of which `drag()` already did. Two spells are taken now, and the gesture among them
+is the one the elements in [book-of-elementals](https://github.com/stamat/book-of-elementals)
+start their own drags with; the other rides inside it:
 
 | Taken from it | What it does here | Shared with |
 | --- | --- | --- |
-| [`drag()`](https://stamat.github.io/book-of-spells/module-dom.html#.drag), `src/dom.mjs` | The pointer half of the gesture: the capture, a `pointercancel` told apart from a release, the moves heard on the document, and the coordinate turned into a percentage of the track | [`<splitter-elemental>`](https://stamat.github.io/book-of-elementals/elementals/splitter.html) and [`<rearrangeable-elemental>`](https://stamat.github.io/book-of-elementals/elementals/rearrangeable.html) |
-| [`sampleVelocity()`](https://stamat.github.io/book-of-spells/global.html#sampleVelocity), `src/helpers.mjs` | Measures a flick over a time window rather than off the last two events, which is what stops one large jump between them slamming the handle into an edge | `drag()`'s own inertia, which samples a flick with this same function |
-| [`clamp()`](https://stamat.github.io/book-of-spells/global.html#clamp), `src/helpers.mjs` | Holds the position to 0–100 and the flick to `maxFlickVelocity` | `drag()`, the same way |
+| [`drag()`](https://stamat.github.io/book-of-spells/module-dom.html#.drag), `src/dom.mjs` | The gesture, both halves: under the pointer, the capture, a `pointercancel` told apart from a release, the moves heard on the document, the client coordinate turned into a percentage of the track; after it, the glide — the flick sampled over a window and capped, the friction, the wall it stops at or bounces off | [`<splitter-elemental>`](https://stamat.github.io/book-of-elementals/elementals/splitter.html) and [`<rearrangeable-elemental>`](https://stamat.github.io/book-of-elementals/elementals/rearrangeable.html) |
+| [`clamp()`](https://stamat.github.io/book-of-spells/global.html#clamp), `src/helpers.mjs` | Holds the position to 0–100 under the keys and the collapse | `drag()`, which holds the flick to its ceiling with it |
 
-What stayed here is the physics above. `drag()` has inertia of its own and it is the
-wrong one for this: it caps a flick in **pixels** per millisecond, so the same flick
-would carry further on a narrow slider than on a wide one, where `maxFlickVelocity` is
-per cent per millisecond and reads the same at every size.
+The physics above is `drag()`'s too. One thing stays, because `drag()` cannot know it:
+the double tap, which is no part of a drag.
 
 ## How it compares
 

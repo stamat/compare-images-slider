@@ -31,7 +31,7 @@ Write it for the person upgrading, not for the person who wrote the code. What
 they need is what changed for them: a renamed option, a different default, an
 error that is now thrown, output that moved.
 
-## [Unreleased] — the pointer half is book-of-spells' now
+## [Unreleased] — the gesture is book-of-spells' now, glide included
 
 The gesture was written out here: the capture, the move and up and cancel listeners, the
 pointer-id matching, and the sum turning a client coordinate into a percentage. So were two
@@ -40,23 +40,36 @@ pure functions, `sampleVelocity` and `capVelocity`, which existed in book-of-spe
 other was fixed.
 
 `drag()` takes a `pointerdown` already in hand and a `within` box to measure the percentages
-against, which is this element's press and this element's track. The physics stays here, on
-purpose: `drag()`'s own inertia caps a flick in **pixels** per millisecond, so the same flick
-would carry further on a narrow slider than on a wide one, where `maxFlickVelocity` is per cent
-per millisecond and reads the same at every size.
+against, which is this element's press and this element's track, and its inertia is the glide
+after the pointer lets go. `maxFlickVelocity` is handed to it as `'0.5%'` — per cent of the track
+per millisecond, the unit `drag()` measures against `within` in — so the same flick reads the same
+at every size, which a cap in pixels would not give.
 
 ### Changed
 
-- **One dependency, `book-of-spells@^2.7.0`, where there were none.** It is the sibling
-  spellbook rather than a third party, and what it brings is the pointer gesture — a captured
-  pointer, a `pointercancel` told apart from a release, the moves heard on the document — plus
-  `clamp` and `sampleVelocity`, which used to live here in a second copy.
+- **One dependency, `book-of-spells@^2.8.0`, where there were none.** It is the sibling
+  spellbook rather than a third party, and what it brings is the gesture — a captured pointer, a
+  `pointercancel` told apart from a release, the moves heard on the document, and the glide after
+  the release: the flick sampled over a window and capped, the friction, the wall it stops at or
+  bounces off, along the one axis this element reads — plus `clamp`, which used to live here in
+  a second copy.
 
   Nothing changed for a page using the element or the class: the same markup, the same options,
-  the same `input` / `change` / edge events, the same keyboard, the same ARIA. Verified in
-  Chromium across a drag, a flick that glides on after the pointer lets go and commits once it
-  settles, a double tap snapping to an extreme, the arrow keys and <kbd>End</kbd>, the vertical
-  axis, and `drag-anywhere` pressing on the picture itself.
+  the same `input` / `change` / edge events, the same keyboard, the same ARIA. Two things are
+  measurably different and neither is visible. A glide is over below 0.01 pixels per millisecond
+  where it was over below 0.0005 per cent — on a 1000px track, a fiftieth of a pixel per frame
+  either way. And a release held still under `inertia` reports `change` one frame later than it
+  did, because `drag()` books a glide frame for every release and takes that frame to find there
+  is nothing to glide on.
+
+  Verified in headless Chromium driven over the DevTools protocol: a flick glides on after the
+  release, arrives at 100 and reports `end` and `change` in the same frame; the same flick under
+  `bounce` comes off the wall and settles short of it with one `change` as it settles; a double
+  tap snaps to 0; a press on the picture mid-glide takes over from it; a vertical flick arrives
+  at 100; <kbd>End</kbd> pressed mid-glide lands at 100 and stays; `drag-anywhere` pressed at 25%
+  and dragged to 75% reports one `change` at 75; a release held still under `inertia` glides
+  nowhere and reports `change` within a frame; and a 200px slider glides no faster than
+  `max-flick-velocity` in per cent.
 
   The README no longer says *dependency-free*, because it no longer is.
 
@@ -76,12 +89,11 @@ per millisecond and reads the same at every size.
   reachable, so anyone importing one has to import it from
   [book-of-spells](https://github.com/stamat/book-of-spells) instead: `clamp` and
   `sampleVelocity` are its helpers now, and `capVelocity(v, max)` is `clamp(v, -max, max)`.
-  `sampleVelocity` answers with an object per numeric key rather than a bare number, so this
-  element's samples read back as `sampleVelocity(samples).pos`.
+  `sampleVelocity` answers with an object per numeric key rather than a bare number.
 
   The guarantees those functions carried moved with them and are tested there — the range and
   its `NaN`, the window that smooths a flick spike, the too-short gesture that reads zero. What
-  stays in `test/physics.test.js` is the composition this element does with them.
+  stays in `test/physics.test.js` is the one sum this element does before handing the flick over.
 
 ## [3.0.1] - 2026-08-23 — a translated name on the element now reaches the handle
 

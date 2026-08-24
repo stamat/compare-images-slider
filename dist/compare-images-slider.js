@@ -362,10 +362,7 @@
       this.position = clamp(this.options.initialPosition, 0, 100);
       this.committedPosition = this.position;
       this.gesture = null;
-      this.samples = [];
-      this.velocity = 0;
-      this.inertiaId = null;
-      this.lastFrameTime = 0;
+      this.gliding = false;
       this.pressPosition = 0;
       this.lastTapAt = 0;
       this.restorePosition = this.position;
@@ -373,6 +370,7 @@
       this.onDragStart = this.onDragStart.bind(this);
       this.onDragEnd = this.onDragEnd.bind(this);
       this.onDragCancel = this.onDragCancel.bind(this);
+      this.onGlideEnd = this.onGlideEnd.bind(this);
       this.onKeyDown = this.onKeyDown.bind(this);
       this.setupAccessibility();
       this.dragTarget = this.options.dragAnywhere ? this.element : this.handle;
@@ -408,7 +406,7 @@
     onKeyDown(e) {
       if (e.key === "Enter") {
         e.preventDefault();
-        this.stopInertia();
+        this.stopGlide();
         const target = collapseToggle(this.position, this.restorePosition);
         if (this.position !== 0) this.restorePosition = this.position;
         this.setPosition(target);
@@ -418,13 +416,12 @@
       const next = keyboardStep(this.position, e.key, this.options.step, this.options.pageStep);
       if (next === null) return;
       e.preventDefault();
-      this.stopInertia();
+      this.stopGlide();
       this.setPosition(next);
       this.commit();
     }
     /** Double-click or double-tap snaps to the nearest extreme (0 or 100). */
     snapToExtreme() {
-      this.stopInertia();
       this.setPosition(nearestExtreme(this.position));
       this.commit();
     }
@@ -447,25 +444,35 @@
      * The gesture is `drag()` from book-of-spells, started from this `pointerdown` rather than
      * handed the element to own: started that way it writes no attributes and no inline
      * `touch-action` into an element this class already set one on, and the `preventDefault`
-     * below stays this class's to do. What it owns is the pointer - the capture, the
-     * `pointercancel` path, and the moves heard on the document.
+     * below stays this class's to do. What `drag()` owns is the pointer - the capture, the
+     * `pointercancel` path, the moves heard on the document - and the glide after it: the flick
+     * sampled over a window and capped in per cent of the track, the friction, the walls of
+     * `within`.
      *
-     * The physics stays here. `drag()` has inertia of its own and it is the wrong one for this:
-     * it caps a flick in pixels per millisecond, so the same flick would carry further on a
-     * narrow slider than on a wide one, where `maxFlickVelocity` is per cent per millisecond and
-     * reads the same at every size.
+     * What it is told differs from the options in two places. Its glide is two-dimensional
+     * unless told the axis, and the velocity across a track can outlive the one along it by most
+     * of a second - so it is told, and the glide is over when the handle is. And it is always
+     * told to bounce: without bounce its glide carries on past the wall of `within` with
+     * the percentage pinned to the edge, decaying out of sight for up to a second, whereas a
+     * bounce that keeps nothing is the stop at the wall this element means by `bounce: false`.
      */
     onPointerDown(e) {
-      if (this.gesture) return;
-      this.stopInertia();
-      this.samples = [];
+      if (this.gesture && !this.gliding) return;
+      this.endDrag();
       e.preventDefault();
       this.dragTarget.addEventListener("dragstart", this.onDragStart);
       this.dragTarget.addEventListener("dragend", this.onDragEnd);
       this.dragTarget.addEventListener("dragcancel", this.onDragCancel);
+      this.dragTarget.addEventListener("draginertiaend", this.onGlideEnd);
       this.gesture = drag(e, {
         target: this.dragTarget,
         within: this.element,
+        inertia: this.options.inertia,
+        axis: this.options.vertical ? "y" : "x",
+        friction: this.options.friction,
+        bounce: true,
+        bounceFactor: this.options.bounce ? this.options.bounceFactor : 0,
+        maxVelocity: this.options.maxFlickVelocity + "%",
         callback: (detail) => this.follow(detail)
       });
     }
@@ -484,36 +491,39 @@
       if (!e.detail || typeof e.detail !== "object") return;
       const pos = this.positionFromDrag(e.detail);
       this.pressPosition = pos;
-      this.pushSample(pos);
       this.setPosition(pos);
     }
+    /** Every move `drag()` reports, under the pointer and through the glide alike. */
     follow(detail) {
-      const pos = this.positionFromDrag(detail);
-      this.pushSample(pos);
-      this.setPosition(pos);
+      this.setPosition(this.positionFromDrag(detail));
     }
     onDragEnd(e) {
       if (!e.detail || typeof e.detail !== "object") return;
-      this.endDrag();
       const now = performance.now();
       const movedBy = Math.abs(this.position - this.pressPosition);
       if (isDoubleTap(now, this.lastTapAt, movedBy)) {
         this.lastTapAt = 0;
+        this.endDrag();
         this.snapToExtreme();
         return;
       }
       this.lastTapAt = movedBy > TAP_SLOP ? 0 : now;
       if (this.options.inertia) {
-        const flick = sampleVelocity(this.samples).pos || 0;
-        this.velocity = clamp(flick, -this.options.maxFlickVelocity, this.options.maxFlickVelocity);
-        if (Math.abs(this.velocity) > 0) return this.startInertia();
+        this.gliding = true;
+        return;
       }
+      this.endDrag();
+      this.commit();
+    }
+    /** The glide has settled - decayed, or stopped at the wall - and this is where `change` reports it. */
+    onGlideEnd() {
+      this.endDrag();
       this.commit();
     }
     /**
      * The system took the gesture away - a call arriving, the page scrolling out from
      * under the finger. iOS Safari raises this far more readily than a desktop browser
-     * does. The samples describe a gesture the user never finished, so the handle stops
+     * does. `drag()` drops the flick it was carrying and starts no glide, so the handle stops
      * where it stands rather than flying off on a flick nobody meant to throw.
      */
     onDragCancel(e) {
@@ -522,50 +532,20 @@
       this.endDrag();
       this.commit();
     }
-    /** Tear down a drag, however it ended. */
+    /** Tear down a gesture, however it ended - under the pointer, through the glide, or cut short. */
     endDrag() {
       if (!this.gesture) return;
+      this.gliding = false;
       this.dragTarget.removeEventListener("dragstart", this.onDragStart);
       this.dragTarget.removeEventListener("dragend", this.onDragEnd);
       this.dragTarget.removeEventListener("dragcancel", this.onDragCancel);
+      this.dragTarget.removeEventListener("draginertiaend", this.onGlideEnd);
       this.gesture.destroy();
       this.gesture = null;
     }
-    pushSample(pos) {
-      this.samples.push({ t: performance.now(), pos });
-      if (this.samples.length > 10) this.samples.shift();
-    }
-    startInertia() {
-      this.stopInertia();
-      this.lastFrameTime = performance.now();
-      const step = (now) => {
-        const dt = now - this.lastFrameTime;
-        this.lastFrameTime = now;
-        let next = this.position + this.velocity * dt;
-        this.velocity *= Math.pow(this.options.friction, dt / 16.6667);
-        if (next <= 0 || next >= 100) {
-          next = clamp(next, 0, 100);
-          if (this.options.bounce) {
-            this.velocity *= -this.options.bounceFactor;
-          } else {
-            this.velocity = 0;
-          }
-        }
-        this.setPosition(next);
-        if (Math.abs(this.velocity) < 5e-4) {
-          this.inertiaId = null;
-          this.commit();
-          return;
-        }
-        this.inertiaId = requestAnimationFrame(step);
-      };
-      this.inertiaId = requestAnimationFrame(step);
-    }
-    stopInertia() {
-      if (this.inertiaId) {
-        cancelAnimationFrame(this.inertiaId);
-        this.inertiaId = null;
-      }
+    /** A key pressed mid-glide takes over from it; one pressed mid-drag leaves the pointer its gesture. */
+    stopGlide() {
+      if (this.gliding) this.endDrag();
     }
     /** Set the position (0-100), clamped, re-render and report the move. */
     setPosition(pct) {
@@ -601,7 +581,6 @@
       this.handle.setAttribute("aria-valuetext", rounded + "%");
     }
     destroy() {
-      this.stopInertia();
       this.element.style.removeProperty("--compare-images-slider-position");
       this.endDrag();
       this.dragTarget.removeEventListener("pointerdown", this.onPointerDown);
