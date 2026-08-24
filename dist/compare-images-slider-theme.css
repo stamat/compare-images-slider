@@ -33,7 +33,6 @@ compare-images-slider .handle-knob svg {
 .compare-images-slider .handle:focus-visible .handle-knob,
 compare-images-slider .handle:focus-visible .handle-knob {
   outline: 3px solid Highlight;
-  outline: 3px solid -webkit-focus-ring-color;
   outline-offset: 2px;
 }
 .compare-images-slider[data-vertical] .handle-knob, .compare-images-slider[vertical] .handle-knob,

@@ -60,6 +60,15 @@ per millisecond and reads the same at every size.
 
   The README no longer says *dependency-free*, because it no longer is.
 
+### Fixed
+
+- **The focus ring on the handle is the system highlight colour in every browser.** It was
+  declared twice, `Highlight` and then `-webkit-focus-ring-color` for the browsers that
+  understand it — and Chromium understands it as an orange of its own rather than as the
+  platform's ring, so a focused handle drew an orange outline on a page that was blue
+  everywhere else. The second declaration is gone. A page restyling the ring overrides
+  `.handle:focus-visible::after` as before.
+
 ### Removed
 
 - **`clamp`, `capVelocity` and `sampleVelocity` are no longer exported from this package.** They

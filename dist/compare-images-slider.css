@@ -110,7 +110,6 @@ compare-images-slider .handle:focus-visible {
 .compare-images-slider .handle:focus-visible:after,
 compare-images-slider .handle:focus-visible:after {
   outline: 3px solid Highlight;
-  outline: 3px solid -webkit-focus-ring-color;
   outline-offset: 2px;
 }
 .compare-images-slider[data-vertical] .frame, .compare-images-slider[vertical] .frame,

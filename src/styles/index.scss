@@ -102,8 +102,10 @@ compare-images-slider {
   }
 
   .handle:focus-visible:after {
+    // `Highlight` and not `-webkit-focus-ring-color`, which reads like the platform's ring
+    // and is not one: Chromium resolves the keyword to an orange of its own, so the ring came
+    // out orange on a page whose focus colour was blue everywhere else.
     outline: 3px solid Highlight;
-    outline: 3px solid -webkit-focus-ring-color;
     outline-offset: 2px;
   }
 

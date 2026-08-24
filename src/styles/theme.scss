@@ -50,7 +50,6 @@ compare-images-slider {
   // the handle keeps focus and shows nothing for it.
   .handle:focus-visible .handle-knob {
     outline: 3px solid Highlight;
-    outline: 3px solid -webkit-focus-ring-color;
     outline-offset: 2px;
   }
 
