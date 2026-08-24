@@ -31,7 +31,9 @@ Write it for the person upgrading, not for the person who wrote the code. What
 they need is what changed for them: a renamed option, a different default, an
 error that is now thrown, output that moved.
 
-## [Unreleased] — the gesture is book-of-spells' now, glide included
+## [Unreleased]
+
+## [4.0.0] - 2026-08-24 — the gesture is book-of-spells' now, glide included
 
 The gesture was written out here: the capture, the move and up and cancel listeners, the
 pointer-id matching, and the sum turning a client coordinate into a percentage. So were two
