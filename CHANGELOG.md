@@ -31,7 +31,9 @@ Write it for the person upgrading, not for the person who wrote the code. What
 they need is what changed for them: a renamed option, a different default, an
 error that is now thrown, output that moved.
 
-## [Unreleased] — the classes carry the package's name, and `frame` was the wrong word
+## [Unreleased]
+
+## [5.0.0] - 2026-08-24 — the classes carry the package's name, and `frame` was the wrong word
 
 `.frame`, `.handle` and `.handle-knob` were unprefixed class names on a light-DOM
 element, which is the one place a class has no scope to hide in. A page with its own

@@ -1,6 +1,6 @@
 {
   "name": "compare-images-slider",
-  "version": "4.0.0",
+  "version": "5.0.0",
   "description": "A before/after comparison slider - two images, two videos, or whatever else you put in the markup. One dependency, and it is the sibling spellbook.",
   "type": "module",
   "main": "src/scripts/compare-images-slider.js",
