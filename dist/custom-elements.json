@@ -169,6 +169,32 @@
           }
         },
         {
+          "kind": "function",
+          "name": "upgradeAction",
+          "parameters": [
+            {
+              "name": "hasChildren",
+              "description": "Whether both required children are present.",
+              "type": {
+                "text": "boolean"
+              }
+            },
+            {
+              "name": "readyState",
+              "description": "`document.readyState`.",
+              "type": {
+                "text": "string"
+              }
+            }
+          ],
+          "description": "What a connection should do about the required children.\n\nThe parser inserts an element - and so fires `connectedCallback` - at its start tag,\nbefore any child of it exists, so absent children are ambiguous on their own. The\ndocument's ready state is what disambiguates: still `loading` means the parser has\nnot reached them yet, anything else means it has been and gone and the markup is\nsimply wrong.",
+          "return": {
+            "type": {
+              "text": "'build'|'wait'|'fail'"
+            }
+          }
+        },
+        {
           "kind": "class",
           "description": "",
           "name": "CompareImagesSlider",
@@ -318,7 +344,7 @@
             },
             {
               "kind": "field",
-              "name": "frame"
+              "name": "reveal"
             },
             {
               "kind": "field",
@@ -431,7 +457,7 @@
         },
         {
           "kind": "class",
-          "description": "`<compare-images-slider>` custom element. Uses light DOM (no shadow root) so\nthe images, frame and handle stay fully stylable by the page author.\n\nEvery attribute below is also readable as `data-*` or passed to the\n`CompareImagesSlider` constructor in its camelCase form. The constructor reads the\nelement's attributes itself, so markup wins over the options object, `data-*` wins\nover the bare attribute, and a boolean is turned off with `=\"false\"` or `=\"0\"`.",
+          "description": "`<compare-images-slider>` custom element. Uses light DOM (no shadow root) so\nthe images, reveal layer and handle stay fully stylable by the page author.\n\nEvery attribute below is also readable as `data-*` or passed to the\n`CompareImagesSlider` constructor in its camelCase form. The constructor reads the\nelement's attributes itself, so markup wins over the options object, `data-*` wins\nover the bare attribute, and a boolean is turned off with `=\"false\"` or `=\"0\"`.",
           "name": "CompareImagesSliderElement",
           "cssProperties": [
             {
@@ -573,7 +599,7 @@
               "type": {
                 "text": "number"
               },
-              "description": "Starting position, 0-100. Paint it with `--compare-images-slider-initial-position` too, or the frame is at 50% until the script runs.",
+              "description": "Starting position, 0-100. Paint it with `--compare-images-slider-initial-position` too, or the reveal layer is at 50% until the script runs.",
               "name": "initial-position",
               "default": "50"
             },
@@ -640,6 +666,14 @@
           "name": "keyboardStep",
           "declaration": {
             "name": "keyboardStep",
+            "module": "src/scripts/compare-images-slider.js"
+          }
+        },
+        {
+          "kind": "js",
+          "name": "upgradeAction",
+          "declaration": {
+            "name": "upgradeAction",
             "module": "src/scripts/compare-images-slider.js"
           }
         },

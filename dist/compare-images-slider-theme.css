@@ -4,12 +4,12 @@ compare-images-slider {
   --compare-images-slider-handle-bg: Canvas;
   --compare-images-slider-handle-fg: CanvasText;
 }
-.compare-images-slider .handle:has(.handle-knob)::after,
-compare-images-slider .handle:has(.handle-knob)::after {
+.compare-images-slider .compare-images-slider-handle:has(.compare-images-slider-handle-knob)::after,
+compare-images-slider .compare-images-slider-handle:has(.compare-images-slider-handle-knob)::after {
   display: none;
 }
-.compare-images-slider .handle-knob,
-compare-images-slider .handle-knob {
+.compare-images-slider .compare-images-slider-handle-knob,
+compare-images-slider .compare-images-slider-handle-knob {
   position: absolute;
   top: 50%;
   left: 50%;
@@ -23,21 +23,21 @@ compare-images-slider .handle-knob {
   justify-content: center;
   border-radius: 50%;
 }
-.compare-images-slider .handle-knob svg,
-compare-images-slider .handle-knob svg {
+.compare-images-slider .compare-images-slider-handle-knob svg,
+compare-images-slider .compare-images-slider-handle-knob svg {
   width: 24px;
   height: 24px;
   fill: currentColor;
   margin-top: 1px;
 }
-.compare-images-slider .handle:focus-visible .handle-knob,
-compare-images-slider .handle:focus-visible .handle-knob {
+.compare-images-slider .compare-images-slider-handle:focus-visible .compare-images-slider-handle-knob,
+compare-images-slider .compare-images-slider-handle:focus-visible .compare-images-slider-handle-knob {
   outline: 3px solid Highlight;
   outline-offset: 2px;
 }
-.compare-images-slider[data-vertical] .handle-knob, .compare-images-slider[vertical] .handle-knob,
-compare-images-slider[data-vertical] .handle-knob,
-compare-images-slider[vertical] .handle-knob {
+.compare-images-slider[data-vertical] .compare-images-slider-handle-knob, .compare-images-slider[vertical] .compare-images-slider-handle-knob,
+compare-images-slider[data-vertical] .compare-images-slider-handle-knob,
+compare-images-slider[vertical] .compare-images-slider-handle-knob {
   transform: translate3d(-50%, -50%, 0) rotate(90deg);
 }
 /*# sourceMappingURL=compare-images-slider-theme.css.map */

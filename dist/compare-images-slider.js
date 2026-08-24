@@ -353,13 +353,19 @@
     }
   }
   var sliderCount = 0;
+  function upgradeAction(hasChildren, readyState) {
+    if (hasChildren) return "build";
+    return readyState === "loading" ? "wait" : "fail";
+  }
+  var REVEAL_SELECTOR = ".compare-images-slider-reveal";
+  var HANDLE_SELECTOR = ".compare-images-slider-handle";
   var CompareImagesSlider = class {
     constructor(element, options) {
       this.element = element;
-      this.frame = this.element.querySelector(".frame");
-      this.handle = this.element.querySelector(".handle");
-      if (!this.frame || !this.handle) {
-        throw new Error("CompareImagesSlider: the element needs a .frame child holding the revealed layer, and a .handle child");
+      this.reveal = this.element.querySelector(REVEAL_SELECTOR);
+      this.handle = this.element.querySelector(HANDLE_SELECTOR);
+      if (!this.reveal || !this.handle) {
+        throw new Error("CompareImagesSlider: the element needs a " + REVEAL_SELECTOR + " child holding the revealed layer, and a " + HANDLE_SELECTOR + " child");
       }
       this.options = resolveOptions(this.element, options);
       if (this.options.vertical) {
@@ -396,10 +402,10 @@
      * @see https://www.w3.org/WAI/ARIA/apg/patterns/windowsplitter/
      */
     setupAccessibility() {
-      if (!this.frame.id) this.frame.id = "compare-images-slider-frame-" + ++sliderCount;
+      if (!this.reveal.id) this.reveal.id = "compare-images-slider-reveal-" + ++sliderCount;
       this.handle.setAttribute("role", "separator");
       this.handle.setAttribute("tabindex", "0");
-      this.handle.setAttribute("aria-controls", this.frame.id);
+      this.handle.setAttribute("aria-controls", this.reveal.id);
       this.handle.setAttribute("aria-orientation", this.options.vertical ? "horizontal" : "vertical");
       this.handle.setAttribute("aria-valuemin", "0");
       this.handle.setAttribute("aria-valuemax", "100");
@@ -641,8 +647,23 @@
   };
   var CompareImagesSliderElement = class extends ElementBase {
     connectedCallback() {
-      if (this.slider || !this.querySelector(".frame") || !this.querySelector(".handle")) return;
-      this.slider = new CompareImagesSlider(this);
+      if (this.slider) return;
+      const hasChildren = !!(this.querySelector(REVEAL_SELECTOR) && this.querySelector(HANDLE_SELECTOR));
+      const action = upgradeAction(hasChildren, document.readyState);
+      if (action === "build") {
+        this.slider = new CompareImagesSlider(this);
+        return;
+      }
+      if (action === "wait") {
+        if (this.awaitingChildren) return;
+        this.awaitingChildren = true;
+        document.addEventListener("DOMContentLoaded", () => {
+          this.awaitingChildren = false;
+          if (this.isConnected) this.connectedCallback();
+        }, { once: true });
+        return;
+      }
+      console.error("<compare-images-slider>: no slider was built. The element needs a " + REVEAL_SELECTOR + " child holding the revealed layer, and a " + HANDLE_SELECTOR + " child. Elements created after load must carry both before they are connected.", this);
     }
     disconnectedCallback() {
       if (this.slider) {

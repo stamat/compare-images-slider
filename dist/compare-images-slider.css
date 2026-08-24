@@ -33,10 +33,10 @@ compare-images-slider img {
 }
 .compare-images-slider,
 compare-images-slider {
-  /* The base layer is what gives the slider its size, and the frame's copy has to lay
+  /* The base layer is what gives the slider its size, and the reveal layer's copy has to lay
      out identically over it or the two halves do not line up. `picture` is addressed
      through its `img`, the wrapper itself having no box worth sizing. Anything else -
-     a div, an iframe, an svg sprite - is left to fill the frame on its own terms. */
+     a div, an iframe, an svg sprite - is left to fill the reveal layer on its own terms. */
 }
 .compare-images-slider > :is(img, video, canvas), .compare-images-slider > picture > img,
 compare-images-slider > :is(img, video, canvas),
@@ -47,28 +47,28 @@ compare-images-slider > picture > img {
 }
 .compare-images-slider,
 compare-images-slider {
-  /* The frame covers the whole slider and is clipped back to the reveal position, rather
+  /* The reveal layer covers the whole slider and is clipped back to the current position, rather
      than being sized to it. That is what keeps the overlay laying out at the same size as
-     the image underneath with no script measuring anything - sizing the frame instead
+     the image underneath with no script measuring anything - sizing it instead
      would need every child resized to the slider's width, on load and on every resize. */
 }
-.compare-images-slider .frame,
-compare-images-slider .frame {
+.compare-images-slider .compare-images-slider-reveal,
+compare-images-slider .compare-images-slider-reveal {
   position: absolute;
   inset: 0;
   z-index: 2;
   -webkit-clip-path: inset(0 calc(100% - var(--compare-images-slider-position)) 0 0);
   clip-path: inset(0 calc(100% - var(--compare-images-slider-position)) 0 0);
 }
-.compare-images-slider .frame > :is(img, video, canvas), .compare-images-slider .frame > picture > img,
-compare-images-slider .frame > :is(img, video, canvas),
-compare-images-slider .frame > picture > img {
+.compare-images-slider .compare-images-slider-reveal > :is(img, video, canvas), .compare-images-slider .compare-images-slider-reveal > picture > img,
+compare-images-slider .compare-images-slider-reveal > :is(img, video, canvas),
+compare-images-slider .compare-images-slider-reveal > picture > img {
   width: 100%;
   height: auto;
   display: block;
 }
-.compare-images-slider .handle,
-compare-images-slider .handle {
+.compare-images-slider .compare-images-slider-handle,
+compare-images-slider .compare-images-slider-handle {
   position: absolute;
   left: var(--compare-images-slider-position);
   top: 0;
@@ -80,8 +80,8 @@ compare-images-slider .handle {
   z-index: 3;
   touch-action: none;
 }
-.compare-images-slider .handle:after,
-compare-images-slider .handle:after {
+.compare-images-slider .compare-images-slider-handle:after,
+compare-images-slider .compare-images-slider-handle:after {
   position: absolute;
   top: 50%;
   left: 50%;
@@ -103,24 +103,24 @@ compare-images-slider .handle:after {
   box-sizing: border-box;
   padding-block-end: 0.08em;
 }
-.compare-images-slider .handle:focus-visible,
-compare-images-slider .handle:focus-visible {
+.compare-images-slider .compare-images-slider-handle:focus-visible,
+compare-images-slider .compare-images-slider-handle:focus-visible {
   outline: none;
 }
-.compare-images-slider .handle:focus-visible:after,
-compare-images-slider .handle:focus-visible:after {
+.compare-images-slider .compare-images-slider-handle:focus-visible:after,
+compare-images-slider .compare-images-slider-handle:focus-visible:after {
   outline: 3px solid Highlight;
   outline-offset: 2px;
 }
-.compare-images-slider[data-vertical] .frame, .compare-images-slider[vertical] .frame,
-compare-images-slider[data-vertical] .frame,
-compare-images-slider[vertical] .frame {
+.compare-images-slider[data-vertical] .compare-images-slider-reveal, .compare-images-slider[vertical] .compare-images-slider-reveal,
+compare-images-slider[data-vertical] .compare-images-slider-reveal,
+compare-images-slider[vertical] .compare-images-slider-reveal {
   -webkit-clip-path: inset(0 0 calc(100% - var(--compare-images-slider-position)) 0);
   clip-path: inset(0 0 calc(100% - var(--compare-images-slider-position)) 0);
 }
-.compare-images-slider[data-vertical] .handle, .compare-images-slider[vertical] .handle,
-compare-images-slider[data-vertical] .handle,
-compare-images-slider[vertical] .handle {
+.compare-images-slider[data-vertical] .compare-images-slider-handle, .compare-images-slider[vertical] .compare-images-slider-handle,
+compare-images-slider[data-vertical] .compare-images-slider-handle,
+compare-images-slider[vertical] .compare-images-slider-handle {
   left: 0;
   top: var(--compare-images-slider-position);
   width: 100%;
@@ -129,9 +129,9 @@ compare-images-slider[vertical] .handle {
   margin-left: 0;
   cursor: ns-resize;
 }
-.compare-images-slider[data-vertical] .handle:after, .compare-images-slider[vertical] .handle:after,
-compare-images-slider[data-vertical] .handle:after,
-compare-images-slider[vertical] .handle:after {
+.compare-images-slider[data-vertical] .compare-images-slider-handle:after, .compare-images-slider[vertical] .compare-images-slider-handle:after,
+compare-images-slider[data-vertical] .compare-images-slider-handle:after,
+compare-images-slider[vertical] .compare-images-slider-handle:after {
   content: "↕";
 }
 /*# sourceMappingURL=compare-images-slider.css.map */
