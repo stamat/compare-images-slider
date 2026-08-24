@@ -1,4 +1,4 @@
-# ↔️ Compare Images Slider [![npm version](https://img.shields.io/npm/v/compare-images-slider)](https://www.npmjs.com/package/compare-images-slider) [![license mit](https://img.shields.io/badge/license-MIT-green)](https://github.com/stamat/compare-images-slider/blob/main/LICENSE)
+# ↔️ Compare Images Slider [![npm version](https://img.shields.io/npm/v/compare-images-slider)](https://www.npmjs.com/package/compare-images-slider) [![script gzip](https://img.shields.io/bundlejs/size/compare-images-slider?label=script%20gzip)](https://bundlejs.com/?q=compare-images-slider) [![license mit](https://img.shields.io/badge/license-MIT-green)](https://github.com/stamat/compare-images-slider/blob/main/LICENSE)
 
 A before/after comparison slider — two images, two videos, or whatever else you
 put in the markup.

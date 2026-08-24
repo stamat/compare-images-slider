@@ -9,6 +9,10 @@ This file contains the complete Markdown documentation for Compare Images Slider
 # Compare Images Slider
 URL: https://stamat.github.io/compare-images-slider/
 
+[![npm version](https://img.shields.io/npm/v/compare-images-slider)](https://www.npmjs.com/package/compare-images-slider)
+[![script gzip](https://img.shields.io/bundlejs/size/compare-images-slider?label=script%20gzip)](https://bundlejs.com/?q=compare-images-slider)
+[![license mit](https://img.shields.io/badge/license-MIT-green)](https://github.com/stamat/compare-images-slider/blob/main/LICENSE)
+
 A before/after image comparison slider — a custom element or a class you
 instantiate, with no shadow DOM to fight.
 
@@ -427,7 +431,7 @@ is a 2015 build, so it is measured from its own CDN instead.
 
 |                                     | **this one**                                                                             | [img-comparison-slider](https://github.com/sneas/img-comparison-slider) | [react-compare-slider](https://github.com/nerdyman/react-compare-slider) | [cocoen](https://github.com/koenoe/cocoen) | JuxtaposeJS                                  | [image-compare-viewer](https://github.com/kylewetton/image-compare-viewer) |
 | ----------------------------------- | ---------------------------------------------------------------------------------------- | ----------------------------------------------------------------------- | ------------------------------------------------------------------------ | ------------------------------------------ | -------------------------------------------- | -------------------------------------------------------------------------- |
-| Gzipped                             | **4.9 kB**                                                                               | 3.7 kB                                                                  | 3.6 kB + React                                                           | 2.5 kB                                     | 5.3 kB                                       | 17.2 kB                                                                    |
+| Gzipped                             | **4.8 kB**                                                                               | 3.7 kB                                                                  | 3.6 kB + React                                                           | 2.5 kB                                     | 5.3 kB                                       | 17.2 kB                                                                    |
 | Runtime dependencies                | **one, the sibling spellbook**                                                           | none                                                                    | React                                                                    | none                                       | none                                         | five                                                                       |
 | Reveals                             | **any element**                                                                          | any slotted element                                                     | any React node                                                           | any slotted element                        | images, from URLs                            | two images                                                                 |
 | Pointer Events, with capture        | **✔**                                                                                    | —                                                                       | ✔                                                                        | —                                          | —                                            | —                                                                          |
@@ -449,7 +453,7 @@ where `img-comparison-slider` is keyboard operable and ships no ARIA at all, han
 a screen reader a focusable something with no name, role or value. The gestures are
 its own too: pointer capture, so a fast drag cannot fall out of the handle, inertia
 with a capped flick, and a double-tap snap that no other package here has. What it
-costs is the size row: 4.9 kB with the gesture bundled in, where the same element was
+costs is the size row: 4.8 kB with the gesture bundled in, where the same element was
 3.3 kB before it shared one, which puts three of the six below it — cocoen at 2.5 kB,
 react-compare-slider at 3.6 kB before React is counted, img-comparison-slider at
 3.7 kB.
