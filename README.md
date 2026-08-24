@@ -1,7 +1,7 @@
 # ↔️ Compare Images Slider [![npm version](https://img.shields.io/npm/v/compare-images-slider)](https://www.npmjs.com/package/compare-images-slider) [![license mit](https://img.shields.io/badge/license-MIT-green)](https://github.com/stamat/compare-images-slider/blob/main/LICENSE)
 
-A dependency-free before/after comparison slider — two images, two videos, or
-whatever else you put in the markup.
+A before/after comparison slider — two images, two videos, or whatever else you
+put in the markup.
 
 <img style="max-width: 100%" src="https://i.imgur.com/e9m4QaU.jpeg" alt="Compare Images Slider Screenshot">
 
@@ -10,7 +10,7 @@ whatever else you put in the markup.
 - Custom element, no shadow DOM
 - Lightweight
 - Minimal DOM depth
-- No dependencies
+- One dependency: [book-of-spells](https://github.com/stamat/book-of-spells), for the pointer gesture and two sums
 - Mobile friendly
 - Reveals anything — images, video, canvas, your own markup
 - Vertical slider

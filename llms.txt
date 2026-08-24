@@ -1,6 +1,6 @@
 # Compare Images Slider
 
-> A dependency-free before/after image comparison slider — a compare-images-slider custom element or a class you instantiate, with no shadow DOM to fight.
+> A before/after image comparison slider — a compare-images-slider custom element or a class you instantiate, with no shadow DOM to fight.
 
 ## Pages
 

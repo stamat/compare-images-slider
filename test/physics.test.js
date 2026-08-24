@@ -1,6 +1,12 @@
 // The decisions the slider makes, each pulled out as a pure function so it can be tested
-// without a browser: velocity and its cap, the key map, the double tap, the collapse
-// toggle, which extreme an arrival earns an event for, and how options resolve.
+// without a browser: the key map, the double tap, the collapse toggle, which extreme an
+// arrival earns an event for, how options resolve, and the flick this element turns those
+// into.
+//
+// `clamp` and `sampleVelocity` are book-of-spells' now, and the guarantees they used to be
+// held to here are held to there - the range and its NaN, the window that smooths a flick
+// spike, and the too-short gesture that reads zero. What stays below is the composition
+// this element does with them, which is nobody else's.
 //
 // Not covered here, deliberately: anything needing layout or a real event stream - the
 // reveal geometry, pointer capture, the ARIA the handle carries, the events actually
@@ -8,10 +14,8 @@
 // would only be testing the stub.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
+import { clamp, sampleVelocity } from 'book-of-spells/src/helpers.mjs';
 import {
-  clamp,
-  sampleVelocity,
-  capVelocity,
   keyboardStep,
   isDoubleTap,
   nearestExtreme,
@@ -22,25 +26,10 @@ import {
   DEFAULT_OPTIONS
 } from '../src/scripts/compare-images-slider.js';
 
-test('clamp keeps values inside the range', () => {
-  assert.equal(clamp(150, 0, 100), 100);
-  assert.equal(clamp(-5, 0, 100), 0);
-  assert.equal(clamp(42, 0, 100), 42);
-});
-
-test('capVelocity limits magnitude but keeps sign', () => {
-  assert.equal(capVelocity(5, 0.5), 0.5);
-  assert.equal(capVelocity(-5, 0.5), -0.5);
-  assert.equal(capVelocity(0.2, 0.5), 0.2);
-});
-
-test('sampleVelocity is undeterminable with too few samples', () => {
-  assert.equal(sampleVelocity([]), 0);
-  assert.equal(sampleVelocity([{ t: 0, pos: 10 }]), 0);
-});
-
-test('sampleVelocity smooths a quick-flick spike vs a single frame delta', () => {
-  // A slow build-up then one large last-frame jump - the classic flick spike.
+test('a flick is smoothed over the window and then held to the ceiling, in per cent per millisecond', () => {
+  // The composition `onDragEnd` does: sample the gesture, then cap what it carries. A slow
+  // build-up and one large last-frame jump is the classic spike, and the whole point of
+  // measuring over the window is that the spike is not what the flick carries.
   const samples = [
     { t: 0, pos: 10 },
     { t: 16, pos: 20 },
@@ -48,16 +37,19 @@ test('sampleVelocity smooths a quick-flick spike vs a single frame delta', () =>
     { t: 48, pos: 90 }
   ];
   const singleFrame = (90 - 35) / (48 - 32); // ~3.44 %/ms
-  const windowed = sampleVelocity(samples, 80);
+  const windowed = sampleVelocity(samples, 80).pos;
   assert.ok(windowed < singleFrame, 'windowed velocity must be lower than the spike');
   // Over the full 48ms window: (90-10)/48
   assert.ok(Math.abs(windowed - 80 / 48) < 1e-9);
-});
 
-test('capVelocity tames even the smoothed flick to the configured ceiling', () => {
-  const samples = [{ t: 0, pos: 0 }, { t: 16, pos: 100 }];
-  const capped = capVelocity(sampleVelocity(samples), 0.5);
-  assert.equal(capped, 0.5);
+  // And the ceiling is per cent per millisecond, which is what keeps the same flick reading
+  // the same on a narrow slider and a wide one.
+  const ceiling = DEFAULT_OPTIONS.maxFlickVelocity;
+  assert.equal(clamp(windowed, -ceiling, ceiling), ceiling);
+  assert.equal(clamp(-windowed, -ceiling, ceiling), -ceiling);
+
+  // A gesture with one sample in it is not a speed, and must not reach the ceiling as a NaN.
+  assert.equal(sampleVelocity([{ t: 0, pos: 10 }]).pos, 0);
 });
 
 test('Enter collapses the primary pane and puts it back where it was', () => {

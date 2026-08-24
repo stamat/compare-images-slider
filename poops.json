@@ -58,7 +58,7 @@
         "title": "Compare Images Slider",
         "brand": "compare-images-slider",
         "brandMark": "🖼️",
-        "description": "A dependency-free before/after image comparison slider \u2014 a compare-images-slider custom element or a class you instantiate, with no shadow DOM to fight.",
+        "description": "A before/after image comparison slider \u2014 a compare-images-slider custom element or a class you instantiate, with no shadow DOM to fight.",
         "image": "img/og.jpg",
         "lang": "en",
         "url": "https://stamat.github.io/compare-images-slider/",

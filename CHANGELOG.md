@@ -31,7 +31,48 @@ Write it for the person upgrading, not for the person who wrote the code. What
 they need is what changed for them: a renamed option, a different default, an
 error that is now thrown, output that moved.
 
-## [Unreleased]
+## [Unreleased] — the pointer half is book-of-spells' now
+
+The gesture was written out here: the capture, the move and up and cancel listeners, the
+pointer-id matching, and the sum turning a client coordinate into a percentage. So were two
+pure functions, `sampleVelocity` and `capVelocity`, which existed in book-of-spells' own
+`drag()` as well — one flick measured two ways in two repositories, and neither knew when the
+other was fixed.
+
+`drag()` takes a `pointerdown` already in hand and a `within` box to measure the percentages
+against, which is this element's press and this element's track. The physics stays here, on
+purpose: `drag()`'s own inertia caps a flick in **pixels** per millisecond, so the same flick
+would carry further on a narrow slider than on a wide one, where `maxFlickVelocity` is per cent
+per millisecond and reads the same at every size.
+
+### Changed
+
+- **One dependency, `book-of-spells@^2.7.0`, where there were none.** It is the sibling
+  spellbook rather than a third party, and what it brings is the pointer gesture — a captured
+  pointer, a `pointercancel` told apart from a release, the moves heard on the document — plus
+  `clamp` and `sampleVelocity`, which used to live here in a second copy.
+
+  Nothing changed for a page using the element or the class: the same markup, the same options,
+  the same `input` / `change` / edge events, the same keyboard, the same ARIA. Verified in
+  Chromium across a drag, a flick that glides on after the pointer lets go and commits once it
+  settles, a double tap snapping to an extreme, the arrow keys and <kbd>End</kbd>, the vertical
+  axis, and `drag-anywhere` pressing on the picture itself.
+
+  The README no longer says *dependency-free*, because it no longer is.
+
+### Removed
+
+- **`clamp`, `capVelocity` and `sampleVelocity` are no longer exported from this package.** They
+  were never in the README — they were exported so the tests could reach them — but they were
+  reachable, so anyone importing one has to import it from
+  [book-of-spells](https://github.com/stamat/book-of-spells) instead: `clamp` and
+  `sampleVelocity` are its helpers now, and `capVelocity(v, max)` is `clamp(v, -max, max)`.
+  `sampleVelocity` answers with an object per numeric key rather than a bare number, so this
+  element's samples read back as `sampleVelocity(samples).pos`.
+
+  The guarantees those functions carried moved with them and are tested there — the range and
+  its `NaN`, the window that smooths a flick spike, the too-short gesture that reads zero. What
+  stays in `test/physics.test.js` is the composition this element does with them.
 
 ## [3.0.1] - 2026-08-23 — a translated name on the element now reaches the handle
 

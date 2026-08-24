@@ -1,54 +1,5 @@
-/**
- * Clamp a number to an inclusive range.
- * @param {number} value
- * @param {number} min
- * @param {number} max
- * @returns {number}
- */
-export function clamp(value, min, max) {
-  if (value < min) return min;
-  if (value > max) return max;
-  return value;
-}
-
-/**
- * Compute a flick velocity (percent per millisecond) from recent pointer samples.
- *
- * The velocity is measured over a time window rather than a single frame delta.
- * A single-frame delta spikes on quick flicks - one large jump between the last
- * two move events makes inertia shoot straight to an extreme. Averaging the
- * displacement over the last `windowMs` of movement smooths those spikes out.
- *
- * @param {Array<{ t: number, pos: number }>} samples - Ordered pointer samples.
- * @param {number} [windowMs=80] - Look-back window in milliseconds.
- * @returns {number} Velocity in percent per millisecond (0 when undeterminable).
- */
-export function sampleVelocity(samples, windowMs = 80) {
-  if (!samples || samples.length < 2) return 0;
-  const last = samples[samples.length - 1];
-  let start = samples[0];
-  // Walk back to the oldest sample still inside the window.
-  for (let i = samples.length - 1; i >= 0; i--) {
-    start = samples[i];
-    if (last.t - samples[i].t >= windowMs) break;
-  }
-  const dt = last.t - start.t;
-  if (dt <= 0) return 0;
-  return (last.pos - start.pos) / dt;
-}
-
-/**
- * Cap the magnitude of a velocity while preserving its sign.
- * Prevents a hard flick from carrying the handle to an extreme every time.
- * @param {number} velocity
- * @param {number} max - Maximum absolute velocity.
- * @returns {number}
- */
-export function capVelocity(velocity, max) {
-  if (velocity > max) return max;
-  if (velocity < -max) return -max;
-  return velocity;
-}
+import { drag } from 'book-of-spells/src/dom.mjs';
+import { clamp, sampleVelocity } from 'book-of-spells/src/helpers.mjs';
 
 // Longest gap between two presses still read as one double tap.
 const DOUBLE_TAP_MS = 400;
@@ -154,8 +105,8 @@ let sliderCount = 0;
  * @classdesc Reveal one layer over another by dragging a handle. The two layers are
  * whatever the markup puts there - images, video, canvas, arbitrary elements - since
  * the reveal is clipped by percentage and nothing here measures the content.
- * Self-contained: pointer physics, inertia, keyboard controls and ARIA are all
- * handled here with no runtime dependencies.
+ * The inertia, the keyboard and the ARIA are all handled here; the pointer gesture is
+ * `drag()` from book-of-spells, which is the one runtime dependency.
  * @param {HTMLElement} element - The slider root element.
  * @param {Object} [options]
  * @param {boolean} [options.inertia=false] - Continue moving after a flick.
@@ -200,9 +151,9 @@ export default class CompareImagesSlider {
     // born at an extreme has not arrived anywhere and reports nothing.
     this.committedPosition = this.position;
 
-    // Drag state.
-    this.dragging = false;
-    this.pointerId = null;
+    // Drag state. `gesture` is what book-of-spells' `drag()` hands back, and it is both the
+    // flag saying one is running and the way to end it.
+    this.gesture = null;
     this.samples = [];
     this.velocity = 0;
     this.inertiaId = null;
@@ -213,9 +164,9 @@ export default class CompareImagesSlider {
 
     // Bound handlers so they can be removed on destroy.
     this.onPointerDown = this.onPointerDown.bind(this);
-    this.onPointerMove = this.onPointerMove.bind(this);
-    this.onPointerUp = this.onPointerUp.bind(this);
-    this.onPointerCancel = this.onPointerCancel.bind(this);
+    this.onDragStart = this.onDragStart.bind(this);
+    this.onDragEnd = this.onDragEnd.bind(this);
+    this.onDragCancel = this.onDragCancel.bind(this);
     this.onKeyDown = this.onKeyDown.bind(this);
 
     this.setupAccessibility();
@@ -288,41 +239,82 @@ export default class CompareImagesSlider {
     this.commit();
   }
 
-  /** Convert a client coordinate to a 0-100 position along the slider axis. */
-  positionFromEvent(e) {
-    const rect = this.element.getBoundingClientRect();
-    if (this.options.vertical) {
-      return clamp(((e.clientY - rect.top) / rect.height) * 100, 0, 100);
-    }
-    return clamp(((e.clientX - rect.left) / rect.width) * 100, 0, 100);
+  /**
+   * Where along the slider a gesture is, out of what `drag()` measured.
+   *
+   * `within` is the slider root rather than the handle, so the percentage is along the track
+   * the handle runs on rather than across the handle itself, and it is held at 0 and 100 when
+   * the pointer runs off the end. The vertical layout is the same number down the other axis.
+   *
+   * @param {object} detail - A `drag()` detail.
+   * @returns {number}
+   */
+  positionFromDrag(detail) {
+    return this.options.vertical ? detail.yPercentage : detail.xPercentage;
   }
 
+  /**
+   * Take hold of the slider.
+   *
+   * The gesture is `drag()` from book-of-spells, started from this `pointerdown` rather than
+   * handed the element to own: started that way it writes no attributes and no inline
+   * `touch-action` into an element this class already set one on, and the `preventDefault`
+   * below stays this class's to do. What it owns is the pointer - the capture, the
+   * `pointercancel` path, and the moves heard on the document.
+   *
+   * The physics stays here. `drag()` has inertia of its own and it is the wrong one for this:
+   * it caps a flick in pixels per millisecond, so the same flick would carry further on a
+   * narrow slider than on a wide one, where `maxFlickVelocity` is per cent per millisecond and
+   * reads the same at every size.
+   */
   onPointerDown(e) {
+    if (this.gesture) return;
     this.stopInertia();
-    this.dragging = true;
-    this.pointerId = e.pointerId;
     this.samples = [];
-    if (this.dragTarget.setPointerCapture) this.dragTarget.setPointerCapture(e.pointerId);
-    this.dragTarget.addEventListener('pointermove', this.onPointerMove);
-    this.dragTarget.addEventListener('pointerup', this.onPointerUp);
-    this.dragTarget.addEventListener('pointercancel', this.onPointerCancel);
-    const pos = this.positionFromEvent(e);
+    // Stops the compatibility mouse events, and with them both the text selection a press
+    // starts and the native image drag a press on a picture would otherwise begin.
+    e.preventDefault();
+
+    // None of the three bubbles out of `drag()`, so they are heard on the target itself, and
+    // all three come off again in `endDrag`.
+    this.dragTarget.addEventListener('dragstart', this.onDragStart);
+    this.dragTarget.addEventListener('dragend', this.onDragEnd);
+    this.dragTarget.addEventListener('dragcancel', this.onDragCancel);
+    this.gesture = drag(e, {
+      target: this.dragTarget,
+      within: this.element,
+      callback: (detail) => this.follow(detail)
+    });
+  }
+
+  /**
+   * The press itself, once `drag()` has measured it.
+   *
+   * Read from the gesture rather than from the `pointerdown`, so the sum that turns a pointer
+   * into a percentage lives in exactly one place.
+   *
+   * `dragstart` and `dragend` are the native drag and drop API's names too, and the native ones
+   * bubble - with `dragAnywhere` the target is the whole slider, and an `<img>` inside it is
+   * draggable without being asked. book-of-spells sends an object as `detail`; a native
+   * `dragstart` carries the number `UIEvent` gives it, which is what tells the two apart.
+   */
+  onDragStart(e) {
+    if (!e.detail || typeof e.detail !== 'object') return;
+    const pos = this.positionFromDrag(e.detail);
     this.pressPosition = pos;
     this.pushSample(pos);
     this.setPosition(pos);
-    e.preventDefault();
   }
 
-  onPointerMove(e) {
-    if (!this.dragging || e.pointerId !== this.pointerId) return;
-    const pos = this.positionFromEvent(e);
+  follow(detail) {
+    const pos = this.positionFromDrag(detail);
     this.pushSample(pos);
     this.setPosition(pos);
   }
 
-  onPointerUp(e) {
-    if (!this.dragging || e.pointerId !== this.pointerId) return;
-    this.endDrag(e);
+  onDragEnd(e) {
+    if (!e.detail || typeof e.detail !== 'object') return;
+    this.endDrag();
 
     const now = performance.now();
     const movedBy = Math.abs(this.position - this.pressPosition);
@@ -335,7 +327,10 @@ export default class CompareImagesSlider {
     this.lastTapAt = movedBy > TAP_SLOP ? 0 : now;
 
     if (this.options.inertia) {
-      this.velocity = capVelocity(sampleVelocity(this.samples), this.options.maxFlickVelocity);
+      // `|| 0` because an empty sample list has no key to answer for, and a `NaN` velocity is
+      // an inertia loop that never settles and never commits.
+      const flick = sampleVelocity(this.samples).pos || 0;
+      this.velocity = clamp(flick, -this.options.maxFlickVelocity, this.options.maxFlickVelocity);
       // A flick is one gesture that outlives the finger, so `change` waits for the glide
       // to settle rather than reporting the position the finger happened to leave.
       if (Math.abs(this.velocity) > 0) return this.startInertia();
@@ -349,23 +344,23 @@ export default class CompareImagesSlider {
    * does. The samples describe a gesture the user never finished, so the handle stops
    * where it stands rather than flying off on a flick nobody meant to throw.
    */
-  onPointerCancel(e) {
-    if (!this.dragging || e.pointerId !== this.pointerId) return;
+  onDragCancel(e) {
+    if (!e.detail || typeof e.detail !== 'object') return;
     this.lastTapAt = 0;
-    this.endDrag(e);
+    this.endDrag();
     this.commit();
   }
 
   /** Tear down a drag, however it ended. */
-  endDrag(e) {
-    this.dragging = false;
-    this.dragTarget.removeEventListener('pointermove', this.onPointerMove);
-    this.dragTarget.removeEventListener('pointerup', this.onPointerUp);
-    this.dragTarget.removeEventListener('pointercancel', this.onPointerCancel);
-    if (this.dragTarget.releasePointerCapture) {
-      try { this.dragTarget.releasePointerCapture(e.pointerId); } catch { /* already released */ }
-    }
-    this.pointerId = null;
+  endDrag() {
+    if (!this.gesture) return;
+    this.dragTarget.removeEventListener('dragstart', this.onDragStart);
+    this.dragTarget.removeEventListener('dragend', this.onDragEnd);
+    this.dragTarget.removeEventListener('dragcancel', this.onDragCancel);
+    // Releases the capture and takes the document listeners off, and dispatches nothing doing
+    // it - so ending a gesture from anywhere but its own end cannot come back through these.
+    this.gesture.destroy();
+    this.gesture = null;
   }
 
   pushSample(pos) {
@@ -456,10 +451,8 @@ export default class CompareImagesSlider {
   destroy() {
     this.stopInertia();
     this.element.style.removeProperty('--compare-images-slider-position');
+    this.endDrag();
     this.dragTarget.removeEventListener('pointerdown', this.onPointerDown);
-    this.dragTarget.removeEventListener('pointermove', this.onPointerMove);
-    this.dragTarget.removeEventListener('pointerup', this.onPointerUp);
-    this.dragTarget.removeEventListener('pointercancel', this.onPointerCancel);
     this.dragTarget.style.removeProperty('touch-action');
     this.handle.removeEventListener('keydown', this.onKeyDown);
   }

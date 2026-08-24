@@ -8,89 +8,6 @@
       "declarations": [
         {
           "kind": "function",
-          "name": "clamp",
-          "parameters": [
-            {
-              "name": "value",
-              "type": {
-                "text": "number"
-              }
-            },
-            {
-              "name": "min",
-              "type": {
-                "text": "number"
-              }
-            },
-            {
-              "name": "max",
-              "type": {
-                "text": "number"
-              }
-            }
-          ],
-          "description": "Clamp a number to an inclusive range.",
-          "return": {
-            "type": {
-              "text": "number"
-            }
-          }
-        },
-        {
-          "kind": "function",
-          "name": "sampleVelocity",
-          "parameters": [
-            {
-              "name": "samples",
-              "description": "Ordered pointer samples.",
-              "type": {
-                "text": "Array<{ t: number, pos: number }>"
-              }
-            },
-            {
-              "name": "windowMs",
-              "default": "80",
-              "description": "Look-back window in milliseconds.",
-              "optional": true,
-              "type": {
-                "text": "number"
-              }
-            }
-          ],
-          "description": "Compute a flick velocity (percent per millisecond) from recent pointer samples.\n\nThe velocity is measured over a time window rather than a single frame delta.\nA single-frame delta spikes on quick flicks - one large jump between the last\ntwo move events makes inertia shoot straight to an extreme. Averaging the\ndisplacement over the last `windowMs` of movement smooths those spikes out.",
-          "return": {
-            "type": {
-              "text": "number"
-            }
-          }
-        },
-        {
-          "kind": "function",
-          "name": "capVelocity",
-          "parameters": [
-            {
-              "name": "velocity",
-              "type": {
-                "text": "number"
-              }
-            },
-            {
-              "name": "max",
-              "description": "Maximum absolute velocity.",
-              "type": {
-                "text": "number"
-              }
-            }
-          ],
-          "description": "Cap the magnitude of a velocity while preserving its sign.\nPrevents a hard flick from carrying the handle to an extreme every time.",
-          "return": {
-            "type": {
-              "text": "number"
-            }
-          }
-        },
-        {
-          "kind": "function",
           "name": "isDoubleTap",
           "parameters": [
             {
@@ -277,13 +194,22 @@
             },
             {
               "kind": "method",
-              "name": "positionFromEvent",
+              "name": "positionFromDrag",
               "parameters": [
                 {
-                  "name": "e"
+                  "name": "detail",
+                  "description": "A `drag()` detail.",
+                  "type": {
+                    "text": "object"
+                  }
                 }
               ],
-              "description": "Convert a client coordinate to a 0-100 position along the slider axis."
+              "description": "Where along the slider a gesture is, out of what `drag()` measured.\n\n`within` is the slider root rather than the handle, so the percentage is along the track\nthe handle runs on rather than across the handle itself, and it is held at 0 and 100 when\nthe pointer runs off the end. The vertical layout is the same number down the other axis.",
+              "return": {
+                "type": {
+                  "text": "number"
+                }
+              }
             },
             {
               "kind": "method",
@@ -292,11 +218,31 @@
                 {
                   "name": "e"
                 }
+              ],
+              "description": "Take hold of the slider.\n\nThe gesture is `drag()` from book-of-spells, started from this `pointerdown` rather than\nhanded the element to own: started that way it writes no attributes and no inline\n`touch-action` into an element this class already set one on, and the `preventDefault`\nbelow stays this class's to do. What it owns is the pointer - the capture, the\n`pointercancel` path, and the moves heard on the document.\n\nThe physics stays here. `drag()` has inertia of its own and it is the wrong one for this:\nit caps a flick in pixels per millisecond, so the same flick would carry further on a\nnarrow slider than on a wide one, where `maxFlickVelocity` is per cent per millisecond and\nreads the same at every size."
+            },
+            {
+              "kind": "method",
+              "name": "onDragStart",
+              "parameters": [
+                {
+                  "name": "e"
+                }
+              ],
+              "description": "The press itself, once `drag()` has measured it.\n\nRead from the gesture rather than from the `pointerdown`, so the sum that turns a pointer\ninto a percentage lives in exactly one place.\n\n`dragstart` and `dragend` are the native drag and drop API's names too, and the native ones\nbubble - with `dragAnywhere` the target is the whole slider, and an `<img>` inside it is\ndraggable without being asked. book-of-spells sends an object as `detail`; a native\n`dragstart` carries the number `UIEvent` gives it, which is what tells the two apart."
+            },
+            {
+              "kind": "method",
+              "name": "follow",
+              "parameters": [
+                {
+                  "name": "detail"
+                }
               ]
             },
             {
               "kind": "method",
-              "name": "onPointerMove",
+              "name": "onDragEnd",
               "parameters": [
                 {
                   "name": "e"
@@ -305,16 +251,7 @@
             },
             {
               "kind": "method",
-              "name": "onPointerUp",
-              "parameters": [
-                {
-                  "name": "e"
-                }
-              ]
-            },
-            {
-              "kind": "method",
-              "name": "onPointerCancel",
+              "name": "onDragCancel",
               "parameters": [
                 {
                   "name": "e"
@@ -325,11 +262,6 @@
             {
               "kind": "method",
               "name": "endDrag",
-              "parameters": [
-                {
-                  "name": "e"
-                }
-              ],
               "description": "Tear down a drag, however it ended."
             },
             {
@@ -412,15 +344,7 @@
             },
             {
               "kind": "field",
-              "name": "dragging",
-              "type": {
-                "text": "boolean"
-              },
-              "default": "false"
-            },
-            {
-              "kind": "field",
-              "name": "pointerId",
+              "name": "gesture",
               "type": {
                 "text": "null"
               },
@@ -709,30 +633,6 @@
         }
       ],
       "exports": [
-        {
-          "kind": "js",
-          "name": "clamp",
-          "declaration": {
-            "name": "clamp",
-            "module": "src/scripts/compare-images-slider.js"
-          }
-        },
-        {
-          "kind": "js",
-          "name": "sampleVelocity",
-          "declaration": {
-            "name": "sampleVelocity",
-            "module": "src/scripts/compare-images-slider.js"
-          }
-        },
-        {
-          "kind": "js",
-          "name": "capVelocity",
-          "declaration": {
-            "name": "capVelocity",
-            "module": "src/scripts/compare-images-slider.js"
-          }
-        },
         {
           "kind": "js",
           "name": "isDoubleTap",

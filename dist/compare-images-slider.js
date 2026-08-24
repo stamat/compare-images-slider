@@ -1,28 +1,309 @@
 /* compare-images-slider v3.0.1 | https://stamat.github.io/compare-images-slider/ | MIT License */
 (() => {
-  // src/scripts/compare-images-slider.js
+  // node_modules/book-of-spells/src/helpers.mjs
+  function shallowMerge(target, source) {
+    for (const key of Object.keys(source)) {
+      if (key === "__proto__" || key === "constructor" || key === "prototype") continue;
+      target[key] = source[key];
+    }
+    return target;
+  }
+  var objProto = Object.prototype;
+  var foldF64 = new Float64Array(1);
+  var foldU32 = new Uint32Array(foldF64.buffer);
+  function isObject(o) {
+    return typeof o === "object" && !Array.isArray(o) && o !== null;
+  }
+  function isFunction(o) {
+    return typeof o === "function";
+  }
+  var PLAIN = {
+    \u00C6: "AE",
+    \u00E6: "ae",
+    \u0152: "OE",
+    \u0153: "oe",
+    \u00DF: "ss",
+    "\u1E9E": "SS",
+    \u00DE: "TH",
+    \u00FE: "th",
+    \u0110: "D",
+    \u0111: "d",
+    \u00D0: "D",
+    \u00F0: "d",
+    \u00D8: "O",
+    \u00F8: "o",
+    \u0141: "L",
+    \u0142: "l",
+    \u013F: "L",
+    \u0140: "l",
+    \u0126: "H",
+    \u0127: "h",
+    \u0166: "T",
+    \u0167: "t",
+    \u01E4: "G",
+    \u01E5: "g",
+    \u014A: "N",
+    \u014B: "n",
+    \u0131: "i"
+  };
+  var PLAIN_RE = new RegExp(`[${Object.keys(PLAIN).join("")}]`, "g");
+  function percentage(num, total) {
+    if (Number.isNaN(num) || Number.isNaN(total) || total === 0) return 0;
+    return num / total * 100;
+  }
   function clamp(value, min, max) {
     if (value < min) return min;
     if (value > max) return max;
     return value;
   }
   function sampleVelocity(samples, windowMs = 80) {
-    if (!samples || samples.length < 2) return 0;
+    const result = {};
+    if (!samples || !samples.length) return result;
     const last = samples[samples.length - 1];
+    const keys = Object.keys(last).filter((key) => key !== "t" && typeof last[key] === "number");
+    for (const key of keys) result[key] = 0;
+    if (samples.length < 2) return result;
     let start = samples[0];
     for (let i = samples.length - 1; i >= 0; i--) {
       start = samples[i];
       if (last.t - samples[i].t >= windowMs) break;
     }
     const dt = last.t - start.t;
-    if (dt <= 0) return 0;
-    return (last.pos - start.pos) / dt;
+    if (dt <= 0) return result;
+    for (const key of keys) result[key] = (last[key] - start[key]) / dt;
+    return result;
   }
-  function capVelocity(velocity, max) {
-    if (velocity > max) return max;
-    if (velocity < -max) return -max;
-    return velocity;
+
+  // node_modules/book-of-spells/src/dom.mjs
+  var dragging = /* @__PURE__ */ new WeakSet();
+  function drag(target, opts) {
+    const fromEvent = !!target && typeof target === "object" && target.type === "pointerdown" && "pointerId" in target;
+    const element = fromEvent ? isObject(opts) && opts.target || target.currentTarget || target.target : target;
+    if (!element || !(element instanceof Element)) return;
+    if (!fromEvent && element.getAttribute("drag-enabled") === "true") return;
+    if (fromEvent && dragging.has(element)) return;
+    const doc = element.ownerDocument;
+    let x = 0;
+    let y = 0;
+    let clientX = 0;
+    let clientY = 0;
+    let prevX = 0;
+    let prevY = 0;
+    let velocityX = 0;
+    let velocityY = 0;
+    let pointerId = null;
+    let pointerType = "";
+    let rect = null;
+    let inertiaId = null;
+    let inertiaTime = 0;
+    let samples = [];
+    const options = {
+      within: null,
+      inertia: false,
+      bounce: false,
+      friction: 0.9,
+      bounceFactor: 0.2,
+      velocityWindow: 80,
+      maxVelocity: 2,
+      callback: null,
+      preventDefaultTouch: true
+    };
+    if (isFunction(opts)) {
+      options.callback = opts;
+    } else if (isObject(opts)) {
+      shallowMerge(options, opts);
+    }
+    options.friction = Math.abs(options.friction);
+    options.bounceFactor = Math.abs(options.bounceFactor);
+    options.maxVelocity = Math.abs(options.maxVelocity);
+    const measureVelocity = function() {
+      const v = sampleVelocity(samples, options.velocityWindow);
+      velocityX = clamp(v.x || 0, -options.maxVelocity, options.maxVelocity);
+      velocityY = clamp(v.y || 0, -options.maxVelocity, options.maxVelocity);
+    };
+    if (!fromEvent) {
+      element.setAttribute("drag-enabled", "true");
+      element.setAttribute("dragging", "false");
+    }
+    const ownTouchAction = element.style.touchAction || "";
+    if (!fromEvent && options.preventDefaultTouch) element.style.touchAction = "none";
+    const measured = options.within instanceof Element ? options.within : element;
+    const calcPageRelativeRect = function() {
+      const origRect = measured.getBoundingClientRect();
+      const rect2 = {
+        top: origRect.top + window.scrollY,
+        left: origRect.left + window.scrollX,
+        width: origRect.width,
+        height: origRect.height
+      };
+      return rect2;
+    };
+    const handleStart = function(e) {
+      if (dragging.has(element)) return;
+      dragging.add(element);
+      samples = [];
+      pointerId = e.pointerId;
+      pointerType = e.pointerType || "";
+      setXY(e);
+      prevX = x;
+      prevY = y;
+      rect = calcPageRelativeRect();
+      if (!fromEvent) element.setAttribute("dragging", "true");
+      if (element.setPointerCapture) {
+        try {
+          element.setPointerCapture(e.pointerId);
+        } catch {
+        }
+      }
+      doc.addEventListener("pointermove", handleMove);
+      doc.addEventListener("pointerup", handleEnd);
+      doc.addEventListener("pointercancel", handleCancel);
+      if (inertiaId) {
+        cancelAnimationFrame(inertiaId);
+        inertiaId = null;
+      }
+      const event = new CustomEvent("dragstart", { detail: getDetail() });
+      element.dispatchEvent(event);
+    };
+    const handleMove = function(e) {
+      if (e.pointerId !== pointerId) return;
+      if (e.clientX === clientX && e.clientY === clientY && e.pageX === x && e.pageY === y) return;
+      setXY(e);
+      measureVelocity();
+      const detail = getDetail();
+      if (options.callback) options.callback(detail);
+      const event = new CustomEvent("drag", { detail });
+      element.dispatchEvent(event);
+    };
+    const stop = function() {
+      dragging.delete(element);
+      if (!fromEvent) element.setAttribute("dragging", "false");
+      doc.removeEventListener("pointermove", handleMove);
+      doc.removeEventListener("pointerup", handleEnd);
+      doc.removeEventListener("pointercancel", handleCancel);
+      if (element.hasPointerCapture && element.hasPointerCapture(pointerId)) element.releasePointerCapture(pointerId);
+      pointerId = null;
+    };
+    const handleEnd = function(e) {
+      if (e.pointerId !== pointerId) return;
+      stop();
+      const t = performance.now();
+      samples.push({ t, x, y });
+      measureVelocity();
+      inertiaTime = t;
+      if (options.inertia) inertiaId = requestAnimationFrame(inertia);
+      const event = new CustomEvent("dragend", { detail: getDetail() });
+      element.dispatchEvent(event);
+    };
+    const handleCancel = function(e) {
+      if (e.pointerId !== pointerId) return;
+      stop();
+      velocityX = 0;
+      velocityY = 0;
+      samples = [];
+      const event = new CustomEvent("dragcancel", { detail: getDetail() });
+      element.dispatchEvent(event);
+    };
+    const setXY = function(e) {
+      prevX = x;
+      prevY = y;
+      x = e.pageX;
+      y = e.pageY;
+      clientX = e.clientX;
+      clientY = e.clientY;
+      samples.push({ t: performance.now(), x, y });
+      if (samples.length > 12) samples.shift();
+    };
+    const getDetail = function() {
+      const relativeX = x - rect.left;
+      const relativeY = y - rect.top;
+      const xPercentage = percentage(relativeX, rect.width);
+      const yPercentage = percentage(relativeY, rect.height);
+      const detail = {
+        target: element,
+        x,
+        y,
+        clientX,
+        clientY,
+        relativeX,
+        relativeY,
+        xPercentage,
+        yPercentage,
+        velocityX,
+        velocityY,
+        prevX,
+        prevY,
+        pointerType
+      };
+      if (xPercentage < 0) detail.xPercentage = 0;
+      if (xPercentage > 100) detail.xPercentage = 100;
+      if (yPercentage < 0) detail.yPercentage = 0;
+      if (yPercentage > 100) detail.yPercentage = 100;
+      return detail;
+    };
+    const inertia = function() {
+      const t = performance.now();
+      const dt = t - inertiaTime;
+      inertiaTime = t;
+      x += velocityX * dt;
+      y += velocityY * dt;
+      const decay = Math.pow(options.friction, dt / 16.6667);
+      velocityX *= decay;
+      velocityY *= decay;
+      if (options.bounce) {
+        if (x < rect.left) {
+          x = rect.left;
+          velocityX *= -options.bounceFactor;
+        }
+        if (x > rect.width + rect.left) {
+          x = rect.width + rect.left;
+          velocityX *= -options.bounceFactor;
+        }
+        if (y < rect.top) {
+          y = rect.top;
+          velocityY *= -options.bounceFactor;
+        }
+        if (y > rect.height + rect.top) {
+          y = rect.height + rect.top;
+          velocityY *= -options.bounceFactor;
+        }
+      }
+      if (Math.abs(velocityX) < 0.01) velocityX = 0;
+      if (Math.abs(velocityY) < 0.01) velocityY = 0;
+      const detail = getDetail();
+      if (velocityX !== 0 || velocityY !== 0) {
+        if (options.callback) options.callback(detail);
+        const event = new CustomEvent("draginertia", { detail });
+        element.dispatchEvent(event);
+        inertiaId = requestAnimationFrame(inertia);
+      } else {
+        inertiaId = null;
+        if (options.callback) options.callback(detail);
+        const event = new CustomEvent("draginertiaend", { detail });
+        element.dispatchEvent(event);
+      }
+    };
+    if (fromEvent) handleStart(target);
+    else element.addEventListener("pointerdown", handleStart);
+    return {
+      //TODO: add manual start, move and end methods - for programmatic control
+      destroy: function() {
+        if (pointerId !== null) stop();
+        if (!fromEvent) {
+          element.removeEventListener("pointerdown", handleStart);
+          element.style.touchAction = ownTouchAction;
+          element.removeAttribute("drag-enabled");
+          element.removeAttribute("dragging");
+        }
+        if (inertiaId) {
+          cancelAnimationFrame(inertiaId);
+          inertiaId = null;
+        }
+      }
+    };
   }
+
+  // src/scripts/compare-images-slider.js
   var DOUBLE_TAP_MS = 400;
   var TAP_SLOP = 1;
   function isDoubleTap(now, lastTapAt, movedBy, windowMs = DOUBLE_TAP_MS, slop = TAP_SLOP) {
@@ -80,8 +361,7 @@
       }
       this.position = clamp(this.options.initialPosition, 0, 100);
       this.committedPosition = this.position;
-      this.dragging = false;
-      this.pointerId = null;
+      this.gesture = null;
       this.samples = [];
       this.velocity = 0;
       this.inertiaId = null;
@@ -90,9 +370,9 @@
       this.lastTapAt = 0;
       this.restorePosition = this.position;
       this.onPointerDown = this.onPointerDown.bind(this);
-      this.onPointerMove = this.onPointerMove.bind(this);
-      this.onPointerUp = this.onPointerUp.bind(this);
-      this.onPointerCancel = this.onPointerCancel.bind(this);
+      this.onDragStart = this.onDragStart.bind(this);
+      this.onDragEnd = this.onDragEnd.bind(this);
+      this.onDragCancel = this.onDragCancel.bind(this);
       this.onKeyDown = this.onKeyDown.bind(this);
       this.setupAccessibility();
       this.dragTarget = this.options.dragAnywhere ? this.element : this.handle;
@@ -148,38 +428,73 @@
       this.setPosition(nearestExtreme(this.position));
       this.commit();
     }
-    /** Convert a client coordinate to a 0-100 position along the slider axis. */
-    positionFromEvent(e) {
-      const rect = this.element.getBoundingClientRect();
-      if (this.options.vertical) {
-        return clamp((e.clientY - rect.top) / rect.height * 100, 0, 100);
-      }
-      return clamp((e.clientX - rect.left) / rect.width * 100, 0, 100);
+    /**
+     * Where along the slider a gesture is, out of what `drag()` measured.
+     *
+     * `within` is the slider root rather than the handle, so the percentage is along the track
+     * the handle runs on rather than across the handle itself, and it is held at 0 and 100 when
+     * the pointer runs off the end. The vertical layout is the same number down the other axis.
+     *
+     * @param {object} detail - A `drag()` detail.
+     * @returns {number}
+     */
+    positionFromDrag(detail) {
+      return this.options.vertical ? detail.yPercentage : detail.xPercentage;
     }
+    /**
+     * Take hold of the slider.
+     *
+     * The gesture is `drag()` from book-of-spells, started from this `pointerdown` rather than
+     * handed the element to own: started that way it writes no attributes and no inline
+     * `touch-action` into an element this class already set one on, and the `preventDefault`
+     * below stays this class's to do. What it owns is the pointer - the capture, the
+     * `pointercancel` path, and the moves heard on the document.
+     *
+     * The physics stays here. `drag()` has inertia of its own and it is the wrong one for this:
+     * it caps a flick in pixels per millisecond, so the same flick would carry further on a
+     * narrow slider than on a wide one, where `maxFlickVelocity` is per cent per millisecond and
+     * reads the same at every size.
+     */
     onPointerDown(e) {
+      if (this.gesture) return;
       this.stopInertia();
-      this.dragging = true;
-      this.pointerId = e.pointerId;
       this.samples = [];
-      if (this.dragTarget.setPointerCapture) this.dragTarget.setPointerCapture(e.pointerId);
-      this.dragTarget.addEventListener("pointermove", this.onPointerMove);
-      this.dragTarget.addEventListener("pointerup", this.onPointerUp);
-      this.dragTarget.addEventListener("pointercancel", this.onPointerCancel);
-      const pos = this.positionFromEvent(e);
+      e.preventDefault();
+      this.dragTarget.addEventListener("dragstart", this.onDragStart);
+      this.dragTarget.addEventListener("dragend", this.onDragEnd);
+      this.dragTarget.addEventListener("dragcancel", this.onDragCancel);
+      this.gesture = drag(e, {
+        target: this.dragTarget,
+        within: this.element,
+        callback: (detail) => this.follow(detail)
+      });
+    }
+    /**
+     * The press itself, once `drag()` has measured it.
+     *
+     * Read from the gesture rather than from the `pointerdown`, so the sum that turns a pointer
+     * into a percentage lives in exactly one place.
+     *
+     * `dragstart` and `dragend` are the native drag and drop API's names too, and the native ones
+     * bubble - with `dragAnywhere` the target is the whole slider, and an `<img>` inside it is
+     * draggable without being asked. book-of-spells sends an object as `detail`; a native
+     * `dragstart` carries the number `UIEvent` gives it, which is what tells the two apart.
+     */
+    onDragStart(e) {
+      if (!e.detail || typeof e.detail !== "object") return;
+      const pos = this.positionFromDrag(e.detail);
       this.pressPosition = pos;
       this.pushSample(pos);
       this.setPosition(pos);
-      e.preventDefault();
     }
-    onPointerMove(e) {
-      if (!this.dragging || e.pointerId !== this.pointerId) return;
-      const pos = this.positionFromEvent(e);
+    follow(detail) {
+      const pos = this.positionFromDrag(detail);
       this.pushSample(pos);
       this.setPosition(pos);
     }
-    onPointerUp(e) {
-      if (!this.dragging || e.pointerId !== this.pointerId) return;
-      this.endDrag(e);
+    onDragEnd(e) {
+      if (!e.detail || typeof e.detail !== "object") return;
+      this.endDrag();
       const now = performance.now();
       const movedBy = Math.abs(this.position - this.pressPosition);
       if (isDoubleTap(now, this.lastTapAt, movedBy)) {
@@ -189,7 +504,8 @@
       }
       this.lastTapAt = movedBy > TAP_SLOP ? 0 : now;
       if (this.options.inertia) {
-        this.velocity = capVelocity(sampleVelocity(this.samples), this.options.maxFlickVelocity);
+        const flick = sampleVelocity(this.samples).pos || 0;
+        this.velocity = clamp(flick, -this.options.maxFlickVelocity, this.options.maxFlickVelocity);
         if (Math.abs(this.velocity) > 0) return this.startInertia();
       }
       this.commit();
@@ -200,25 +516,20 @@
      * does. The samples describe a gesture the user never finished, so the handle stops
      * where it stands rather than flying off on a flick nobody meant to throw.
      */
-    onPointerCancel(e) {
-      if (!this.dragging || e.pointerId !== this.pointerId) return;
+    onDragCancel(e) {
+      if (!e.detail || typeof e.detail !== "object") return;
       this.lastTapAt = 0;
-      this.endDrag(e);
+      this.endDrag();
       this.commit();
     }
     /** Tear down a drag, however it ended. */
-    endDrag(e) {
-      this.dragging = false;
-      this.dragTarget.removeEventListener("pointermove", this.onPointerMove);
-      this.dragTarget.removeEventListener("pointerup", this.onPointerUp);
-      this.dragTarget.removeEventListener("pointercancel", this.onPointerCancel);
-      if (this.dragTarget.releasePointerCapture) {
-        try {
-          this.dragTarget.releasePointerCapture(e.pointerId);
-        } catch {
-        }
-      }
-      this.pointerId = null;
+    endDrag() {
+      if (!this.gesture) return;
+      this.dragTarget.removeEventListener("dragstart", this.onDragStart);
+      this.dragTarget.removeEventListener("dragend", this.onDragEnd);
+      this.dragTarget.removeEventListener("dragcancel", this.onDragCancel);
+      this.gesture.destroy();
+      this.gesture = null;
     }
     pushSample(pos) {
       this.samples.push({ t: performance.now(), pos });
@@ -292,10 +603,8 @@
     destroy() {
       this.stopInertia();
       this.element.style.removeProperty("--compare-images-slider-position");
+      this.endDrag();
       this.dragTarget.removeEventListener("pointerdown", this.onPointerDown);
-      this.dragTarget.removeEventListener("pointermove", this.onPointerMove);
-      this.dragTarget.removeEventListener("pointerup", this.onPointerUp);
-      this.dragTarget.removeEventListener("pointercancel", this.onPointerCancel);
       this.dragTarget.style.removeProperty("touch-action");
       this.handle.removeEventListener("keydown", this.onKeyDown);
     }

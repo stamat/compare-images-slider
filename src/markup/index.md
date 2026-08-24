@@ -17,8 +17,8 @@ og:
 
 # Compare Images Slider
 
-A dependency-free before/after image comparison slider — a custom element or a
-class you instantiate, with no shadow DOM to fight.
+A before/after image comparison slider — a custom element or a class you
+instantiate, with no shadow DOM to fight.
 
 <compare-images-slider inertia>
   <img width="1680" height="1120" src="https://i.imgur.com/Ju4pEb7.jpeg" loading="lazy" alt="Building, before edit">
@@ -38,7 +38,7 @@ _A live `<compare-images-slider>`, upgraded on connect with no JavaScript instan
 
 **Compare Images Slider** overlays two images — or two videos, or anything else you
 put in the markup — and reveals one over the other as you drag a handle across
-them. It is lightweight, dependency-free, mobile friendly, and works as a
+them. It is lightweight, mobile friendly, and works as a
 `<compare-images-slider>` custom element or as a class you instantiate. Because it
 uses no shadow DOM, every part stays yours to style.
 
