@@ -49,10 +49,10 @@ used here, and the gesture is the one
 [book-of-elementals](https://github.com/stamat/book-of-elementals) reaches for as well —
 the other rides inside it:
 
-| Taken from it | What it does here | Shared with |
-| --- | --- | --- |
-| [`drag()`](https://stamat.github.io/book-of-spells/module-dom.html#.drag), `src/dom.mjs` | The gesture, both halves: under the pointer, the capture, a `pointercancel` told apart from a release, the moves heard on the document, the client coordinate turned into a percentage of the track; after it, the glide — the flick sampled over a window and capped, the friction, the wall it stops at or bounces off | [`<splitter-elemental>`](https://stamat.github.io/book-of-elementals/elementals/splitter.html) and [`<rearrangeable-elemental>`](https://stamat.github.io/book-of-elementals/elementals/rearrangeable.html) |
-| [`clamp()`](https://stamat.github.io/book-of-spells/global.html#clamp), `src/helpers.mjs` | Holds the position to 0–100 under the keys and the collapse | `drag()`, which holds the flick to its ceiling with it |
+| Taken from it                                                                             | What it does here                                                                                                                                                                                                                                                                                                        | Shared with                                                                                                                                                                                         |
+| ----------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [`drag()`](https://stamat.github.io/book-of-spells/module-dom.html#.drag), `src/dom.mjs`  | The gesture, both halves: under the pointer, the capture, a `pointercancel` told apart from a release, the moves heard on the document, the client coordinate turned into a percentage of the track; after it, the glide — the flick sampled over a window and capped, the friction, the wall it stops at or bounces off | [`<splitter-elemental>`](https://stamat.github.io/book-of-elementals/elementals/splitter.html) and [`<rearrange-elemental>`](https://stamat.github.io/book-of-elementals/elementals/rearrange.html) |
+| [`clamp()`](https://stamat.github.io/book-of-spells/global.html#clamp), `src/helpers.mjs` | Holds the position to 0–100 under the keys and the collapse                                                                                                                                                                                                                                                              | `drag()`, which holds the flick to its ceiling with it                                                                                                                                              |
 
 The flick was written out here as well until it was not — sampled, capped and glided
 in two repositories, and neither copy knew when the other was fixed. One thing stays,
@@ -115,9 +115,25 @@ screenshot, a styled `div` over a photo — all the same to it.
 
 ```html
 <compare-images-slider>
-  <video src="graded.mp4" width="1280" height="720" autoplay muted loop playsinline></video>
+  <video
+    src="graded.mp4"
+    width="1280"
+    height="720"
+    autoplay
+    muted
+    loop
+    playsinline
+  ></video>
   <div class="frame">
-    <video src="ungraded.mp4" width="1280" height="720" autoplay muted loop playsinline></video>
+    <video
+      src="ungraded.mp4"
+      width="1280"
+      height="720"
+      autoplay
+      muted
+      loop
+      playsinline
+    ></video>
   </div>
   <span class="handle"></span>
 </compare-images-slider>
@@ -214,12 +230,12 @@ compare-images-slider {
 Four events on the element, each bubbling, each carrying the position it happened
 at as `detail.position` — a number from 0 to 100, unrounded:
 
-| Event | Fires |
-| --- | --- |
-| `input` | Every move as it happens: a drag, a key, a frame of inertia. What `<input type="range">` calls it |
-| `change` | Once the position settles: a press released, a flick come to rest, a key pressed |
-| `start` | The handle has just reached 0 — the pane fully collapsed |
-| `end` | The handle has just reached 100 — the pane fully revealed |
+| Event    | Fires                                                                                             |
+| -------- | ------------------------------------------------------------------------------------------------- |
+| `input`  | Every move as it happens: a drag, a key, a frame of inertia. What `<input type="range">` calls it |
+| `change` | Once the position settles: a press released, a flick come to rest, a key pressed                  |
+| `start`  | The handle has just reached 0 — the pane fully collapsed                                          |
+| `end`    | The handle has just reached 100 — the pane fully revealed                                         |
 
 ```javascript
 slider.addEventListener('input', (e) => {

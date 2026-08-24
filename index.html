@@ -89,9 +89,25 @@ content: the frame covers the whole slider and is clipped back to the reveal
 position, so whatever sits inside it is what gets revealed. Two videos, a canvas
 over a screenshot, a styled <code>div</code> over a photo — all the same to it.</p>
 <pre><code class="hljs language-html"><span class="hljs-tag">&lt;<span class="hljs-name">compare-images-slider</span>&gt;</span>
-  <span class="hljs-tag">&lt;<span class="hljs-name">video</span> <span class="hljs-attr">src</span>=<span class="hljs-string">&quot;graded.mp4&quot;</span> <span class="hljs-attr">width</span>=<span class="hljs-string">&quot;1280&quot;</span> <span class="hljs-attr">height</span>=<span class="hljs-string">&quot;720&quot;</span> <span class="hljs-attr">autoplay</span> <span class="hljs-attr">muted</span> <span class="hljs-attr">loop</span> <span class="hljs-attr">playsinline</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">video</span>&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">video</span>
+    <span class="hljs-attr">src</span>=<span class="hljs-string">&quot;graded.mp4&quot;</span>
+    <span class="hljs-attr">width</span>=<span class="hljs-string">&quot;1280&quot;</span>
+    <span class="hljs-attr">height</span>=<span class="hljs-string">&quot;720&quot;</span>
+    <span class="hljs-attr">autoplay</span>
+    <span class="hljs-attr">muted</span>
+    <span class="hljs-attr">loop</span>
+    <span class="hljs-attr">playsinline</span>
+  &gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">video</span>&gt;</span>
   <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;frame&quot;</span>&gt;</span>
-    <span class="hljs-tag">&lt;<span class="hljs-name">video</span> <span class="hljs-attr">src</span>=<span class="hljs-string">&quot;ungraded.mp4&quot;</span> <span class="hljs-attr">width</span>=<span class="hljs-string">&quot;1280&quot;</span> <span class="hljs-attr">height</span>=<span class="hljs-string">&quot;720&quot;</span> <span class="hljs-attr">autoplay</span> <span class="hljs-attr">muted</span> <span class="hljs-attr">loop</span> <span class="hljs-attr">playsinline</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">video</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">video</span>
+      <span class="hljs-attr">src</span>=<span class="hljs-string">&quot;ungraded.mp4&quot;</span>
+      <span class="hljs-attr">width</span>=<span class="hljs-string">&quot;1280&quot;</span>
+      <span class="hljs-attr">height</span>=<span class="hljs-string">&quot;720&quot;</span>
+      <span class="hljs-attr">autoplay</span>
+      <span class="hljs-attr">muted</span>
+      <span class="hljs-attr">loop</span>
+      <span class="hljs-attr">playsinline</span>
+    &gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">video</span>&gt;</span>
   <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
   <span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;handle&quot;</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span>
 <span class="hljs-tag">&lt;/<span class="hljs-name">compare-images-slider</span>&gt;</span></code></pre>
@@ -241,9 +257,19 @@ is running.</p>
 extreme; `$frame-pad` in `src/styles/prose.scss` is the same 6%, and the frame's height
 is derived from it. Change one and change the other, or the sample scrolls inside. -->
 <code-preview css="./dist/compare-images-slider.min.css" js="./dist/compare-images-slider.min.js" manifest="./dist/custom-elements.json" theme-attribute="data-theme" head="&lt;style&gt;body{margin:0;padding:6%}&lt;/style&gt;"><pre><code class="hljs language-html"><span class="hljs-tag">&lt;<span class="hljs-name">compare-images-slider</span> <span class="hljs-attr">inertia</span> <span class="hljs-attr">initial-position</span>=<span class="hljs-string">&quot;35&quot;</span>&gt;</span>
-  <span class="hljs-tag">&lt;<span class="hljs-name">img</span> <span class="hljs-attr">width</span>=<span class="hljs-string">&quot;1680&quot;</span> <span class="hljs-attr">height</span>=<span class="hljs-string">&quot;1120&quot;</span> <span class="hljs-attr">src</span>=<span class="hljs-string">&quot;https://i.imgur.com/Ju4pEb7.jpeg&quot;</span> <span class="hljs-attr">alt</span>=<span class="hljs-string">&quot;Building, before edit&quot;</span>&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">img</span>
+    <span class="hljs-attr">width</span>=<span class="hljs-string">&quot;1680&quot;</span>
+    <span class="hljs-attr">height</span>=<span class="hljs-string">&quot;1120&quot;</span>
+    <span class="hljs-attr">src</span>=<span class="hljs-string">&quot;https://i.imgur.com/Ju4pEb7.jpeg&quot;</span>
+    <span class="hljs-attr">alt</span>=<span class="hljs-string">&quot;Building, before edit&quot;</span>
+  /&gt;</span>
   <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;frame&quot;</span>&gt;</span>
-    <span class="hljs-tag">&lt;<span class="hljs-name">img</span> <span class="hljs-attr">width</span>=<span class="hljs-string">&quot;1680&quot;</span> <span class="hljs-attr">height</span>=<span class="hljs-string">&quot;1120&quot;</span> <span class="hljs-attr">src</span>=<span class="hljs-string">&quot;https://i.imgur.com/pvWyCKw.jpeg&quot;</span> <span class="hljs-attr">alt</span>=<span class="hljs-string">&quot;Building, after edit&quot;</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">img</span>
+      <span class="hljs-attr">width</span>=<span class="hljs-string">&quot;1680&quot;</span>
+      <span class="hljs-attr">height</span>=<span class="hljs-string">&quot;1120&quot;</span>
+      <span class="hljs-attr">src</span>=<span class="hljs-string">&quot;https://i.imgur.com/pvWyCKw.jpeg&quot;</span>
+      <span class="hljs-attr">alt</span>=<span class="hljs-string">&quot;Building, after edit&quot;</span>
+    /&gt;</span>
   <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
   <span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;handle&quot;</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span>
 <span class="hljs-tag">&lt;/<span class="hljs-name">compare-images-slider</span>&gt;</span></code></pre>
@@ -393,7 +419,10 @@ The handle it draws is an <code>↔</code> glyph in a white circle, and white on
 be: the stylesheet knows nothing about the page it landed on.</p>
 <p>The look done properly is a second file, because a light-DOM element cannot scope a look
 away from a page that never asked for one:</p>
-<pre><code class="hljs language-html"><span class="hljs-tag">&lt;<span class="hljs-name">link</span> <span class="hljs-attr">rel</span>=<span class="hljs-string">&quot;stylesheet&quot;</span> <span class="hljs-attr">href</span>=<span class="hljs-string">&quot;https://unpkg.com/compare-images-slider/dist/compare-images-slider-theme.min.css&quot;</span>&gt;</span></code></pre>
+<pre><code class="hljs language-html"><span class="hljs-tag">&lt;<span class="hljs-name">link</span>
+  <span class="hljs-attr">rel</span>=<span class="hljs-string">&quot;stylesheet&quot;</span>
+  <span class="hljs-attr">href</span>=<span class="hljs-string">&quot;https://unpkg.com/compare-images-slider/dist/compare-images-slider-theme.min.css&quot;</span>
+/&gt;</span></code></pre>
 <pre><code class="hljs language-scss"><span class="hljs-keyword">@use</span> <span class="hljs-string">&quot;compare-images-slider/src/styles/theme&quot;</span>;</code></pre>
 <p>It paints the handle in <code>Canvas</code>/<code>CanvasText</code>, the page&#39;s own pair — so the knob inverts
 with a dark page, and is repainted rather than lost in forced-colors mode — and it takes
@@ -438,7 +467,7 @@ start their own drags with; the other rides inside it:</p>
 <tbody><tr>
 <td><a href="https://stamat.github.io/book-of-spells/module-dom.html#.drag"><code>drag()</code></a>, <code>src/dom.mjs</code></td>
 <td>The gesture, both halves: under the pointer, the capture, a <code>pointercancel</code> told apart from a release, the moves heard on the document, the client coordinate turned into a percentage of the track; after it, the glide — the flick sampled over a window and capped, the friction, the wall it stops at or bounces off</td>
-<td><a href="https://stamat.github.io/book-of-elementals/elementals/splitter.html"><code>&lt;splitter-elemental&gt;</code></a> and <a href="https://stamat.github.io/book-of-elementals/elementals/rearrangeable.html"><code>&lt;rearrangeable-elemental&gt;</code></a></td>
+<td><a href="https://stamat.github.io/book-of-elementals/elementals/splitter.html"><code>&lt;splitter-elemental&gt;</code></a> and <a href="https://stamat.github.io/book-of-elementals/elementals/rearrange.html"><code>&lt;rearrange-elemental&gt;</code></a></td>
 </tr>
 <tr>
 <td><a href="https://stamat.github.io/book-of-spells/global.html#clamp"><code>clamp()</code></a>, <code>src/helpers.mjs</code></td>
