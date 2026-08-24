@@ -105,6 +105,7 @@
       bounceFactor: 0.2,
       velocityWindow: 80,
       maxVelocity: 2,
+      axis: null,
       callback: null,
       preventDefaultTouch: true
     };
@@ -115,11 +116,15 @@
     }
     options.friction = Math.abs(options.friction);
     options.bounceFactor = Math.abs(options.bounceFactor);
-    options.maxVelocity = Math.abs(options.maxVelocity);
+    const capInPercent = typeof options.maxVelocity === "string" && options.maxVelocity.trim().endsWith("%");
+    const cap = Math.abs(parseFloat(options.maxVelocity));
+    options.maxVelocity = Number.isNaN(cap) ? 2 : cap;
+    let capX = options.maxVelocity;
+    let capY = options.maxVelocity;
     const measureVelocity = function() {
       const v = sampleVelocity(samples, options.velocityWindow);
-      velocityX = clamp(v.x || 0, -options.maxVelocity, options.maxVelocity);
-      velocityY = clamp(v.y || 0, -options.maxVelocity, options.maxVelocity);
+      velocityX = options.axis === "y" ? 0 : clamp(v.x || 0, -capX, capX);
+      velocityY = options.axis === "x" ? 0 : clamp(v.y || 0, -capY, capY);
     };
     if (!fromEvent) {
       element.setAttribute("drag-enabled", "true");
@@ -148,6 +153,10 @@
       prevX = x;
       prevY = y;
       rect = calcPageRelativeRect();
+      if (capInPercent) {
+        capX = rect.width * options.maxVelocity / 100;
+        capY = rect.height * options.maxVelocity / 100;
+      }
       if (!fromEvent) element.setAttribute("dragging", "true");
       if (element.setPointerCapture) {
         try {
@@ -272,10 +281,10 @@
       if (Math.abs(velocityY) < 0.01) velocityY = 0;
       const detail = getDetail();
       if (velocityX !== 0 || velocityY !== 0) {
+        inertiaId = requestAnimationFrame(inertia);
         if (options.callback) options.callback(detail);
         const event = new CustomEvent("draginertia", { detail });
         element.dispatchEvent(event);
-        inertiaId = requestAnimationFrame(inertia);
       } else {
         inertiaId = null;
         if (options.callback) options.callback(detail);

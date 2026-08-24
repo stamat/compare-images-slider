@@ -57,6 +57,6 @@
     "poops-docs-theme": "^5.1.0"
   },
   "dependencies": {
-    "book-of-spells": "^2.7.0"
+    "book-of-spells": "^2.8.0"
   }
 }
