@@ -4,7 +4,7 @@ Issues and pull requests are welcome. Taking part means keeping to the
 [Code of Conduct](CODE_OF_CONDUCT.md).
 
 This is one slider that reveals one layer over another — images, usually, though
-the frame takes whatever the markup puts in it — and it intends to stay that size. It
+the reveal layer takes whatever the markup puts in it — and it intends to stay that size. It
 ships no shadow DOM, no build step for the people installing it, and one dependency —
 [book-of-spells](https://github.com/stamat/book-of-spells), the sibling spellbook, which
 is where the pointer gesture lives so that this element and

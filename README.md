@@ -62,18 +62,25 @@ because `drag()` cannot know it: the double tap, which is no part of a drag.
 
 The `<compare-images-slider>` tag upgrades itself the moment it connects — no
 JavaScript call, nothing to register past loading the bundle. It uses light DOM
-(no shadow root), so the images, frame and handle stay fully stylable, and every
+(no shadow root), so the images, reveal layer and handle stay fully stylable, and every
 option is an attribute (bare, `data-*` or kebab-case):
 
 ```html
 <compare-images-slider inertia initial-position="35">
   <img src="img.jpg" alt="" />
-  <div class="frame">
+  <div class="compare-images-slider-reveal">
     <img src="img-alt.jpg" alt="" />
   </div>
-  <span class="handle"></span>
+  <span class="compare-images-slider-handle"></span>
 </compare-images-slider>
 ```
+
+Both children are required. Where they are missing, the two entry points say so
+differently: `new CompareImagesSlider(el)` throws, while `<compare-images-slider>`
+reports on the console, because a throw from a custom element's reaction callback goes
+to `window.onerror` and leaves the page believing it has a slider. Neither sits silent.
+The tag itself upgrades wherever the script is loaded — head, deferred or last in
+`<body>` — waiting for the parser to reach its children when it has to.
 
 **⚠️ Note:** Don't be lazy and please set the intrinsic dimensions of the images.
 Nothing in the slider measures them — the reveal is clipped by percentage — but
@@ -109,7 +116,7 @@ table into knobs beside a live sample.
 ## Not only images
 
 The name says images and images are the point, but nothing in the script reads the
-content: the frame covers the whole slider and is clipped back to the reveal
+content: the reveal layer covers the whole slider and is clipped back to the current
 position, so whatever is inside it is revealed. Two videos, a canvas over a
 screenshot, a styled `div` over a photo — all the same to it.
 
@@ -124,7 +131,7 @@ screenshot, a styled `div` over a photo — all the same to it.
     loop
     playsinline
   ></video>
-  <div class="frame">
+  <div class="compare-images-slider-reveal">
     <video
       src="ungraded.mp4"
       width="1280"
@@ -135,13 +142,13 @@ screenshot, a styled `div` over a photo — all the same to it.
       playsinline
     ></video>
   </div>
-  <span class="handle"></span>
+  <span class="compare-images-slider-handle"></span>
 </compare-images-slider>
 ```
 
 The stylesheet sizes `img`, `video`, `canvas` and `picture > img` on both layers.
 Anything else is yours to size, and the rule is that the two layers have to lay out
-identically — the base layer is what gives the slider its height, and the frame is
+identically — the base layer is what gives the slider its height, and the reveal layer is
 laid over it.
 
 ## Without the custom element
@@ -153,10 +160,10 @@ for markup whose tag name isn't yours to choose, or a slider built after load:
 ```html
 <div class="js-compare-images-slider compare-images-slider">
   <img src="img.jpg" alt="" />
-  <div class="frame">
+  <div class="compare-images-slider-reveal">
     <img src="img-alt.jpg" alt="" />
   </div>
-  <span class="handle"></span>
+  <span class="compare-images-slider-handle"></span>
 </div>
 ```
 
@@ -178,7 +185,7 @@ document.addEventListener('CompareImagesSliderLoaded', function () {
 
 ## Optional theme
 
-The stylesheet above is the slider working: the frame, the handle, the reveal.
+The stylesheet above is the slider working: the layers, the handle, the reveal.
 It draws the handle as an `↔` glyph in a white circle, which is a look, and a
 look that has to be black on white because it knows nothing about the page it
 landed on.
@@ -199,19 +206,19 @@ light-DOM element cannot scope a look away from a page that never asked for one:
 
 It paints the handle in `Canvas`/`CanvasText` — the page's own pair, so the knob
 inverts with a dark page and is repainted rather than lost in forced-colors mode
-— and it picks up an icon of your own from a `.handle-knob` span inside the
+— and it picks up an icon of your own from a `.compare-images-slider-handle-knob` span inside the
 handle:
 
 ```html
-<span class="handle">
-  <span class="handle-knob">
+<span class="compare-images-slider-handle">
+  <span class="compare-images-slider-handle-knob">
     <svg viewBox="0 0 16 16" width="16" height="16"><!-- your icon --></svg>
   </span>
 </span>
 ```
 
 The knob is markup, so the icon is yours. A handle without one keeps the `↔`
-glyph: every rule in the theme sits behind `:has(.handle-knob)`.
+glyph: every rule in the theme sits behind `:has(.compare-images-slider-handle-knob)`.
 
 **One caveat:** `Canvas` reads the page's `color-scheme`. A page that themes in
 custom properties without also declaring one keeps a light `Canvas` when it goes
@@ -273,7 +280,7 @@ nothing to cycle focus between.
 
 The accessible name is `Image comparison slider` unless you say otherwise, and that
 string is English. Override it with `aria-label` or `aria-labelledby` on the
-`.handle`, or on the element itself, from where either is copied down.
+`.compare-images-slider-handle`, or on the element itself, from where either is copied down.
 `aria-labelledby` wins, as it does in ARIA, and it is the route that can point at
 visible text the page already translates.
 
@@ -294,10 +301,10 @@ Every option is an attribute — bare, `data-*` or kebab-case:
 ```html
 <compare-images-slider vertical>
   <img src="img.jpg" alt="" />
-  <div class="frame">
+  <div class="compare-images-slider-reveal">
     <img src="img-alt.jpg" alt="" />
   </div>
-  <span class="handle"></span>
+  <span class="compare-images-slider-handle"></span>
 </compare-images-slider>
 ```
 

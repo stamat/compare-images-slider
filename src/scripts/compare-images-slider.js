@@ -101,6 +101,30 @@ export function keyboardStep(current, key, step, pageStep) {
 let sliderCount = 0;
 
 /**
+ * What a connection should do about the required children.
+ *
+ * The parser inserts an element - and so fires `connectedCallback` - at its start tag,
+ * before any child of it exists, so absent children are ambiguous on their own. The
+ * document's ready state is what disambiguates: still `loading` means the parser has
+ * not reached them yet, anything else means it has been and gone and the markup is
+ * simply wrong.
+ *
+ * @param {boolean} hasChildren - Whether both required children are present.
+ * @param {string} readyState - `document.readyState`.
+ * @returns {'build'|'wait'|'fail'}
+ */
+export function upgradeAction(hasChildren, readyState) {
+  if (hasChildren) return 'build';
+  return readyState === 'loading' ? 'wait' : 'fail';
+}
+
+
+// The markup contract, in one place: the class looks these up, the custom element gates
+// its upgrade on them, and the error messages quote them.
+const REVEAL_SELECTOR = '.compare-images-slider-reveal';
+const HANDLE_SELECTOR = '.compare-images-slider-handle';
+
+/**
  * @class CompareImagesSlider
  * @classdesc Reveal one layer over another by dragging a handle. The two layers are
  * whatever the markup puts there - images, video, canvas, arbitrary elements - since
@@ -125,13 +149,13 @@ let sliderCount = 0;
 export default class CompareImagesSlider {
   constructor(element, options) {
     this.element = element;
-    this.frame = this.element.querySelector('.frame');
-    this.handle = this.element.querySelector('.handle');
+    this.reveal = this.element.querySelector(REVEAL_SELECTOR);
+    this.handle = this.element.querySelector(HANDLE_SELECTOR);
 
     // Both are the contract, and both are used before the constructor returns. Saying so
     // beats the `null.setAttribute` that would land two calls deeper.
-    if (!this.frame || !this.handle) {
-      throw new Error('CompareImagesSlider: the element needs a .frame child holding the revealed layer, and a .handle child');
+    if (!this.reveal || !this.handle) {
+      throw new Error('CompareImagesSlider: the element needs a ' + REVEAL_SELECTOR + ' child holding the revealed layer, and a ' + HANDLE_SELECTOR + ' child');
     }
 
     this.options = resolveOptions(this.element, options);
@@ -190,11 +214,11 @@ export default class CompareImagesSlider {
    * @see https://www.w3.org/WAI/ARIA/apg/patterns/windowsplitter/
    */
   setupAccessibility() {
-    if (!this.frame.id) this.frame.id = 'compare-images-slider-frame-' + (++sliderCount);
+    if (!this.reveal.id) this.reveal.id = 'compare-images-slider-reveal-' + (++sliderCount);
 
     this.handle.setAttribute('role', 'separator');
     this.handle.setAttribute('tabindex', '0');
-    this.handle.setAttribute('aria-controls', this.frame.id);
+    this.handle.setAttribute('aria-controls', this.reveal.id);
     // A separator that splits left/right is itself vertical, and vice versa.
     this.handle.setAttribute('aria-orientation', this.options.vertical ? 'horizontal' : 'vertical');
     this.handle.setAttribute('aria-valuemin', '0');
@@ -414,7 +438,7 @@ export default class CompareImagesSlider {
 
   render() {
     // One property for both axes and both parts: the stylesheet decides which edge of the
-    // frame is clipped back and which way the handle travels, so nothing here knows about
+    // reveal layer is clipped back and which way the handle travels, so nothing here knows about
     // orientation, and nothing has to be recomputed when the slider is resized.
     this.element.style.setProperty('--compare-images-slider-position', this.position + '%');
     const rounded = Math.round(this.position);
@@ -496,7 +520,7 @@ const ElementBase = typeof HTMLElement !== 'undefined' ? HTMLElement : class {};
 
 /**
  * `<compare-images-slider>` custom element. Uses light DOM (no shadow root) so
- * the images, frame and handle stay fully stylable by the page author.
+ * the images, reveal layer and handle stay fully stylable by the page author.
  *
  * Every attribute below is also readable as `data-*` or passed to the
  * `CompareImagesSlider` constructor in its camelCase form. The constructor reads the
@@ -510,7 +534,7 @@ const ElementBase = typeof HTMLElement !== 'undefined' ? HTMLElement : class {};
  * @attr {number} [friction=0.9] - Inertia decay per frame, 0-1. Applied frame-rate independently, so the feel holds across displays.
  * @attr {number} [bounce-factor=0.1] - Energy kept on a bounce, 0-1.
  * @attr {number} [max-flick-velocity=0.5] - Cap on flick velocity, percent per millisecond.
- * @attr {number} [initial-position=50] - Starting position, 0-100. Paint it with `--compare-images-slider-initial-position` too, or the frame is at 50% until the script runs.
+ * @attr {number} [initial-position=50] - Starting position, 0-100. Paint it with `--compare-images-slider-initial-position` too, or the reveal layer is at 50% until the script runs.
  * @attr {number} [step=5] - Arrow-key step, in percent.
  * @attr {number} [page-step=25] - Page Up/Down step, in percent.
  *
@@ -528,9 +552,32 @@ const ElementBase = typeof HTMLElement !== 'undefined' ? HTMLElement : class {};
  */
 export class CompareImagesSliderElement extends ElementBase {
   connectedCallback() {
-    // Wait until the required light-DOM children have been parsed.
-    if (this.slider || !this.querySelector('.frame') || !this.querySelector('.handle')) return;
-    this.slider = new CompareImagesSlider(this);
+    if (this.slider) return;
+    const hasChildren = !!(this.querySelector(REVEAL_SELECTOR) && this.querySelector(HANDLE_SELECTOR));
+    const action = upgradeAction(hasChildren, document.readyState);
+
+    if (action === 'build') {
+      this.slider = new CompareImagesSlider(this);
+      return;
+    }
+
+    if (action === 'wait') {
+      if (this.awaitingChildren) return;
+      this.awaitingChildren = true;
+      document.addEventListener('DOMContentLoaded', () => {
+        this.awaitingChildren = false;
+        // Connected is checked again because the element may have been taken back out
+        // of the document while the rest of the page parsed, and a slider built on a
+        // detached element would wire listeners nothing can reach.
+        if (this.isConnected) this.connectedCallback();
+      }, { once: true });
+      return;
+    }
+
+    // The class throws here; this cannot, because nothing called it - a throw from a
+    // reaction callback lands on `window.onerror` and leaves the page believing it
+    // has a slider. Logging is the only way this path is heard.
+    console.error('<compare-images-slider>: no slider was built. The element needs a ' + REVEAL_SELECTOR + ' child holding the revealed layer, and a ' + HANDLE_SELECTOR + ' child. Elements created after load must carry both before they are connected.', this);
   }
 
   disconnectedCallback() {

@@ -2,6 +2,7 @@ import js from '@eslint/js';
 
 const browserGlobals = {
   window: 'readonly',
+  console: 'readonly',
   document: 'readonly',
   performance: 'readonly',
   requestAnimationFrame: 'readonly',

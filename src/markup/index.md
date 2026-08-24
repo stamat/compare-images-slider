@@ -26,11 +26,11 @@ instantiate, with no shadow DOM to fight.
 
 <compare-images-slider inertia>
   <img width="1680" height="1120" src="https://i.imgur.com/Ju4pEb7.jpeg" loading="lazy" alt="Building, before edit">
-  <div class="frame">
+  <div class="compare-images-slider-reveal">
     <img width="1680" height="1120" src="https://i.imgur.com/pvWyCKw.jpeg" loading="lazy" alt="Building, after edit">
   </div>
-  <span class="handle">
-    <span class="handle-knob">
+  <span class="compare-images-slider-handle">
+    <span class="compare-images-slider-handle-knob">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16"><path d="M3.72 3.72a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042L2.56 7h10.88l-2.22-2.22a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018l3.5 3.5a.75.75 0 0 1 0 1.06l-3.5 3.5a.749.749 0 0 1-1.275-.326.749.749 0 0 1 .215-.734l2.22-2.22H2.56l2.22 2.22a.749.749 0 0 1-.326 1.275.749.749 0 0 1-.734-.215l-3.5-3.5a.75.75 0 0 1 0-1.06Z"></path></svg>
     </span>
   </span>
@@ -56,17 +56,24 @@ load.
 ```html
 <compare-images-slider inertia initial-position="35">
   <img width="1680" height="1120" src="before.jpg" alt="Before" />
-  <div class="frame">
+  <div class="compare-images-slider-reveal">
     <img width="1680" height="1120" src="after.jpg" alt="After" />
   </div>
-  <span class="handle"></span>
+  <span class="compare-images-slider-handle"></span>
 </compare-images-slider>
 ```
+
+Both children are required. Where they are missing, the two entry points say so
+differently: `new CompareImagesSlider(el)` throws, while `<compare-images-slider>`
+reports on the console, because a throw from a custom element's reaction callback
+goes to `window.onerror` and leaves the page believing it has a slider. Neither sits
+silent. The tag upgrades wherever the script is loaded — head, deferred or last in
+`<body>` — waiting for the parser to reach its children when it has to.
 
 ## Not only images
 
 The name says images and images are the point, but nothing in the script reads the
-content: the frame covers the whole slider and is clipped back to the reveal
+content: the reveal layer covers the whole slider and is clipped back to the current
 position, so whatever sits inside it is what gets revealed. Two videos, a canvas
 over a screenshot, a styled `div` over a photo — all the same to it.
 
@@ -81,7 +88,7 @@ over a screenshot, a styled `div` over a photo — all the same to it.
     loop
     playsinline
   ></video>
-  <div class="frame">
+  <div class="compare-images-slider-reveal">
     <video
       src="ungraded.mp4"
       width="1280"
@@ -92,13 +99,13 @@ over a screenshot, a styled `div` over a photo — all the same to it.
       playsinline
     ></video>
   </div>
-  <span class="handle"></span>
+  <span class="compare-images-slider-handle"></span>
 </compare-images-slider>
 ```
 
 The stylesheet sizes `img`, `video`, `canvas` and `picture > img` on both layers.
 Anything else is yours to size, and the rule is that the two layers must lay out
-identically: the base layer is what gives the slider its height, and the frame is
+identically: the base layer is what gives the slider its height, and the reveal layer is
 laid over it.
 
 ## Without the custom element
@@ -110,10 +117,10 @@ for markup whose tag name is not yours to choose, or a slider built after load.
 ```html
 <div class="js-compare-images-slider compare-images-slider">
   <img width="1680" height="1120" src="before.jpg" alt="Before" />
-  <div class="frame">
+  <div class="compare-images-slider-reveal">
     <img width="1680" height="1120" src="after.jpg" alt="After" />
   </div>
-  <span class="handle"></span>
+  <span class="compare-images-slider-handle"></span>
 </div>
 ```
 
@@ -136,11 +143,11 @@ document.addEventListener('CompareImagesSliderLoaded', () => {
 
 <div class="js-compare-images-slider compare-images-slider">
   <img width="1680" height="1120" src="https://i.imgur.com/Ju4pEb7.jpeg" loading="lazy" alt="Building, before edit">
-  <div class="frame">
+  <div class="compare-images-slider-reveal">
     <img width="1680" height="1120" src="https://i.imgur.com/pvWyCKw.jpeg" loading="lazy" alt="Building, after edit">
   </div>
-  <span class="handle">
-    <span class="handle-knob">
+  <span class="compare-images-slider-handle">
+    <span class="compare-images-slider-handle-knob">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16"><path d="M3.72 3.72a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042L2.56 7h10.88l-2.22-2.22a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018l3.5 3.5a.75.75 0 0 1 0 1.06l-3.5 3.5a.749.749 0 0 1-1.275-.326.749.749 0 0 1 .215-.734l2.22-2.22H2.56l2.22 2.22a.749.749 0 0 1-.326 1.275.749.749 0 0 1-.734-.215l-3.5-3.5a.75.75 0 0 1 0-1.06Z"></path></svg>
     </span>
   </span>
@@ -161,11 +168,11 @@ bottom instead of left and right.
 
 <compare-images-slider vertical inertia>
   <img width="1680" height="1120" src="https://i.imgur.com/VWdIu81.jpeg" loading="lazy" alt="Tree, before edit">
-  <div class="frame">
+  <div class="compare-images-slider-reveal">
     <img width="1680" height="1120" src="https://i.imgur.com/C7zhEkz.jpeg" loading="lazy" alt="Tree, after edit">
   </div>
-  <span class="handle">
-    <span class="handle-knob">
+  <span class="compare-images-slider-handle">
+    <span class="compare-images-slider-handle-knob">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16"><path d="M3.72 3.72a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042L2.56 7h10.88l-2.22-2.22a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018l3.5 3.5a.75.75 0 0 1 0 1.06l-3.5 3.5a.749.749 0 0 1-1.275-.326.749.749 0 0 1 .215-.734l2.22-2.22H2.56l2.22 2.22a.749.749 0 0 1-.326 1.275.749.749 0 0 1-.734-.215l-3.5-3.5a.75.75 0 0 1 0-1.06Z"></path></svg>
     </span>
   </span>
@@ -223,7 +230,7 @@ is derived from it. Change one and change the other, or the sample scrolls insid
     src="https://i.imgur.com/Ju4pEb7.jpeg"
     alt="Building, before edit"
   />
-  <div class="frame">
+  <div class="compare-images-slider-reveal">
     <img
       width="1680"
       height="1120"
@@ -231,7 +238,7 @@ is derived from it. Change one and change the other, or the sample scrolls insid
       alt="Building, after edit"
     />
   </div>
-  <span class="handle"></span>
+  <span class="compare-images-slider-handle"></span>
 </compare-images-slider>
 ```
 
@@ -307,7 +314,7 @@ There is one pane here and nothing to cycle to, so it is not implemented.
 
 The accessible name is `Image comparison slider` until you give it one, and that
 string is English with no locale switch behind it. Both ARIA naming attributes work,
-on the `.handle` or on the element itself — from the element they are copied down
+on the `.compare-images-slider-handle` or on the element itself — from the element they are copied down
 onto the handle, so the translated string sits in the markup you already render:
 
 ```html
@@ -349,7 +356,7 @@ compare-images-slider {
 ```
 
 Where it is _now_ is a second property, `--compare-images-slider-position`, written
-on the element on every render — the same value the frame is clipped to and the
+on the element on every render — the same value the reveal layer is clipped to and the
 handle sits at. Read it to hang your own styling off the reveal; setting it is
 overwritten by the next move.
 
@@ -361,7 +368,7 @@ compare-images-slider .caption {
 
 ### Optional theme
 
-`compare-images-slider.css` is the slider working — the frame, the handle, the reveal.
+`compare-images-slider.css` is the slider working — the layers, the handle, the reveal.
 The handle it draws is an `↔` glyph in a white circle, and white on black is all it can
 be: the stylesheet knows nothing about the page it landed on.
 
@@ -381,19 +388,19 @@ away from a page that never asked for one:
 
 It paints the handle in `Canvas`/`CanvasText`, the page's own pair — so the knob inverts
 with a dark page, and is repainted rather than lost in forced-colors mode — and it takes
-an icon of your own from a `.handle-knob` span inside the handle, which is the knob this
+an icon of your own from a `.compare-images-slider-handle-knob` span inside the handle, which is the knob this
 page wears:
 
 ```html
-<span class="handle">
-  <span class="handle-knob">
+<span class="compare-images-slider-handle">
+  <span class="compare-images-slider-handle-knob">
     <svg viewBox="0 0 16 16" width="16" height="16"><!-- your icon --></svg>
   </span>
 </span>
 ```
 
 The knob is markup, so the icon is yours; a handle without one keeps the `↔` glyph,
-because every rule in the theme sits behind `:has(.handle-knob)`.
+because every rule in the theme sits behind `:has(.compare-images-slider-handle-knob)`.
 
 > [!NOTE]
 > `Canvas` reads the page's `color-scheme`. A page that themes in custom properties

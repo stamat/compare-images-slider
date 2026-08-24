@@ -30,10 +30,10 @@ compare-images-slider {
     pointer-events: none;
   }
 
-  /* The base layer is what gives the slider its size, and the frame's copy has to lay
+  /* The base layer is what gives the slider its size, and the reveal layer's copy has to lay
      out identically over it or the two halves do not line up. `picture` is addressed
      through its `img`, the wrapper itself having no box worth sizing. Anything else -
-     a div, an iframe, an svg sprite - is left to fill the frame on its own terms. */
+     a div, an iframe, an svg sprite - is left to fill the reveal layer on its own terms. */
   & > :is(img, video, canvas),
   & > picture > img {
     max-width: 100%;
@@ -41,11 +41,11 @@ compare-images-slider {
     display: block;
   }
 
-  /* The frame covers the whole slider and is clipped back to the reveal position, rather
+  /* The reveal layer covers the whole slider and is clipped back to the current position, rather
      than being sized to it. That is what keeps the overlay laying out at the same size as
-     the image underneath with no script measuring anything - sizing the frame instead
+     the image underneath with no script measuring anything - sizing it instead
      would need every child resized to the slider's width, on load and on every resize. */
-  .frame {
+  .compare-images-slider-reveal {
     position: absolute;
     inset: 0;
     z-index: 2;
@@ -60,7 +60,7 @@ compare-images-slider {
     }
   }
 
-  .handle {
+  .compare-images-slider-handle {
     position:absolute;
     left: var(--compare-images-slider-position);
     top:0;
@@ -73,7 +73,7 @@ compare-images-slider {
     touch-action: none;
   }
 
-  .handle:after {
+  .compare-images-slider-handle:after {
     position: absolute;
     top: 50%;
     left: 50%;
@@ -97,11 +97,11 @@ compare-images-slider {
     padding-block-end: 0.08em;
   }
 
-  .handle:focus-visible {
+  .compare-images-slider-handle:focus-visible {
     outline: none;
   }
 
-  .handle:focus-visible:after {
+  .compare-images-slider-handle:focus-visible:after {
     // `Highlight` and not `-webkit-focus-ring-color`, which reads like the platform's ring
     // and is not one: Chromium resolves the keyword to an orange of its own, so the ring came
     // out orange on a page whose focus colour was blue everywhere else.
@@ -111,12 +111,12 @@ compare-images-slider {
 
   &[data-vertical],
   &[vertical] {
-    .frame {
+    .compare-images-slider-reveal {
       -webkit-clip-path: inset(0 0 calc(100% - var(--compare-images-slider-position)) 0);
       clip-path: inset(0 0 calc(100% - var(--compare-images-slider-position)) 0);
     }
 
-    .handle {
+    .compare-images-slider-handle {
       left: 0;
       top: var(--compare-images-slider-position);
       width: 100%;
@@ -126,7 +126,7 @@ compare-images-slider {
       cursor: ns-resize;
     }
 
-    .handle:after {
+    .compare-images-slider-handle:after {
       content:'↕';
     }
   }

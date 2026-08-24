@@ -31,7 +31,62 @@ Write it for the person upgrading, not for the person who wrote the code. What
 they need is what changed for them: a renamed option, a different default, an
 error that is now thrown, output that moved.
 
-## [Unreleased]
+## [Unreleased] — the classes carry the package's name, and `frame` was the wrong word
+
+`.frame`, `.handle` and `.handle-knob` were unprefixed class names on a light-DOM
+element, which is the one place a class has no scope to hide in. A page with its own
+`.frame` inside a slider collided with it and had no way out: the selectors were
+hard-coded, with no option to point them elsewhere. `frame` also named the wrong thing
+— a frame is the border around something, while the element is the layer laid over the
+base one and clipped back to the handle.
+
+### Changed
+
+- **The three classes are prefixed, and `frame` is now `reveal`.** Rename them in your
+  markup; nothing else about the element changed — the same tag, the same options, the
+  same events, the same keyboard and ARIA.
+
+  | Was            | Now                                  |
+  | -------------- | ------------------------------------ |
+  | `.frame`       | `.compare-images-slider-reveal`      |
+  | `.handle`      | `.compare-images-slider-handle`      |
+  | `.handle-knob` | `.compare-images-slider-handle-knob` |
+
+  The old names are gone rather than deprecated, and the two entry points fail
+  differently on markup that still uses them. `new CompareImagesSlider(el)` throws,
+  naming both classes it wanted. `<compare-images-slider>` does nothing at all and says
+  nothing: its `connectedCallback` cannot tell markup with the wrong classes from
+  markup whose children have not parsed yet, so it waits for children that never come.
+  A slider that upgraded to a blank stack of both images is this rename, not a bug.
+
+- **`slider.frame` is `slider.reveal`.** The instance property holding the revealed
+  layer follows the class it points at, so the two cannot disagree. It appears in no
+  documentation and no example, so this only reaches you if you reached into the
+  instance.
+
+- **The generated `aria-controls` id is `compare-images-slider-reveal-N`**, where it was
+  `compare-images-slider-frame-N`. It is only generated when the reveal layer has no
+  `id` of its own, so markup that sets one is untouched.
+
+### Fixed
+
+- **`<compare-images-slider>` no longer fails silently, and now upgrades when the script
+  is loaded in `<head>`.** The parser inserts an element — and so fires
+  `connectedCallback` — at its start tag, before any child of it exists. The element
+  read those absent children as "not parsed yet" and returned, with nothing scheduled to
+  try again. Where the script ran before the parser reached the markup, which is what the
+  CDN snippet in the README gives you unless you defer it or put it last in `<body>`,
+  every slider on the page stayed a plain stack of two images and said nothing.
+
+  `document.readyState` is what tells the two cases apart. Still `loading` means the
+  parser is coming, so the upgrade waits for `DOMContentLoaded` and runs then. Anything
+  else means the parser has been and gone, so the markup is wrong and the element says
+  so on the console, naming both classes it wanted and the element it wanted them on.
+  An element built after load must carry both children before it is connected.
+
+  The class and the element still fail differently, and that is not fixable: a
+  constructor can throw to whoever called it, while a reaction callback has no caller
+  and a throw from one lands on `window.onerror` with the page none the wiser.
 
 ## [4.0.0] - 2026-08-24 — the gesture is book-of-spells' now, glide included
 

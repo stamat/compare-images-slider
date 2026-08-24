@@ -7,9 +7,14 @@
 // window that smooths a flick spike, the too-short gesture that reads zero, the cap that reads
 // the same at every width, the friction applied per millisecond rather than per frame.
 //
+// The upgrade decision is here too, as `upgradeAction`: whether an element connecting
+// without its children is mid-parse or simply mis-marked-up, which is the difference
+// between waiting and reporting a broken slider.
+//
 // Not covered here, deliberately: anything needing layout or a real event stream - the
 // reveal geometry, pointer capture, the ARIA the handle carries, the events actually
-// leaving the element. Those are checked in a browser, since a DOM stub asserting them
+// leaving the element, and the `DOMContentLoaded` listener `upgradeAction` sends the
+// waiting case to. Those are checked in a browser, since a DOM stub asserting them
 // would only be testing the stub.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
@@ -21,6 +26,7 @@ import {
   collapseToggle,
   readOptionsFromElement,
   resolveOptions,
+  upgradeAction,
   DEFAULT_OPTIONS
 } from '../src/scripts/compare-images-slider.js';
 
@@ -110,4 +116,12 @@ test('reaching an extreme is an event, sitting at one is not', () => {
   assert.equal(edgeEvent(100, 100), null, 'nor has an inertia glide clamped at 100');
   assert.equal(edgeEvent(0, 100), 'end', 'crossing from one extreme to the other counts');
   assert.equal(edgeEvent(40, 41), null, 'an ordinary move earns nothing');
+});
+
+test('a slider whose children have not been parsed yet waits, one with the wrong markup does not', () => {
+  assert.equal(upgradeAction(true, 'loading'), 'build', 'children present mid-parse need no wait');
+  assert.equal(upgradeAction(true, 'complete'), 'build', 'children present after load build straight away');
+  assert.equal(upgradeAction(false, 'loading'), 'wait', 'the parser has not reached the children yet');
+  assert.equal(upgradeAction(false, 'interactive'), 'fail', 'the parser has been and gone, so the markup is wrong');
+  assert.equal(upgradeAction(false, 'complete'), 'fail', 'an element built after load carries its children or it is broken');
 });

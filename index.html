@@ -59,11 +59,11 @@
 instantiate, with no shadow DOM to fight.</p>
 <compare-images-slider inertia>
   <img width="1680" height="1120" src="https://i.imgur.com/Ju4pEb7.jpeg" loading="lazy" alt="Building, before edit">
-  <div class="frame">
+  <div class="compare-images-slider-reveal">
     <img width="1680" height="1120" src="https://i.imgur.com/pvWyCKw.jpeg" loading="lazy" alt="Building, after edit">
   </div>
-  <span class="handle">
-    <span class="handle-knob">
+  <span class="compare-images-slider-handle">
+    <span class="compare-images-slider-handle-knob">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16"><path d="M3.72 3.72a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042L2.56 7h10.88l-2.22-2.22a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018l3.5 3.5a.75.75 0 0 1 0 1.06l-3.5 3.5a.749.749 0 0 1-1.275-.326.749.749 0 0 1 .215-.734l2.22-2.22H2.56l2.22 2.22a.749.749 0 0 1-.326 1.275.749.749 0 0 1-.734-.215l-3.5-3.5a.75.75 0 0 1 0-1.06Z"></path></svg>
     </span>
   </span>
@@ -81,14 +81,20 @@ intrinsic <code>width</code>/<code>height</code> on the images so the layout doe
 load.</p>
 <pre><code class="hljs language-html"><span class="hljs-tag">&lt;<span class="hljs-name">compare-images-slider</span> <span class="hljs-attr">inertia</span> <span class="hljs-attr">initial-position</span>=<span class="hljs-string">&quot;35&quot;</span>&gt;</span>
   <span class="hljs-tag">&lt;<span class="hljs-name">img</span> <span class="hljs-attr">width</span>=<span class="hljs-string">&quot;1680&quot;</span> <span class="hljs-attr">height</span>=<span class="hljs-string">&quot;1120&quot;</span> <span class="hljs-attr">src</span>=<span class="hljs-string">&quot;before.jpg&quot;</span> <span class="hljs-attr">alt</span>=<span class="hljs-string">&quot;Before&quot;</span> /&gt;</span>
-  <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;frame&quot;</span>&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;compare-images-slider-reveal&quot;</span>&gt;</span>
     <span class="hljs-tag">&lt;<span class="hljs-name">img</span> <span class="hljs-attr">width</span>=<span class="hljs-string">&quot;1680&quot;</span> <span class="hljs-attr">height</span>=<span class="hljs-string">&quot;1120&quot;</span> <span class="hljs-attr">src</span>=<span class="hljs-string">&quot;after.jpg&quot;</span> <span class="hljs-attr">alt</span>=<span class="hljs-string">&quot;After&quot;</span> /&gt;</span>
   <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
-  <span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;handle&quot;</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;compare-images-slider-handle&quot;</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span>
 <span class="hljs-tag">&lt;/<span class="hljs-name">compare-images-slider</span>&gt;</span></code></pre>
+<p>Both children are required. Where they are missing, the two entry points say so
+differently: <code>new CompareImagesSlider(el)</code> throws, while <code>&lt;compare-images-slider&gt;</code>
+reports on the console, because a throw from a custom element&#39;s reaction callback
+goes to <code>window.onerror</code> and leaves the page believing it has a slider. Neither sits
+silent. The tag upgrades wherever the script is loaded — head, deferred or last in
+<code>&lt;body&gt;</code> — waiting for the parser to reach its children when it has to.</p>
 <h2 id="not-only-images">Not only images<a class="heading-anchor" href="#not-only-images" tabindex="-1" aria-hidden="true"></a></h2>
 <p>The name says images and images are the point, but nothing in the script reads the
-content: the frame covers the whole slider and is clipped back to the reveal
+content: the reveal layer covers the whole slider and is clipped back to the current
 position, so whatever sits inside it is what gets revealed. Two videos, a canvas
 over a screenshot, a styled <code>div</code> over a photo — all the same to it.</p>
 <pre><code class="hljs language-html"><span class="hljs-tag">&lt;<span class="hljs-name">compare-images-slider</span>&gt;</span>
@@ -101,7 +107,7 @@ over a screenshot, a styled <code>div</code> over a photo — all the same to it
     <span class="hljs-attr">loop</span>
     <span class="hljs-attr">playsinline</span>
   &gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">video</span>&gt;</span>
-  <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;frame&quot;</span>&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;compare-images-slider-reveal&quot;</span>&gt;</span>
     <span class="hljs-tag">&lt;<span class="hljs-name">video</span>
       <span class="hljs-attr">src</span>=<span class="hljs-string">&quot;ungraded.mp4&quot;</span>
       <span class="hljs-attr">width</span>=<span class="hljs-string">&quot;1280&quot;</span>
@@ -112,11 +118,11 @@ over a screenshot, a styled <code>div</code> over a photo — all the same to it
       <span class="hljs-attr">playsinline</span>
     &gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">video</span>&gt;</span>
   <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
-  <span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;handle&quot;</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;compare-images-slider-handle&quot;</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span>
 <span class="hljs-tag">&lt;/<span class="hljs-name">compare-images-slider</span>&gt;</span></code></pre>
 <p>The stylesheet sizes <code>img</code>, <code>video</code>, <code>canvas</code> and <code>picture &gt; img</code> on both layers.
 Anything else is yours to size, and the rule is that the two layers must lay out
-identically: the base layer is what gives the slider its height, and the frame is
+identically: the base layer is what gives the slider its height, and the reveal layer is
 laid over it.</p>
 <h2 id="without-the-custom-element">Without the custom element<a class="heading-anchor" href="#without-the-custom-element" tabindex="-1" aria-hidden="true"></a></h2>
 <p>The same markup on a plain element works too — give it the <code>compare-images-slider</code>
@@ -124,10 +130,10 @@ class for the styles, and instantiate the slider on it yourself. That is the pat
 for markup whose tag name is not yours to choose, or a slider built after load.</p>
 <pre><code class="hljs language-html"><span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;js-compare-images-slider compare-images-slider&quot;</span>&gt;</span>
   <span class="hljs-tag">&lt;<span class="hljs-name">img</span> <span class="hljs-attr">width</span>=<span class="hljs-string">&quot;1680&quot;</span> <span class="hljs-attr">height</span>=<span class="hljs-string">&quot;1120&quot;</span> <span class="hljs-attr">src</span>=<span class="hljs-string">&quot;before.jpg&quot;</span> <span class="hljs-attr">alt</span>=<span class="hljs-string">&quot;Before&quot;</span> /&gt;</span>
-  <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;frame&quot;</span>&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;compare-images-slider-reveal&quot;</span>&gt;</span>
     <span class="hljs-tag">&lt;<span class="hljs-name">img</span> <span class="hljs-attr">width</span>=<span class="hljs-string">&quot;1680&quot;</span> <span class="hljs-attr">height</span>=<span class="hljs-string">&quot;1120&quot;</span> <span class="hljs-attr">src</span>=<span class="hljs-string">&quot;after.jpg&quot;</span> <span class="hljs-attr">alt</span>=<span class="hljs-string">&quot;After&quot;</span> /&gt;</span>
   <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
-  <span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;handle&quot;</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;compare-images-slider-handle&quot;</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span>
 <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span></code></pre>
 <pre><code class="hljs language-javascript"><span class="hljs-keyword">import</span> <span class="hljs-title class_">CompareImagesSlider</span> <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;compare-images-slider&#x27;</span>;
 
@@ -141,11 +147,11 @@ event before instantiating:</p>
 });</code></pre>
 <div class="js-compare-images-slider compare-images-slider">
   <img width="1680" height="1120" src="https://i.imgur.com/Ju4pEb7.jpeg" loading="lazy" alt="Building, before edit">
-  <div class="frame">
+  <div class="compare-images-slider-reveal">
     <img width="1680" height="1120" src="https://i.imgur.com/pvWyCKw.jpeg" loading="lazy" alt="Building, after edit">
   </div>
-  <span class="handle">
-    <span class="handle-knob">
+  <span class="compare-images-slider-handle">
+    <span class="compare-images-slider-handle-knob">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16"><path d="M3.72 3.72a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042L2.56 7h10.88l-2.22-2.22a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018l3.5 3.5a.75.75 0 0 1 0 1.06l-3.5 3.5a.749.749 0 0 1-1.275-.326.749.749 0 0 1 .215-.734l2.22-2.22H2.56l2.22 2.22a.749.749 0 0 1-.326 1.275.749.749 0 0 1-.734-.215l-3.5-3.5a.75.75 0 0 1 0-1.06Z"></path></svg>
     </span>
   </span>
@@ -158,11 +164,11 @@ bottom instead of left and right.</p>
 <span class="hljs-tag">&lt;/<span class="hljs-name">compare-images-slider</span>&gt;</span></code></pre>
 <compare-images-slider vertical inertia>
   <img width="1680" height="1120" src="https://i.imgur.com/VWdIu81.jpeg" loading="lazy" alt="Tree, before edit">
-  <div class="frame">
+  <div class="compare-images-slider-reveal">
     <img width="1680" height="1120" src="https://i.imgur.com/C7zhEkz.jpeg" loading="lazy" alt="Tree, after edit">
   </div>
-  <span class="handle">
-    <span class="handle-knob">
+  <span class="compare-images-slider-handle">
+    <span class="compare-images-slider-handle-knob">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16"><path d="M3.72 3.72a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042L2.56 7h10.88l-2.22-2.22a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018l3.5 3.5a.75.75 0 0 1 0 1.06l-3.5 3.5a.749.749 0 0 1-1.275-.326.749.749 0 0 1 .215-.734l2.22-2.22H2.56l2.22 2.22a.749.749 0 0 1-.326 1.275.749.749 0 0 1-.734-.215l-3.5-3.5a.75.75 0 0 1 0-1.06Z"></path></svg>
     </span>
   </span>
@@ -266,7 +272,7 @@ is derived from it. Change one and change the other, or the sample scrolls insid
     <span class="hljs-attr">src</span>=<span class="hljs-string">&quot;https://i.imgur.com/Ju4pEb7.jpeg&quot;</span>
     <span class="hljs-attr">alt</span>=<span class="hljs-string">&quot;Building, before edit&quot;</span>
   /&gt;</span>
-  <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;frame&quot;</span>&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;compare-images-slider-reveal&quot;</span>&gt;</span>
     <span class="hljs-tag">&lt;<span class="hljs-name">img</span>
       <span class="hljs-attr">width</span>=<span class="hljs-string">&quot;1680&quot;</span>
       <span class="hljs-attr">height</span>=<span class="hljs-string">&quot;1120&quot;</span>
@@ -274,7 +280,7 @@ is derived from it. Change one and change the other, or the sample scrolls insid
       <span class="hljs-attr">alt</span>=<span class="hljs-string">&quot;Building, after edit&quot;</span>
     /&gt;</span>
   <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
-  <span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;handle&quot;</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;compare-images-slider-handle&quot;</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span>
 <span class="hljs-tag">&lt;/<span class="hljs-name">compare-images-slider</span>&gt;</span></code></pre>
 </code-preview><p>The frame loads only <code>compare-images-slider.min.css</code>, so the handle there is the
 library&#39;s own <code>↔</code> glyph rather than the svg knob this page draws over it. That knob is
@@ -379,7 +385,7 @@ There is one pane here and nothing to cycle to, so it is not implemented.</p>
 <h3 id="naming-the-handle">Naming the handle<a class="heading-anchor" href="#naming-the-handle" tabindex="-1" aria-hidden="true"></a></h3>
 <p>The accessible name is <code>Image comparison slider</code> until you give it one, and that
 string is English with no locale switch behind it. Both ARIA naming attributes work,
-on the <code>.handle</code> or on the element itself — from the element they are copied down
+on the <code>.compare-images-slider-handle</code> or on the element itself — from the element they are copied down
 onto the handle, so the translated string sits in the markup you already render:</p>
 <pre><code class="hljs language-html"><span class="hljs-tag">&lt;<span class="hljs-name">h2</span> <span class="hljs-attr">id</span>=<span class="hljs-string">&quot;restoration-label&quot;</span>&gt;</span>Pre i posle restauracije<span class="hljs-tag">&lt;/<span class="hljs-name">h2</span>&gt;</span>
 <span class="hljs-tag">&lt;<span class="hljs-name">compare-images-slider</span> <span class="hljs-attr">aria-labelledby</span>=<span class="hljs-string">&quot;restoration-label&quot;</span>&gt;</span>
@@ -410,14 +416,14 @@ the first painted frame rather than after the script has run:</p>
   <span class="hljs-attr">--compare-images-slider-initial-position</span>: <span class="hljs-number">35%</span>;
 }</code></pre>
 <p>Where it is <em>now</em> is a second property, <code>--compare-images-slider-position</code>, written
-on the element on every render — the same value the frame is clipped to and the
+on the element on every render — the same value the reveal layer is clipped to and the
 handle sits at. Read it to hang your own styling off the reveal; setting it is
 overwritten by the next move.</p>
 <pre><code class="hljs language-css">compare-images-slider <span class="hljs-selector-class">.caption</span> {
   <span class="hljs-attribute">left</span>: <span class="hljs-built_in">var</span>(--compare-images-slider-position);
 }</code></pre>
 <h3 id="optional-theme">Optional theme<a class="heading-anchor" href="#optional-theme" tabindex="-1" aria-hidden="true"></a></h3>
-<p><code>compare-images-slider.css</code> is the slider working — the frame, the handle, the reveal.
+<p><code>compare-images-slider.css</code> is the slider working — the layers, the handle, the reveal.
 The handle it draws is an <code>↔</code> glyph in a white circle, and white on black is all it can
 be: the stylesheet knows nothing about the page it landed on.</p>
 <p>The look done properly is a second file, because a light-DOM element cannot scope a look
@@ -429,15 +435,15 @@ away from a page that never asked for one:</p>
 <pre><code class="hljs language-scss"><span class="hljs-keyword">@use</span> <span class="hljs-string">&quot;compare-images-slider/src/styles/theme&quot;</span>;</code></pre>
 <p>It paints the handle in <code>Canvas</code>/<code>CanvasText</code>, the page&#39;s own pair — so the knob inverts
 with a dark page, and is repainted rather than lost in forced-colors mode — and it takes
-an icon of your own from a <code>.handle-knob</code> span inside the handle, which is the knob this
+an icon of your own from a <code>.compare-images-slider-handle-knob</code> span inside the handle, which is the knob this
 page wears:</p>
-<pre><code class="hljs language-html"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;handle&quot;</span>&gt;</span>
-  <span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;handle-knob&quot;</span>&gt;</span>
+<pre><code class="hljs language-html"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;compare-images-slider-handle&quot;</span>&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;compare-images-slider-handle-knob&quot;</span>&gt;</span>
     <span class="hljs-tag">&lt;<span class="hljs-name">svg</span> <span class="hljs-attr">viewBox</span>=<span class="hljs-string">&quot;0 0 16 16&quot;</span> <span class="hljs-attr">width</span>=<span class="hljs-string">&quot;16&quot;</span> <span class="hljs-attr">height</span>=<span class="hljs-string">&quot;16&quot;</span>&gt;</span><span class="hljs-comment">&lt;!-- your icon --&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">svg</span>&gt;</span>
   <span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span>
 <span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></code></pre>
 <p>The knob is markup, so the icon is yours; a handle without one keeps the <code>↔</code> glyph,
-because every rule in the theme sits behind <code>:has(.handle-knob)</code>.</p>
+because every rule in the theme sits behind <code>:has(.compare-images-slider-handle-knob)</code>.</p>
 <div class="marked-github-alert marked-github-alert-note">
 <p class="marked-github-alert-title"><svg version="1.1" width="16" height="16" viewBox="0 0 16 16" class="octicon octicon-info marked-github-alert-icon" aria-hidden="true" data-component="Octicon"><path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8Zm8-6.5a6.5 6.5 0 1 0 0 13 6.5 6.5 0 0 0 0-13ZM6.5 7.75A.75.75 0 0 1 7.25 7h1a.75.75 0 0 1 .75.75v2.75h.25a.75.75 0 0 1 0 1.5h-2a.75.75 0 0 1 0-1.5h.25v-2h-.25a.75.75 0 0 1-.75-.75ZM8 6a1 1 0 1 1 0-2 1 1 0 0 1 0 2Z"></path></svg><span>Note</span></p>
 <p><code>Canvas</code> reads the page&#39;s <code>color-scheme</code>. A page that themes in custom properties

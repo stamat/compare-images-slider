@@ -3,9 +3,9 @@
 // not in that stylesheet and not in the bundle, because a light-DOM element cannot scope
 // a look away from a page that never asked for one. Import this when you want it.
 //
-// The knob is markup - `<span class="handle-knob">` inside the handle, with your svg
+// The knob is markup - `<span class="compare-images-slider-handle-knob">` inside the handle, with your svg
 // inside that - so the icon stays yours. A handle without one keeps the `↔` glyph the
-// base stylesheet draws, which is why every rule here is behind `:has(.handle-knob)`.
+// base stylesheet draws, which is why every rule here is behind `:has(.compare-images-slider-handle-knob)`.
 
 .compare-images-slider,
 compare-images-slider {
@@ -17,11 +17,11 @@ compare-images-slider {
   --compare-images-slider-handle-bg: Canvas;
   --compare-images-slider-handle-fg: CanvasText;
 
-  .handle:has(.handle-knob)::after {
+  .compare-images-slider-handle:has(.compare-images-slider-handle-knob)::after {
     display: none;
   }
 
-  .handle-knob {
+  .compare-images-slider-handle-knob {
     position: absolute;
     top: 50%;
     left: 50%;
@@ -48,14 +48,14 @@ compare-images-slider {
 
   // The base stylesheet outlines the glyph, and the glyph is gone here - without this
   // the handle keeps focus and shows nothing for it.
-  .handle:focus-visible .handle-knob {
+  .compare-images-slider-handle:focus-visible .compare-images-slider-handle-knob {
     outline: 3px solid Highlight;
     outline-offset: 2px;
   }
 
   &[data-vertical],
   &[vertical] {
-    .handle-knob {
+    .compare-images-slider-handle-knob {
       transform: translate3d(-50%, -50%, 0) rotate(90deg);
     }
   }
