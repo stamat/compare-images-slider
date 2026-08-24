@@ -21,12 +21,6 @@ compare-images-slider {
   }
 }
 
-// A paragraph that is nothing but small print - a photo credit, what a sample is showing.
-// The theme sizes and mutes the element itself, and carries this line too on main; it comes
-// out with the release after 5.1.0. Set on the paragraph rather than the inline `small`,
-// whose own line boxes cannot come out shorter than the strut the block builds for them.
-.prose p:has(> small:only-child) { line-height: 1.2; }
-
 // The frame pads the sample by this fraction of its own width on every side, which is
 // where the handle knob's overhanging half lands at either extreme - without it the knob
 // is cut in two against the frame edge. A percentage, not pixels: percentage padding
