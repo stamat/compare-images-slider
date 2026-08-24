@@ -1,0 +1,3 @@
+# Prettier rewrites the JS and HTML inside markdown fences — single quotes to
+# double, attributes onto their own lines. The docs are hand-formatted.
+*.md
